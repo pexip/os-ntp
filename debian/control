@@ -1,15 +1,17 @@
 Source: ntp
 Section: net
 Priority: optional
-Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Maintainer: Pexip AS <packaging@pexip.com>
+XSBC-Pexip-Original-Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 XSBC-Original-Maintainer: Debian NTP Team <pkg-ntp-maintainers@lists.alioth.debian.org>
-Uploaders: Bdale Garbee <bdale@gag.com>, Peter Eisentraut <petere@debian.org>, Kurt Roeckx <kurt@roeckx.be>
+XSBC-Pexip-Original-Uploaders: Bdale Garbee <bdale@gag.com>, Peter Eisentraut <petere@debian.org>, Kurt Roeckx <kurt@roeckx.be>
 Build-Depends: autotools-dev, debhelper (>= 6), libedit-dev, libcap2-dev | not+linux-gnu, libssl-dev (>= 0.9), autogen (>= 1:5.11), hardening-wrapper, dh-apparmor
 Build-Conflicts: libavahi-compat-libdnssd-dev, libwww-dev, libwww-ssl-dev
 Standards-Version: 3.8.1
 Homepage: http://support.ntp.org/
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-ntp/ntp/trunk/
 Vcs-Svn: svn://svn.debian.org/pkg-ntp/ntp/trunk/
+XS-Pexip-Upstream: http://archive.ubuntu.com/ubuntu/ precise
 
 Package: ntp
 Architecture: any

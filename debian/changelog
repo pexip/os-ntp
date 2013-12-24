@@ -1,3 +1,9 @@
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.1pexip1) pexip; urgency=low
+
+  * Prepare Pexip packaging
+
+ -- John-Mark Bell <jmb@pexip.com>  Tue, 24 Dec 2013 23:58:14 +0000
+
 ntp (1:4.2.6.p3+dfsg-1ubuntu3.1) precise-proposed; urgency=low
 
   * Re-enable crypto support by pointing openssl libdir to multiarch dir,
