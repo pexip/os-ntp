@@ -1,3 +1,9 @@
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.1pexip2) pexip; urgency=low
+
+  * Avoid use of MD5 when computing refids.
+
+ -- John-Mark Bell <jmb@pexip.com>  Sun, 02 Mar 2014 15:46:12 +0000
+
 ntp (1:4.2.6.p3+dfsg-1ubuntu3.1pexip1) pexip; urgency=low
 
   * Prepare Pexip packaging
