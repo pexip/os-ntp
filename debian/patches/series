@@ -8,3 +8,7 @@ openssl-disable-check.patch
 libedit.patch
 autotools.patch
 format-security.patch
+CVE-2014-9293.patch
+CVE-2014-9294.patch
+CVE-2014-9295.patch
+CVE-2014-9296.patch
