@@ -1,6 +1,9 @@
 ntp (1:4.2.6.p3+dfsg-1ubuntu3.2pexip1) pexip; urgency=medium
 
   * New upstream release
+  * Fix build to reflect migration of opensslconf.h
+    - Backport http://anonscm.debian.org/viewvc/pkg-ntp?view=revision&revision=365
+    - Patch sntp configure script
 
  -- John-Mark Bell <jmb@pexip.com>  Mon, 05 Jan 2015 15:08:26 +0000
 

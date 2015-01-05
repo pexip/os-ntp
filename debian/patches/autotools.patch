@@ -29954,10 +29954,10 @@ Index: ntp-4.2.6.p3+dfsg/configure
 +case "$ans" in
 + no)
 +    ;;
-+ *) # look for openssl/opensslconf.h:
++ *) # look for openssl/opensslv.h:
 +    for i in $ans no
 +    do
-+	test -f $i/openssl/opensslconf.h && break
++	test -f $i/openssl/opensslv.h && break
 +    done
 +    case "$i" in
 +     no)
@@ -72799,6 +72799,23 @@ Index: ntp-4.2.6.p3+dfsg/scripts/Makefile.in
  plot_summary: $(top_builddir)/config.status $(srcdir)/plot_summary.in
  	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
  summary: $(top_builddir)/config.status $(srcdir)/summary.in
+Index: ntp-4.2.6.p3+dfsg/sntp/configure
+===================================================================
+--- ntp-4.2.6.p3+dfsg.orig/sntp/configure
++++ ntp-4.2.6.p3+dfsg/sntp/configure
+@@ -22615,10 +22615,10 @@
+ case "$ans" in
+  no)
+     ;;
+- *) # look for openssl/opensslconf.h:
++ *) # look for openssl/opensslv.h:
+     for i in $ans no
+     do
+-	test -f $i/openssl/opensslconf.h && break
++	test -f $i/openssl/opensslv.h && break
+     done
+     case "$i" in
+      no)
 Index: ntp-4.2.6.p3+dfsg/util/Makefile.in
 ===================================================================
 --- ntp-4.2.6.p3+dfsg.orig/util/Makefile.in	2011-01-04 02:03:43.000000000 +0000
