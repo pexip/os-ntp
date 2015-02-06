@@ -1,3 +1,17 @@
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.3) precise-security; urgency=medium
+
+  * SECURITY UPDATE: denial of service and possible info leakage via
+    extension fields
+    - debian/patches/CVE-2014-9297.patch: properly check lengths in
+      ntpd/ntp_crypto.c, ntpd/ntp_proto.c.
+    - CVE-2014-9297
+  * SECURITY UPDATE: IPv6 ACL bypass
+    - debian/patches/CVE-2014-9298.patch: check for spoofed ::1 in
+      ntpd/ntp_io.c.
+    - CVE-2014-9298
+
+ -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Fri, 06 Feb 2015 09:10:56 -0500
+
 ntp (1:4.2.6.p3+dfsg-1ubuntu3.2) precise-security; urgency=medium
 
   * SECURITY UPDATE: weak default key in config_auth()
