@@ -1,3 +1,16 @@
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.3pexip2) pexip; urgency=medium
+
+  * SECURITY UPDATE: authentication bypass when using symmetric keys
+    - debian/patches/CVE-2015-1798.patch: ensure MAC is present when
+      validating packets.
+    - CVE-2015-1798
+  * SECURITY UPDATE: denial of service when using symmetric keys
+    - debian/patches/CVE=2015-1799.patch: update state variables
+      after authentication succeeds.
+    - CVE-2015-1799
+
+ -- John-Mark Bell <jmb@pexip.com>  Tue, 07 Apr 2015 17:16:42 +0100
+
 ntp (1:4.2.6.p3+dfsg-1ubuntu3.3pexip1) pexip; urgency=medium
 
   * New upstream release
