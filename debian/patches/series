@@ -16,5 +16,6 @@ CVE-2014-9297.patch
 CVE-2014-9298.patch
 CVE-2015-1798.patch
 CVE-2015-1799.patch
+ntp-keygen-endless-loop.patch
 openssl-headers.patch
 sha1-refid.patch

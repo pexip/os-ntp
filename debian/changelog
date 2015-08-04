@@ -1,3 +1,27 @@
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.4pexip1) pexip; urgency=medium
+
+  * New upstream release
+
+ -- John-Mark Bell <jmb@pexip.com>  Tue, 04 Aug 2015 17:22:53 +0100
+
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.4) precise-security; urgency=medium
+
+  * SECURITY UPDATE: symmetric key unauthenticated packet MITM attack
+    - debian/patches/CVE-2015-1798.patch: reject packets without MAC in
+      ntpd/ntp_proto.c.
+    - CVE-2015-1798
+  * SECURITY UPDATE: symmetric association DoS attack
+    - debian/patches/CVE-2015-1799.patch: don't update state variables when
+      authentication fails in ntpd/ntp_proto.c.
+    - CVE-2015-1799
+  * SECURITY UPDATE: ntp-keygen infinite loop or lack of randonmess on big
+    endian platforms
+    - debian/patches/ntp-keygen-endless-loop.patch: fix logic in
+      util/ntp-keygen.c.
+    - CVE number pending
+
+ -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Mon, 13 Apr 2015 09:06:54 -0400
+
 ntp (1:4.2.6.p3+dfsg-1ubuntu3.3pexip2) pexip; urgency=medium
 
   * SECURITY UPDATE: authentication bypass when using symmetric keys
