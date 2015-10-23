@@ -1,3 +1,76 @@
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.6) precise-security; urgency=medium
+
+  * SECURITY UPDATE: denial of service via crafted NUL-byte in
+    configuration directive
+    - debian/patches/CVE-2015-5146.patch: properly validate command in
+      ntpd/ntp_control.c.
+    - CVE-2015-5146
+  * SECURITY UPDATE: denial of service via malformed logconfig commands
+    - debian/patches/CVE-2015-5194.patch: fix logconfig logic in
+      ntpd/ntp_parser.y.
+    - CVE-2015-5194
+  * SECURITY UPDATE: denial of service via disabled statistics type
+    - debian/patches/CVE-2015-5195.patch: handle unrecognized types in
+      ntpd/ntp_config.c.
+    - CVE-2015-5195
+  * SECURITY UPDATE: file overwrite via remote pidfile and driftfile
+    configuration directives
+    - debian/patches/CVE-2015-5196.patch: disable remote configuration in
+      ntpd/ntp_parser.y.
+    - CVE-2015-5196
+    - CVE-2015-7703
+  * SECURITY UPDATE: denial of service via precision value conversion
+    - debian/patches/CVE-2015-5219.patch: use ldexp for LOGTOD in
+      include/ntp.h.
+    - CVE-2015-5219
+  * SECURITY UPDATE: timeshifting by reboot issue
+    - debian/patches/CVE-2015-5300.patch: disable panic in
+      ntpd/ntp_loopfilter.c.
+    - CVE-2015-5300
+  * SECURITY UPDATE: incomplete autokey data packet length checks
+    - debian/patches/CVE-2015-7691.patch: add length and size checks to
+      ntpd/ntp_crypto.c.
+    - CVE-2015-7691
+    - CVE-2015-7692
+    - CVE-2015-7702
+  * SECURITY UPDATE: memory leak in CRYPTO_ASSOC
+    - debian/patches/CVE-2015-7701.patch: add missing free in
+      ntpd/ntp_crypto.c.
+    - CVE-2015-7701
+  * SECURITY UPDATE: denial of service by spoofed KoD
+    - debian/patches/CVE-2015-7704.patch: add check to ntpd/ntp_proto.c.
+    - CVE-2015-7704
+    - CVE-2015-7705
+  * SECURITY UPDATE: denial of service via same logfile and keyfile
+    - debian/patches/CVE-2015-7850.patch: rate limit errors in
+      include/ntp_stdlib.h, include/ntp_syslog.h, libntp/authreadkeys.c,
+      libntp/msyslog.c.
+    - CVE-2015-7850
+  * SECURITY UPDATE: ntpq atoascii memory corruption
+    - debian/patches/CVE-2015-7852.patch: avoid buffer overrun in
+      ntpq/ntpq.c.
+    - CVE-2015-7852
+  * SECURITY UPDATE: buffer overflow via custom refclock driver
+    - debian/patches/CVE-2015-7853.patch: properly calculate length in
+      ntpd/ntp_io.c.
+    - CVE-2015-7853
+  * SECURITY UPDATE: denial of service via ASSERT in decodenetnum
+    - debian/patches/CVE-2015-7855.patch: simply return fail in
+      libntp/decodenetnum.c.
+    - CVE-2015-7855
+  * SECURITY UPDATE: symmetric association authentication bypass via
+    crypto-NAK
+    - debian/patches/CVE-2015-7871.patch: drop unhandled packet in
+      ntpd/ntp_proto.c.
+    - CVE-2015-7871
+  * debian/control: add bison to Build-Depends.
+  * debian/rules: remove ntp/ntp_parser.{c,h} or they don't get properly
+    regenerated for some reason.
+  * This package does _not_ contain the changes from
+    (1:4.2.6.p3+dfsg-1ubuntu3.5) in precise-proposed.
+
+ -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Fri, 23 Oct 2015 11:57:50 -0400
+
 ntp (1:4.2.6.p3+dfsg-1ubuntu3.4) precise-security; urgency=medium
 
   * SECURITY UPDATE: symmetric key unauthenticated packet MITM attack
