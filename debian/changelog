@@ -3,6 +3,9 @@ ntp (1:4.2.6.p5+dfsg-7+deb8u2pexip3) pexip; urgency=medium
   * Use flock instead of lockfile-progs for ntpdate.if-up (closes:
     #731976); change lock file location to /run/lock
     Backported from 6fd823d03b908867ce67a0bcff33b873b825ebd1 upstream
+  * Also use flock to in the ntp init script, and update the lock file
+    location.  (Closes: #806556)
+    Backported from a1e6a54f3eb59e6a32a05463eca85d7683d6e99d upstream
 
  -- John-Mark Bell <jmb@pexip.com>  Fri, 22 Jun 2017 19:05:54 +0100
 
