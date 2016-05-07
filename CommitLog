@@ -1,3 +1,1675 @@
+ChangeSet@1.2349, 2011-12-24 18:34:58-05:00, stenn@deacon.udel.edu
+  NTP_4_2_6P5
+  TAG: NTP_4_2_6P5
+
+  ChangeLog@1.753 +1 -0
+    NTP_4_2_6P5
+
+  ntpd/ntpd-opts.c@1.291 +5 -5
+    NTP_4_2_6P5
+
+  ntpd/ntpd-opts.h@1.291 +3 -3
+    NTP_4_2_6P5
+
+  ntpd/ntpd-opts.texi@1.288 +2 -2
+    NTP_4_2_6P5
+
+  ntpd/ntpd.1@1.288 +2 -2
+    NTP_4_2_6P5
+
+  ntpdc/ntpdc-opts.c@1.287 +5 -5
+    NTP_4_2_6P5
+
+  ntpdc/ntpdc-opts.h@1.287 +3 -3
+    NTP_4_2_6P5
+
+  ntpdc/ntpdc-opts.texi@1.285 +2 -2
+    NTP_4_2_6P5
+
+  ntpdc/ntpdc.1@1.285 +2 -2
+    NTP_4_2_6P5
+
+  ntpq/ntpq-opts.c@1.288 +5 -5
+    NTP_4_2_6P5
+
+  ntpq/ntpq-opts.h@1.288 +3 -3
+    NTP_4_2_6P5
+
+  ntpq/ntpq-opts.texi@1.286 +2 -2
+    NTP_4_2_6P5
+
+  ntpq/ntpq.1@1.286 +2 -2
+    NTP_4_2_6P5
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.167 +5 -5
+    NTP_4_2_6P5
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.167 +3 -3
+    NTP_4_2_6P5
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.166 +2 -2
+    NTP_4_2_6P5
+
+  ntpsnmpd/ntpsnmpd.1@1.165 +2 -2
+    NTP_4_2_6P5
+
+  packageinfo.sh@1.306 +2 -2
+    NTP_4_2_6P5
+
+  sntp/sntp-opts.c@1.159 +5 -5
+    NTP_4_2_6P5
+
+  sntp/sntp-opts.h@1.159 +3 -3
+    NTP_4_2_6P5
+
+  sntp/sntp-opts.texi@1.158 +2 -2
+    NTP_4_2_6P5
+
+  sntp/sntp.1@1.158 +2 -2
+    NTP_4_2_6P5
+
+  sntp/sntp.html@1.49 +2 -2
+    NTP_4_2_6P5
+
+  util/ntp-keygen-opts.c@1.290 +5 -5
+    NTP_4_2_6P5
+
+  util/ntp-keygen-opts.h@1.290 +3 -3
+    NTP_4_2_6P5
+
+  util/ntp-keygen-opts.texi@1.288 +2 -2
+    NTP_4_2_6P5
+
+  util/ntp-keygen.1@1.288 +2 -2
+    NTP_4_2_6P5
+
+ChangeSet@1.2348, 2011-12-24 18:21:54-05:00, stenn@deacon.udel.edu
+  ntp-4.2.6p5
+
+  packageinfo.sh@1.305 +3 -2
+    ntp-4.2.6p5
+
+ChangeSet@1.2347, 2011-12-24 18:08:51-05:00, stenn@deacon.udel.edu
+  fix typos
+
+  NEWS@1.127 +8 -8
+    fix typos
+
+ChangeSet@1.2346, 2011-12-24 17:47:02-05:00, stenn@deacon.udel.edu
+  NEWS cleanup
+
+  NEWS@1.126 +25 -21
+    NEWS cleanup
+
+ChangeSet@1.2345, 2011-12-23 22:48:14-05:00, stenn@deacon.udel.edu
+  NEWS file cleanup
+
+  ChangeLog@1.752 +3 -0
+    NEWS file cleanup
+
+  NEWS@1.125 +6 -8
+    NEWS file cleanup
+
+ChangeSet@1.2344, 2011-12-08 21:09:05-05:00, stenn@deacon.udel.edu
+  NTP_4_2_6P5_RC3
+  TAG: NTP_4_2_6P5_RC3
+
+  ChangeLog@1.751 +1 -0
+    NTP_4_2_6P5_RC3
+
+  ntpd/ntpd-opts.c@1.290 +3 -3
+    NTP_4_2_6P5_RC3
+
+  ntpd/ntpd-opts.h@1.290 +3 -3
+    NTP_4_2_6P5_RC3
+
+  ntpd/ntpd-opts.texi@1.287 +2 -2
+    NTP_4_2_6P5_RC3
+
+  ntpd/ntpd.1@1.287 +2 -2
+    NTP_4_2_6P5_RC3
+
+  ntpdc/ntpdc-opts.c@1.286 +3 -3
+    NTP_4_2_6P5_RC3
+
+  ntpdc/ntpdc-opts.h@1.286 +3 -3
+    NTP_4_2_6P5_RC3
+
+  ntpdc/ntpdc-opts.texi@1.284 +2 -2
+    NTP_4_2_6P5_RC3
+
+  ntpdc/ntpdc.1@1.284 +2 -2
+    NTP_4_2_6P5_RC3
+
+  ntpq/ntpq-opts.c@1.287 +3 -3
+    NTP_4_2_6P5_RC3
+
+  ntpq/ntpq-opts.h@1.287 +3 -3
+    NTP_4_2_6P5_RC3
+
+  ntpq/ntpq-opts.texi@1.285 +2 -2
+    NTP_4_2_6P5_RC3
+
+  ntpq/ntpq.1@1.285 +2 -2
+    NTP_4_2_6P5_RC3
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.166 +3 -3
+    NTP_4_2_6P5_RC3
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.166 +3 -3
+    NTP_4_2_6P5_RC3
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.165 +2 -2
+    NTP_4_2_6P5_RC3
+
+  ntpsnmpd/ntpsnmpd.1@1.164 +2 -2
+    NTP_4_2_6P5_RC3
+
+  packageinfo.sh@1.304 +1 -1
+    NTP_4_2_6P5_RC3
+
+  sntp/sntp-opts.c@1.158 +3 -3
+    NTP_4_2_6P5_RC3
+
+  sntp/sntp-opts.h@1.158 +3 -3
+    NTP_4_2_6P5_RC3
+
+  sntp/sntp-opts.texi@1.157 +2 -2
+    NTP_4_2_6P5_RC3
+
+  sntp/sntp.1@1.157 +2 -2
+    NTP_4_2_6P5_RC3
+
+  sntp/sntp.html@1.48 +2 -2
+    NTP_4_2_6P5_RC3
+
+  util/ntp-keygen-opts.c@1.289 +3 -3
+    NTP_4_2_6P5_RC3
+
+  util/ntp-keygen-opts.h@1.289 +3 -3
+    NTP_4_2_6P5_RC3
+
+  util/ntp-keygen-opts.texi@1.287 +2 -2
+    NTP_4_2_6P5_RC3
+
+  util/ntp-keygen.1@1.287 +2 -2
+    NTP_4_2_6P5_RC3
+
+ChangeSet@1.2343, 2011-12-08 00:21:36-05:00, stenn@deacon.udel.edu
+  Update NEWS for RC3
+
+  NEWS@1.124 +6 -1
+    Update NEWS for RC3
+
+ChangeSet@1.2342, 2011-12-07 22:28:13+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2087] sys_jitter calculation overweights sys.peer jitter.
+
+  ChangeLog@1.750 +1 -0
+    [Bug 2087] sys_jitter calculation overweights sys.peer jitter.
+
+  ntpd/ntp_proto.c@1.307 +2 -2
+    [Bug 2087] sys_jitter calculation overweights sys.peer jitter.
+
+ChangeSet@1.2341, 2011-12-07 22:24:26+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2086] get_systime() should not offset by sys_residual.
+
+  ChangeLog@1.749 +1 -0
+    [Bug 2086] get_systime() should not offset by sys_residual.
+
+  libntp/systime.c@1.49 +2 -2
+    [Bug 2086] get_systime() should not offset by sys_residual.
+
+ChangeSet@1.2340, 2011-12-07 22:21:41+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2085] clock_update() sys_rootdisp calculation omits root delay.
+
+  ChangeLog@1.748 +1 -0
+    [Bug 2085] clock_update() sys_rootdisp calculation omits root delay.
+
+  ntpd/ntp_proto.c@1.306 +2 -1
+    [Bug 2085] clock_update() sys_rootdisp calculation omits root delay.
+
+ChangeSet@1.2339, 2011-12-05 17:07:40+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2082] 3-char refid sent by ntpd 4.2.6p5-RC2 ends with extra dot.
+  Ensure NULL peer->dstadr is not accessed in orphan parent selection.
+
+  ChangeLog@1.747 +5 -0
+    [Bug 2082] 3-char refid sent by ntpd 4.2.6p5-RC2 ends with extra dot.
+    Ensure NULL peer->dstadr is not accessed in orphan parent selection.
+
+  ntpd/ntp_control.c@1.137 +2 -1
+    [Bug 2082] 3-char refid sent by ntpd 4.2.6p5-RC2 ends with extra dot.
+
+  ntpd/ntp_proto.c@1.305 +4 -1
+    Ensure NULL peer->dstadr is not accessed in orphan parent selection.
+
+ChangeSet@1.2338, 2011-11-30 22:06:41-05:00, stenn@deacon.udel.edu
+  NTP_4_2_6P5_RC2
+  TAG: NTP_4_2_6P5_RC2
+
+  ChangeLog@1.746 +1 -0
+    NTP_4_2_6P5_RC2
+
+  ntpd/ntpd-opts.c@1.289 +3 -3
+    NTP_4_2_6P5_RC2
+
+  ntpd/ntpd-opts.h@1.289 +3 -3
+    NTP_4_2_6P5_RC2
+
+  ntpd/ntpd-opts.texi@1.286 +2 -2
+    NTP_4_2_6P5_RC2
+
+  ntpd/ntpd.1@1.286 +2 -2
+    NTP_4_2_6P5_RC2
+
+  ntpdc/ntpdc-opts.c@1.285 +3 -3
+    NTP_4_2_6P5_RC2
+
+  ntpdc/ntpdc-opts.h@1.285 +3 -3
+    NTP_4_2_6P5_RC2
+
+  ntpdc/ntpdc-opts.texi@1.283 +2 -2
+    NTP_4_2_6P5_RC2
+
+  ntpdc/ntpdc.1@1.283 +2 -2
+    NTP_4_2_6P5_RC2
+
+  ntpq/ntpq-opts.c@1.286 +3 -3
+    NTP_4_2_6P5_RC2
+
+  ntpq/ntpq-opts.h@1.286 +3 -3
+    NTP_4_2_6P5_RC2
+
+  ntpq/ntpq-opts.texi@1.284 +2 -2
+    NTP_4_2_6P5_RC2
+
+  ntpq/ntpq.1@1.284 +2 -2
+    NTP_4_2_6P5_RC2
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.165 +3 -3
+    NTP_4_2_6P5_RC2
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.165 +3 -3
+    NTP_4_2_6P5_RC2
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.164 +2 -2
+    NTP_4_2_6P5_RC2
+
+  ntpsnmpd/ntpsnmpd.1@1.163 +2 -2
+    NTP_4_2_6P5_RC2
+
+  packageinfo.sh@1.303 +1 -1
+    NTP_4_2_6P5_RC2
+
+  sntp/sntp-opts.c@1.157 +3 -3
+    NTP_4_2_6P5_RC2
+
+  sntp/sntp-opts.h@1.157 +3 -3
+    NTP_4_2_6P5_RC2
+
+  sntp/sntp-opts.texi@1.156 +2 -2
+    NTP_4_2_6P5_RC2
+
+  sntp/sntp.1@1.156 +2 -2
+    NTP_4_2_6P5_RC2
+
+  sntp/sntp.html@1.47 +2 -2
+    NTP_4_2_6P5_RC2
+
+  util/ntp-keygen-opts.c@1.288 +3 -3
+    NTP_4_2_6P5_RC2
+
+  util/ntp-keygen-opts.h@1.288 +3 -3
+    NTP_4_2_6P5_RC2
+
+  util/ntp-keygen-opts.texi@1.286 +2 -2
+    NTP_4_2_6P5_RC2
+
+  util/ntp-keygen.1@1.286 +2 -2
+    NTP_4_2_6P5_RC2
+
+ChangeSet@1.2337, 2011-11-30 21:49:45-05:00, stenn@pogo.udel.edu
+  update
+
+  NEWS@1.123 +20 -5
+    update
+
+ChangeSet@1.2336, 2011-11-29 13:35:16+00:00, davehart@shiny.ad.hartbrothers.com
+  merge cleanup
+
+  ChangeLog@1.745 +0 -1
+    merge cleanup
+
+ChangeSet@1.2330.1.2, 2011-11-29 13:33:26+00:00, davehart@shiny.ad.hartbrothers.com
+  Never send KoD rate limiting response to MODE_SERVER response.
+
+  ChangeLog@1.740.1.2 +3 -1
+    Never send KoD rate limiting response to MODE_SERVER response.
+
+  ntpd/ntp_crypto.c@1.147 +1 -1
+    Use () to enforce intended precendence of & and && operators
+
+  ntpd/ntp_proto.c@1.300.1.2 +3 -3
+    Never send KoD rate limiting response to MODE_SERVER response.
+
+ChangeSet@1.2331.1.2, 2011-11-27 00:39:11+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2072] Orphan parent selection metric needs ntohl().
+
+  ChangeLog@1.741.1.1 +1 -0
+    [Bug 2072] Orphan parent selection metric needs ntohl().
+
+  libntp/a_md5encrypt.c@1.28 +1 -0
+    [Bug 2072] Orphan parent selection metric needs ntohl().
+
+  ntpd/ntp_proto.c@1.301.1.1 +3 -3
+    [Bug 2072] Orphan parent selection metric needs ntohl().
+
+ChangeSet@1.2331.1.1, 2011-11-26 19:43:12+00:00, davehart@shiny.ad.hartbrothers.com
+  Avoid redefinition warnings for INT32_MIN, INT32_MAX, U_INT32_MAX.
+
+  include/ntp_types.h@1.17 +18 -6
+    Avoid redefinition warnings for INT32_MIN, INT32_MAX, U_INT32_MAX.
+
+ChangeSet@1.2330.1.1, 2011-11-25 10:23:58+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2059] optional billboard column "server" does not honor -n.
+  [Bug 2066] ntpq lopeers ipv6 "local" column overrun.
+  [Bug 2068] ntpd sends nonprintable stratum 16 refid to ntpq.
+  [Bug 2069] broadcastclient, multicastclient spin up duplicate
+    ephemeral associations without broadcastdelay.
+  Exclude not-yet-determined sys_refid from use in loopback TEST12
+    (from David Mills).
+
+  ChangeLog@1.740.1.1 +9 -0
+    [Bug 2059] optional billboard column "server" does not honor -n.
+    [Bug 2066] ntpq lopeers ipv6 "local" column overrun.
+    [Bug 2068] ntpd sends nonprintable stratum 16 refid to ntpq.
+    [Bug 2069] broadcastclient, multicastclient spin up duplicate
+      ephemeral associations without broadcastdelay.
+    Exclude not-yet-determined sys_refid from use in loopback TEST12
+      (from David Mills).
+
+  include/ntp.h@1.175 +1 -0
+    Add peer flag FLAG_BC_VOL indicating the broadcastclient delay
+      calibration is still in progress.
+
+  include/ntp_refclock.h@1.26 +1 -1
+    [Bug 2068] ntpd sends nonprintable stratum 16 refid to ntpq.
+
+  include/ntp_request.h@1.41 +2 -2
+    [Bug 2068] ntpd sends nonprintable stratum 16 refid to ntpq.
+
+  include/ntpd.h@1.144 +3 -1
+    [Bug 2069] broadcastclient, multicastclient spin up duplicate
+      ephemeral associations without broadcastdelay.
+    backport latoa() -> localaddrtoa(endpt *) from 4.2.7
+
+  ntpd/ntp_config.c@1.251 +1 -1
+    [Bug 2069] broadcastclient, multicastclient spin up duplicate
+      ephemeral associations without broadcastdelay.
+
+  ntpd/ntp_control.c@1.136 +50 -37
+    [Bug 2068] ntpd sends nonprintable stratum 16 refid to ntpq.
+
+  ntpd/ntp_io.c@1.323 +11 -0
+    backport latoa() -> localaddrtoa(endpt *) from 4.2.7
+
+  ntpd/ntp_peer.c@1.130 +40 -21
+    [Bug 2069] broadcastclient, multicastclient spin up duplicate
+      ephemeral associations without broadcastdelay.
+
+  ntpd/ntp_proto.c@1.300.1.1 +53 -14
+    [Bug 2069] broadcastclient, multicastclient spin up duplicate
+      ephemeral associations without broadcastdelay.
+    Exclude not-yet-determined sys_refid from use in loopback TEST12
+      (from David Mills).
+
+  ntpd/ntp_refclock.c@1.95 +2 -2
+    [Bug 2069] broadcastclient, multicastclient spin up duplicate
+      ephemeral associations without broadcastdelay.
+
+  ntpd/ntp_request.c@1.88 +13 -11
+    [Bug 2069] broadcastclient, multicastclient spin up duplicate
+      ephemeral associations without broadcastdelay.
+
+  ntpq/ntpq-subs.c@1.47 +42 -22
+    [Bug 2059] optional billboard column "server" does not honor -n.
+    [Bug 2066] ntpq lopeers ipv6 "local" column overrun.
+
+  ntpq/ntpq.c@1.107 +94 -9
+    [Bug 2059] optional billboard column "server" does not honor -n.
+
+  ntpq/ntpq.h@1.15 +4 -0
+    [Bug 2059] optional billboard column "server" does not honor -n.
+    [Bug 2066] ntpq lopeers ipv6 "local" column overrun.
+
+ChangeSet@1.2331, 2011-11-21 09:35:28+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2050] Orphan mode stratum counting to infinity.
+
+  ChangeLog@1.741 +4 -0
+    [Bug 2050] Orphan mode stratum counting to infinity.
+
+  include/ntp_types.h@1.16 +6 -0
+    [Bug 2050] Orphan mode stratum counting to infinity.
+
+  ntpd/ntp_proto.c@1.301 +31 -8
+    [Bug 2050] Orphan mode stratum counting to infinity.
+
+  ntpd/ntp_timer.c@1.57 +2 -2
+    [Bug 2050] Orphan mode stratum counting to infinity.
+
+ChangeSet@1.2330, 2011-10-18 23:14:54+00:00, stenn@deacon.udel.edu
+  NTP_4_2_6P5_RC1
+  TAG: NTP_4_2_6P5_RC1
+
+  ChangeLog@1.740 +1 -0
+    NTP_4_2_6P5_RC1
+
+  ntpd/ntpd-opts.c@1.288 +5 -5
+    NTP_4_2_6P5_RC1
+
+  ntpd/ntpd-opts.h@1.288 +3 -3
+    NTP_4_2_6P5_RC1
+
+  ntpd/ntpd-opts.texi@1.285 +2 -2
+    NTP_4_2_6P5_RC1
+
+  ntpd/ntpd.1@1.285 +2 -2
+    NTP_4_2_6P5_RC1
+
+  ntpdc/ntpdc-opts.c@1.284 +5 -5
+    NTP_4_2_6P5_RC1
+
+  ntpdc/ntpdc-opts.h@1.284 +3 -3
+    NTP_4_2_6P5_RC1
+
+  ntpdc/ntpdc-opts.texi@1.282 +2 -2
+    NTP_4_2_6P5_RC1
+
+  ntpdc/ntpdc.1@1.282 +2 -2
+    NTP_4_2_6P5_RC1
+
+  ntpq/ntpq-opts.c@1.285 +5 -5
+    NTP_4_2_6P5_RC1
+
+  ntpq/ntpq-opts.h@1.285 +3 -3
+    NTP_4_2_6P5_RC1
+
+  ntpq/ntpq-opts.texi@1.283 +2 -2
+    NTP_4_2_6P5_RC1
+
+  ntpq/ntpq.1@1.283 +2 -2
+    NTP_4_2_6P5_RC1
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.164 +5 -5
+    NTP_4_2_6P5_RC1
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.164 +3 -3
+    NTP_4_2_6P5_RC1
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.163 +2 -2
+    NTP_4_2_6P5_RC1
+
+  ntpsnmpd/ntpsnmpd.1@1.162 +2 -2
+    NTP_4_2_6P5_RC1
+
+  packageinfo.sh@1.302 +2 -2
+    NTP_4_2_6P5_RC1
+
+  sntp/sntp-opts.c@1.156 +5 -5
+    NTP_4_2_6P5_RC1
+
+  sntp/sntp-opts.h@1.156 +3 -3
+    NTP_4_2_6P5_RC1
+
+  sntp/sntp-opts.texi@1.155 +2 -2
+    NTP_4_2_6P5_RC1
+
+  sntp/sntp.1@1.155 +2 -2
+    NTP_4_2_6P5_RC1
+
+  sntp/sntp.html@1.46 +2 -2
+    NTP_4_2_6P5_RC1
+
+  util/ntp-keygen-opts.c@1.287 +5 -5
+    NTP_4_2_6P5_RC1
+
+  util/ntp-keygen-opts.h@1.287 +3 -3
+    NTP_4_2_6P5_RC1
+
+  util/ntp-keygen-opts.texi@1.285 +2 -2
+    NTP_4_2_6P5_RC1
+
+  util/ntp-keygen.1@1.285 +2 -2
+    NTP_4_2_6P5_RC1
+
+ChangeSet@1.2329, 2011-10-18 14:31:10-04:00, stenn@deacon.udel.edu
+  ntp-4.2.6p5-RC1
+
+  packageinfo.sh@1.301 +1 -1
+    ntp-4.2.6p5-RC1
+
+ChangeSet@1.2328, 2011-10-18 14:27:46-04:00, stenn@deacon.udel.edu
+  update NEWS file
+
+  NEWS@1.122 +5 -5
+    update
+
+ChangeSet@1.2327, 2011-10-18 02:35:21+00:00, davehart@shiny.ad.hartbrothers.com
+  Generalize [Bug 2034] summary, correct NEWS description of same.
+
+  ChangeLog@1.739 +1 -1
+    Generalize [Bug 2034] summary, correct NEWS description of same.
+
+  NEWS@1.121 +7 -4
+    Generalize [Bug 2034] summary, correct NEWS description of same.
+
+ChangeSet@1.2326, 2011-10-17 20:43:13-04:00, stenn@deacon.udel.edu
+  Update NEWS file for 4.2.6p5
+
+  NEWS@1.120 +15 -0
+    Update NEWS file for 4.2.6p5
+
+ChangeSet@1.2325, 2011-10-17 20:14:44+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2034] interface ignore fe80::/64 mismatches ::, ::1...
+
+  ChangeLog@1.738 +4 -1
+    [Bug 2034] interface ignore fe80::/64 mismatches ::, ::1...
+
+  ntpd/ntp_io.c@1.322 +7 -4
+    [Bug 2034] interface ignore fe80::/64 mismatches ::, ::1...
+
+ChangeSet@1.2324, 2011-09-23 03:38:30+00:00, stenn@deacon.udel.edu
+  NTP_4_2_6P4
+  TAG: NTP_4_2_6P4
+
+  ChangeLog@1.737 +1 -0
+    NTP_4_2_6P4
+
+  ntpd/ntpd-opts.c@1.287 +5 -5
+    NTP_4_2_6P4
+
+  ntpd/ntpd-opts.h@1.287 +3 -3
+    NTP_4_2_6P4
+
+  ntpd/ntpd-opts.texi@1.284 +2 -2
+    NTP_4_2_6P4
+
+  ntpd/ntpd.1@1.284 +2 -2
+    NTP_4_2_6P4
+
+  ntpdc/ntpdc-opts.c@1.283 +5 -5
+    NTP_4_2_6P4
+
+  ntpdc/ntpdc-opts.h@1.283 +3 -3
+    NTP_4_2_6P4
+
+  ntpdc/ntpdc-opts.texi@1.281 +2 -2
+    NTP_4_2_6P4
+
+  ntpdc/ntpdc.1@1.281 +2 -2
+    NTP_4_2_6P4
+
+  ntpq/ntpq-opts.c@1.284 +5 -5
+    NTP_4_2_6P4
+
+  ntpq/ntpq-opts.h@1.284 +3 -3
+    NTP_4_2_6P4
+
+  ntpq/ntpq-opts.texi@1.282 +2 -2
+    NTP_4_2_6P4
+
+  ntpq/ntpq.1@1.282 +2 -2
+    NTP_4_2_6P4
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.163 +5 -5
+    NTP_4_2_6P4
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.163 +3 -3
+    NTP_4_2_6P4
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.162 +2 -2
+    NTP_4_2_6P4
+
+  ntpsnmpd/ntpsnmpd.1@1.161 +2 -2
+    NTP_4_2_6P4
+
+  packageinfo.sh@1.300 +3 -3
+    NTP_4_2_6P4
+
+  sntp/sntp-opts.c@1.155 +7 -7
+    NTP_4_2_6P4
+
+  sntp/sntp-opts.h@1.155 +3 -3
+    NTP_4_2_6P4
+
+  sntp/sntp-opts.texi@1.154 +4 -4
+    NTP_4_2_6P4
+
+  sntp/sntp.1@1.154 +2 -2
+    NTP_4_2_6P4
+
+  sntp/sntp.html@1.45 +42 -60
+    NTP_4_2_6P4
+
+  util/ntp-keygen-opts.c@1.286 +5 -5
+    NTP_4_2_6P4
+
+  util/ntp-keygen-opts.h@1.286 +3 -3
+    NTP_4_2_6P4
+
+  util/ntp-keygen-opts.texi@1.284 +2 -2
+    NTP_4_2_6P4
+
+  util/ntp-keygen.1@1.284 +2 -2
+    NTP_4_2_6P4
+
+ChangeSet@1.2323, 2011-09-22 22:40:12-04:00, stenn@deacon.udel.edu
+  ntp-4.2.6p4
+
+  ChangeLog@1.736 +1 -0
+    ntp-4.2.6p4
+
+  NEWS@1.119 +62 -37
+    ntp-4.2.6p4
+
+  packageinfo.sh@1.299 +1 -1
+    ntp-4.2.6p4
+
+ChangeSet@1.2322, 2011-09-07 04:29:25+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2003] libntpq ntpq_read_assoc_peervars() broken.
+
+  ChangeLog@1.735 +1 -0
+    [Bug 2003] libntpq ntpq_read_assoc_peervars() broken.
+
+  ntpq/libntpq.c@1.9 +56 -66
+    [Bug 2003] libntpq ntpq_read_assoc_peervars() broken.
+
+  ntpq/libntpq.h@1.7 +1 -1
+    [Bug 2003] libntpq ntpq_read_assoc_peervars() broken.
+
+ChangeSet@1.2321, 2011-08-27 03:34:10+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 2001] ntpdc timerstats reports overruns as handled.
+
+  ChangeLog@1.734 +1 -0
+    [Bug 2001] ntpdc timerstats reports overruns as handled.
+
+  ntpd/ntp_request.c@1.87 +11 -16
+    [Bug 2001] ntpdc timerstats reports overruns as handled.
+
+ChangeSet@1.2320, 2011-08-09 04:27:25+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 1985] "logconfig =allall" rejected.
+
+  ChangeLog@1.733 +1 -0
+    [Bug 1985] "logconfig =allall" rejected.
+
+  include/ntp_syslog.h@1.5 +7 -5
+    convert spaces to tabs, change ntp_syslogmask type from u_long to u_int32.
+
+  include/ntpd.h@1.143 +1 -2
+    #include ntp.h before ntp_syslog.h
+
+  libntp/machines.c@1.22 +1 -0
+    #include ntp.h before ntp_syslog.h
+
+  libntp/msyslog.c@1.29 +1 -1
+    [Bug 1985] "logconfig =allall" rejected.
+
+  ntpd/complete.conf@1.5 +1 -1
+    [Bug 1985] "logconfig =allall" rejected.
+
+  ntpd/ntp_config.c@1.250 +53 -40
+    [Bug 1985] "logconfig =allall" rejected.
+
+ChangeSet@1.2319, 2011-08-08 18:13:07+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 1984] ntp/libisc fails to compile on OS X 10.7 (Lion).
+
+  ChangeLog@1.732 +1 -0
+    [Bug 1984] ntp/libisc fails to compile on OS X 10.7 (Lion).
+    
+
+  configure.ac@1.495 +7 -0
+    [Bug 1984] ntp/libisc fails to compile on OS X 10.7 (Lion).
+    
+
+  sntp/configure.ac@1.41 +7 -0
+    [Bug 1984] ntp/libisc fails to compile on OS X 10.7 (Lion).
+    
+
+ChangeSet@1.2318, 2011-08-04 15:45:08-04:00, stenn@psp-deb1.ntp.org
+  [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+  sntp/sntp-opts.c@1.154 +19 -19
+    [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+  sntp/sntp-opts.h@1.154 +7 -7
+    [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+  sntp/sntp-opts.texi@1.153 +30 -29
+    [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+  sntp/sntp.1@1.153 +8 -8
+    [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+  sntp/sntp.html@1.44 +96 -77
+    [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+ChangeSet@1.2317, 2011-08-04 15:39:31-04:00, stenn@psp-deb1.ntp.org
+  [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+  ChangeLog@1.731 +2 -0
+    [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+  sntp/main.c@1.34 +2 -2
+    [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+  sntp/sntp-opts.def@1.20 +9 -14
+    [Backward Incompatible] sntp: -l/--filelog -> -l/--logfile, to be consistent with ntpd
+
+ChangeSet@1.2316, 2011-08-04 15:17:36-04:00, stenn@psp-deb1.ntp.org
+  libopts/file.c fix from Bruce Korb (arg-type=file)
+
+  ChangeLog@1.730 +4 -0
+    libopts/file.c fix from Bruce Korb (arg-type=file)
+
+  sntp/libopts/file.c@1.8 +4 -2
+    libopts/file.c fix from Bruce Korb (arg-type=file)
+
+ChangeSet@1.2315, 2011-08-04 04:50:12+00:00, stenn@deacon.udel.edu
+  NTP_4_2_6P4_RC2
+  TAG: NTP_4_2_6P4_RC2
+
+  ChangeLog@1.729 +1 -0
+    NTP_4_2_6P4_RC2
+
+  ntpd/ntpd-opts.c@1.286 +3 -3
+    NTP_4_2_6P4_RC2
+
+  ntpd/ntpd-opts.h@1.286 +3 -3
+    NTP_4_2_6P4_RC2
+
+  ntpd/ntpd-opts.texi@1.283 +2 -2
+    NTP_4_2_6P4_RC2
+
+  ntpd/ntpd.1@1.283 +2 -2
+    NTP_4_2_6P4_RC2
+
+  ntpdc/ntpdc-opts.c@1.282 +3 -3
+    NTP_4_2_6P4_RC2
+
+  ntpdc/ntpdc-opts.h@1.282 +3 -3
+    NTP_4_2_6P4_RC2
+
+  ntpdc/ntpdc-opts.texi@1.280 +2 -2
+    NTP_4_2_6P4_RC2
+
+  ntpdc/ntpdc.1@1.280 +2 -2
+    NTP_4_2_6P4_RC2
+
+  ntpq/ntpq-opts.c@1.283 +3 -3
+    NTP_4_2_6P4_RC2
+
+  ntpq/ntpq-opts.h@1.283 +3 -3
+    NTP_4_2_6P4_RC2
+
+  ntpq/ntpq-opts.texi@1.281 +2 -2
+    NTP_4_2_6P4_RC2
+
+  ntpq/ntpq.1@1.281 +2 -2
+    NTP_4_2_6P4_RC2
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.162 +3 -3
+    NTP_4_2_6P4_RC2
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.162 +3 -3
+    NTP_4_2_6P4_RC2
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.161 +2 -2
+    NTP_4_2_6P4_RC2
+
+  ntpsnmpd/ntpsnmpd.1@1.160 +2 -2
+    NTP_4_2_6P4_RC2
+
+  packageinfo.sh@1.298 +1 -1
+    NTP_4_2_6P4_RC2
+
+  sntp/sntp-opts.c@1.153 +3 -3
+    NTP_4_2_6P4_RC2
+
+  sntp/sntp-opts.h@1.153 +3 -3
+    NTP_4_2_6P4_RC2
+
+  sntp/sntp-opts.texi@1.152 +2 -2
+    NTP_4_2_6P4_RC2
+
+  sntp/sntp.1@1.152 +2 -2
+    NTP_4_2_6P4_RC2
+
+  sntp/sntp.html@1.43 +2 -2
+    NTP_4_2_6P4_RC2
+
+  util/ntp-keygen-opts.c@1.285 +3 -3
+    NTP_4_2_6P4_RC2
+
+  util/ntp-keygen-opts.h@1.285 +3 -3
+    NTP_4_2_6P4_RC2
+
+  util/ntp-keygen-opts.texi@1.283 +2 -2
+    NTP_4_2_6P4_RC2
+
+  util/ntp-keygen.1@1.283 +2 -2
+    NTP_4_2_6P4_RC2
+
+ChangeSet@1.2314, 2011-07-28 02:59:20-04:00, stenn@deacon.udel.edu
+  Backport if_nametoindex() check for hpux
+
+  ChangeLog@1.728 +1 -0
+    Backport if_nametoindex() check for hpux
+
+  configure.ac@1.494 +4 -10
+    Backport if_nametoindex() check for hpux
+
+ChangeSet@1.2313, 2011-07-27 22:22:03+00:00, davehart@shiny.ad.hartbrothers.com
+  Correct [Bug 1978] description in ChangeLog.
+
+  ChangeLog@1.727 +1 -1
+    [Bug 1978] [Bug 1134] fix in 4.2.6p4-RC1 doesn't build on older Linux.
+
+ChangeSet@1.2312, 2011-07-27 21:41:02+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 1978] Ignore tentative IP addresses on Linux.
+  Backport several fixes for Coverity warnings from ntp-dev.
+
+  ChangeLog@1.726 +2 -0
+    [Bug 1978] Ignore tentative IP addresses on Linux.
+    Backport several fixes for Coverity warnings from ntp-dev.
+
+  configure.ac@1.493 +9 -0
+    [Bug 1978] Ignore tentative IP addresses on Linux.
+
+  include/ntp_rfc2553.h@1.34 +10 -2
+    Backport several fixes for Coverity warnings from ntp-dev.
+
+  lib/isc/unix/interfaceiter.c@1.21 +5 -3
+    [Bug 1978] Ignore tentative IP addresses on Linux.
+
+  libntp/audio.c@1.28 +29 -29
+    Backport several fixes for Coverity warnings from ntp-dev.
+
+  libntp/decodenetnum.c@1.11 +43 -10
+    Backport several fixes for Coverity warnings from ntp-dev.
+
+  libntp/icom.c@1.12 +34 -10
+    Backport several fixes for Coverity warnings from ntp-dev.
+
+  ntpd/refclock_arc.c@1.23 +37 -34
+    Backport several fixes for Coverity warnings from ntp-dev.
+
+  ntpdc/ntpdc.c@1.80 +25 -17
+    Backport several fixes for Coverity warnings from ntp-dev.
+
+  ntpq/ntpq.c@1.106 +25 -17
+    Backport several fixes for Coverity warnings from ntp-dev.
+
+ChangeSet@1.2311, 2011-07-26 11:21:46+02:00, karlsson@beam.lund.zozs.se
+  [Bug 1975] libntp/mktime.c won't work with 64-bit time_t
+
+  ChangeLog@1.725 +1 -0
+    [Bug 1975] libntp/mktime.c won't work with 64-bit time_t
+
+  libntp/mktime.c@1.10 +4 -0
+    [Bug 1975] libntp/mktime.c won't work with 64-bit time_t
+
+ChangeSet@1.2310, 2011-07-25 14:10:27+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 1972] checking for struct rtattr fails.
+
+  ChangeLog@1.724 +1 -0
+    [Bug 1972] checking for struct rtattr fails.
+
+  configure.ac@1.492 +6 -5
+    [Bug 1972] checking for struct rtattr fails.
+
+ChangeSet@1.2309, 2011-07-25 00:09:06-04:00, stenn@deacon.udel.edu
+  [Bug 1608] Parse Refclock driver should honor trusttime
+
+  ChangeLog@1.723 +2 -1
+    [Bug 1608] Parse Refclock driver should honor trusttime
+
+  html/drivers/driver8.html@1.26 +9 -0
+    [Bug 1608] Parse Refclock driver should honor trusttime
+
+  ntpd/refclock_parse.c@1.54 +62 -13
+    [Bug 1608] Parse Refclock driver should honor trusttime
+
+ChangeSet@1.2308, 2011-07-20 19:37:50+00:00, davehart@shiny.ad.hartbrothers.com
+  Backport latest ntp_lists.h from ntp-dev, remove redundant () in
+    UNLINK_EXPR_SLIST().
+
+  include/ntp_lists.h@1.4 +213 -28
+    Backport latest ntp_lists.h from ntp-dev, remove redundant () in
+      UNLINK_EXPR_SLIST().
+
+ChangeSet@1.2307, 2011-07-20 13:06:51+02:00, karlsson@beam.lund.zozs.se
+  [BUG 1970] UNLINK_EXPR_SLIST() causes crash if list is empty.
+
+  ChangeLog@1.722 +1 -0
+    [BUG 1970] UNLINK_EXPR_SLIST() causes crash if list is empty.
+
+  include/ntp_lists.h@1.3 +4 -3
+    [BUG 1970] UNLINK_EXPR_SLIST() causes crash if list is empty.
+
+ChangeSet@1.2306, 2011-07-12 21:46:20-04:00, stenn@psp-deb1.ntp.org
+  [Bug 1961] html2man update: distribute ntp-wait.html
+
+  ChangeLog@1.721 +4 -0
+    [Bug 1961] html2man update: distribute ntp-wait.html
+
+  html/ntp-wait.html@1.1 +30 -0
+    BitKeeper file /home/stenn/ntp-stable/html/ntp-wait.html
+
+  html/ntp-wait.html@1.0 +0 -0
+
+ChangeSet@1.2305, 2011-07-10 23:03:48-04:00, stenn@deacon.udel.edu
+  NTP_4_2_6P4_RC1
+  TAG: NTP_4_2_6P4_RC1
+
+  ChangeLog@1.720 +1 -0
+    NTP_4_2_6P4_RC1
+
+  ntpd/ntpd-opts.c@1.285 +7 -9
+    NTP_4_2_6P4_RC1
+
+  ntpd/ntpd-opts.h@1.285 +9 -11
+    NTP_4_2_6P4_RC1
+
+  ntpd/ntpd-opts.texi@1.282 +3 -3
+    NTP_4_2_6P4_RC1
+
+  ntpd/ntpd.1@1.282 +2 -2
+    NTP_4_2_6P4_RC1
+
+  ntpdc/ntpdc-opts.c@1.281 +7 -9
+    NTP_4_2_6P4_RC1
+
+  ntpdc/ntpdc-opts.h@1.281 +9 -11
+    NTP_4_2_6P4_RC1
+
+  ntpdc/ntpdc-opts.texi@1.279 +3 -3
+    NTP_4_2_6P4_RC1
+
+  ntpdc/ntpdc.1@1.279 +2 -2
+    NTP_4_2_6P4_RC1
+
+  ntpq/ntpq-opts.c@1.282 +7 -9
+    NTP_4_2_6P4_RC1
+
+  ntpq/ntpq-opts.h@1.282 +9 -11
+    NTP_4_2_6P4_RC1
+
+  ntpq/ntpq-opts.texi@1.280 +3 -3
+    NTP_4_2_6P4_RC1
+
+  ntpq/ntpq.1@1.280 +2 -2
+    NTP_4_2_6P4_RC1
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.161 +7 -9
+    NTP_4_2_6P4_RC1
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.161 +9 -11
+    NTP_4_2_6P4_RC1
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.160 +3 -3
+    NTP_4_2_6P4_RC1
+
+  ntpsnmpd/ntpsnmpd.1@1.159 +2 -2
+    NTP_4_2_6P4_RC1
+
+  packageinfo.sh@1.297 +1 -1
+    NTP_4_2_6P4_RC1
+
+  sntp/sntp-opts.c@1.152 +7 -9
+    NTP_4_2_6P4_RC1
+
+  sntp/sntp-opts.h@1.152 +9 -11
+    NTP_4_2_6P4_RC1
+
+  sntp/sntp-opts.texi@1.151 +3 -3
+    NTP_4_2_6P4_RC1
+
+  sntp/sntp.1@1.151 +2 -2
+    NTP_4_2_6P4_RC1
+
+  sntp/sntp.html@1.42 +3 -3
+    NTP_4_2_6P4_RC1
+
+  util/ntp-keygen-opts.c@1.284 +7 -9
+    NTP_4_2_6P4_RC1
+
+  util/ntp-keygen-opts.h@1.284 +9 -11
+    NTP_4_2_6P4_RC1
+
+  util/ntp-keygen-opts.texi@1.282 +3 -3
+    NTP_4_2_6P4_RC1
+
+  util/ntp-keygen.1@1.282 +2 -2
+    NTP_4_2_6P4_RC1
+
+ChangeSet@1.2304, 2011-07-10 22:14:53-04:00, stenn@deacon.udel.edu
+  4.2.6p4-RC1
+
+  packageinfo.sh@1.296 +1 -1
+    4.2.6p4-RC1
+
+ChangeSet@1.2303, 2011-07-10 17:51:34-04:00, stenn@deacon.udel.edu
+  Update the NEWS file
+
+  ChangeLog@1.719 +1 -0
+    Update the NEWS file
+
+  NEWS@1.118 +39 -0
+    Update the NEWS file
+
+ChangeSet@1.2302, 2011-07-10 08:02:44-04:00, stenn@psp-deb1.ntp.org
+  [Bug 1961] html2man needs an update
+
+  ChangeLog@1.718 +1 -0
+    [Bug 1961] html2man needs an update
+
+  html/authopt.html@1.61 +1 -5
+    [Bug 1961] html2man needs an update
+
+  html/keygen.html@1.20 +1 -0
+    [Bug 1961] html2man needs an update
+
+  html/ntpd.html@1.52 +12 -4
+    [Bug 1961] html2man needs an update
+
+  html/ntpdate.html@1.19 +6 -6
+    [Bug 1961] html2man needs an update
+
+  html/ntpdc.html@1.31 +10 -8
+    [Bug 1961] html2man needs an update
+
+  html/ntpq.html@1.38 +2 -2
+    [Bug 1961] html2man needs an update
+
+  html/ntptrace.html@1.15 +2 -10
+    [Bug 1961] html2man needs an update
+
+  html/tickadj.html@1.16 +3 -1
+    [Bug 1961] html2man needs an update
+
+  scripts/html2man.in@1.6 +99 -37
+    [Bug 1961] html2man needs an update
+
+ChangeSet@1.2301, 2011-07-10 07:34:24-04:00, stenn@deacon.udel.edu
+  [Bug 1790] Update config.guess and config.sub to detect AIX6
+
+  ChangeLog@1.717 +1 -0
+    [Bug 1790] Update config.guess and config.sub to detect AIX6
+
+ChangeSet@1.2300, 2011-07-05 03:39:02-04:00, stenn@psp-deb1.ntp.org
+  [Bug 1134] ntpd fails binding to tentative IPv6 addresses
+
+  ChangeLog@1.716 +4 -0
+    [Bug 1134] ntpd fails binding to tentative IPv6 addresses
+
+  lib/isc/unix/interfaceiter.c@1.20 +11 -0
+    [Bug 1134] ntpd fails binding to tentative IPv6 addresses
+
+ChangeSet@1.2299, 2011-05-25 05:27:31+00:00, stenn@deacon.udel.edu
+  NTP_4_2_6P4_BETA2
+  TAG: NTP_4_2_6P4_BETA2
+
+  ChangeLog@1.715 +1 -0
+    NTP_4_2_6P4_BETA2
+
+  ntpd/ntpd-opts.c@1.284 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  ntpd/ntpd-opts.h@1.284 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  ntpd/ntpd-opts.texi@1.281 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  ntpd/ntpd.1@1.281 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  ntpdc/ntpdc-opts.c@1.280 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  ntpdc/ntpdc-opts.h@1.280 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  ntpdc/ntpdc-opts.texi@1.278 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  ntpdc/ntpdc.1@1.278 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  ntpq/ntpq-opts.c@1.281 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  ntpq/ntpq-opts.h@1.281 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  ntpq/ntpq-opts.texi@1.279 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  ntpq/ntpq.1@1.279 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.160 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.160 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.159 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  ntpsnmpd/ntpsnmpd.1@1.158 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  packageinfo.sh@1.295 +1 -1
+    NTP_4_2_6P4_BETA2
+
+  sntp/sntp-opts.c@1.151 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  sntp/sntp-opts.h@1.151 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  sntp/sntp-opts.texi@1.150 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  sntp/sntp.1@1.150 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  sntp/sntp.html@1.41 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  util/ntp-keygen-opts.c@1.283 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  util/ntp-keygen-opts.h@1.283 +3 -3
+    NTP_4_2_6P4_BETA2
+
+  util/ntp-keygen-opts.texi@1.281 +2 -2
+    NTP_4_2_6P4_BETA2
+
+  util/ntp-keygen.1@1.281 +2 -2
+    NTP_4_2_6P4_BETA2
+
+ChangeSet@1.2298, 2011-05-25 03:44:32+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 1695] ntpdate takes longer than necessary.
+  [Bug 1832] ntpdate doesn't allow timeout > 2s.
+  [Bug 1933] WWVB/Spectracom driver timestamps LFs, not CRs.
+  Backport utility routines from ntp-dev: mprintf(), emalloc_zero().
+
+  ChangeLog@1.714 +7 -0
+    [Bug 1695] ntpdate takes longer than necessary.
+    [Bug 1832] ntpdate doesn't allow timeout > 2s.
+    [Bug 1933] WWVB/Spectracom driver timestamps LFs, not CRs.
+    Backport utility routines from ntp-dev: mprintf(), emalloc_zero().
+
+  include/ntp_assert.h@1.4 +54 -17
+    Backport utility routines from ntp-dev: mprintf(), emalloc_zero().
+
+  include/ntp_malloc.h@1.4 +46 -4
+    Backport utility routines from ntp-dev: mprintf(), emalloc_zero().
+
+  include/ntp_refclock.h@1.25 +1 -1
+    Use void * instead of char * for pp->unitptr to ease backports from 4.2.7.
+
+  include/ntp_stdlib.h@1.45 +37 -14
+    Backport utility routines from ntp-dev: mprintf(), emalloc_zero().
+
+  include/ntp_types.h@1.15 +7 -0
+    provide TRUE, FALSE definitions.
+
+  libntp/emalloc.c@1.11 +53 -79
+    Backport utility routines from ntp-dev: mprintf(), emalloc_zero().
+
+  libntp/msyslog.c@1.28 +80 -7
+    Backport utility routines from ntp-dev: mprintf(), emalloc_zero().
+
+  libntp/strdup.c@1.6 +16 -14
+    include <config.h> first, include <string.h> to resolve incompatible
+      implicit declaration warnings.
+
+  ntpd/refclock_wwvb.c@1.25 +61 -23
+    [Bug 1933] WWVB/Spectracom driver timestamps LFs, not CRs.
+
+  ntpdate/ntpdate.c@1.73 +50 -92
+    [Bug 1695] ntpdate takes longer than necessary.
+    [Bug 1832] ntpdate doesn't allow timeout > 2s.
+    
+
+  ports/winnt/include/config.h@1.85 +2 -0
+    Backport utility routines from ntp-dev: mprintf(), emalloc_zero().
+
+ChangeSet@1.2297, 2011-05-16 04:25:03+00:00, stenn@deacon.udel.edu
+  NTP_4_2_6P4_BETA1
+  TAG: NTP_4_2_6P4_BETA1
+
+  ChangeLog@1.713 +1 -0
+    NTP_4_2_6P4_BETA1
+
+  ntpd/ntpd-opts.c@1.283 +43 -48
+    NTP_4_2_6P4_BETA1
+
+  ntpd/ntpd-opts.h@1.283 +12 -12
+    NTP_4_2_6P4_BETA1
+
+  ntpd/ntpd-opts.texi@1.280 +4 -4
+    NTP_4_2_6P4_BETA1
+
+  ntpd/ntpd.1@1.280 +3 -2
+    NTP_4_2_6P4_BETA1
+
+  ntpdc/ntpdc-opts.c@1.279 +43 -48
+    NTP_4_2_6P4_BETA1
+
+  ntpdc/ntpdc-opts.h@1.279 +12 -12
+    NTP_4_2_6P4_BETA1
+
+  ntpdc/ntpdc-opts.texi@1.277 +12 -19
+    NTP_4_2_6P4_BETA1
+
+  ntpdc/ntpdc.1@1.277 +3 -2
+    NTP_4_2_6P4_BETA1
+
+  ntpq/ntpq-opts.c@1.280 +43 -48
+    NTP_4_2_6P4_BETA1
+
+  ntpq/ntpq-opts.h@1.280 +12 -12
+    NTP_4_2_6P4_BETA1
+
+  ntpq/ntpq-opts.texi@1.278 +10 -12
+    NTP_4_2_6P4_BETA1
+
+  ntpq/ntpq.1@1.278 +3 -2
+    NTP_4_2_6P4_BETA1
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.159 +43 -48
+    NTP_4_2_6P4_BETA1
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.159 +12 -12
+    NTP_4_2_6P4_BETA1
+
+  ntpsnmpd/ntpsnmpd-opts.texi@1.158 +4 -4
+    NTP_4_2_6P4_BETA1
+
+  ntpsnmpd/ntpsnmpd.1@1.157 +3 -2
+    NTP_4_2_6P4_BETA1
+
+  packageinfo.sh@1.294 +3 -3
+    NTP_4_2_6P4_BETA1
+
+  sntp/sntp-opts.c@1.150 +43 -48
+    NTP_4_2_6P4_BETA1
+
+  sntp/sntp-opts.h@1.150 +12 -12
+    NTP_4_2_6P4_BETA1
+
+  sntp/sntp-opts.texi@1.149 +7 -7
+    NTP_4_2_6P4_BETA1
+
+  sntp/sntp.1@1.149 +3 -2
+    NTP_4_2_6P4_BETA1
+
+  sntp/sntp.html@1.40 +7 -7
+    NTP_4_2_6P4_BETA1
+
+  util/ntp-keygen-opts.c@1.282 +52 -75
+    NTP_4_2_6P4_BETA1
+
+  util/ntp-keygen-opts.h@1.282 +12 -12
+    NTP_4_2_6P4_BETA1
+
+  util/ntp-keygen-opts.texi@1.280 +8 -7
+    NTP_4_2_6P4_BETA1
+
+  util/ntp-keygen.1@1.280 +3 -2
+    NTP_4_2_6P4_BETA1
+
+ChangeSet@1.2296, 2011-05-15 19:19:24+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 1554] peer may stay selected as system peer after becoming
+    unreachable.
+  [Bug 1921] LOCAL, ACTS drivers with "prefer" excluded from initial
+    candidate list.
+  [Bug 1923] orphan parent favored over LOCAL, ACTS drivers.
+  [Bug 1924] Billboard tally codes sometimes do not match operation,
+    variables.
+  Enable tickadj-like taming of wildly off-spec Windows clock using
+    NTPD_TICKADJ_PPM env. var. specifying baseline slew.
+
+  ChangeLog@1.712 +9 -0
+    [Bug 1554] peer may stay selected as system peer after becoming
+      unreachable.
+    [Bug 1921] LOCAL, ACTS drivers with "prefer" excluded from initial
+      candidate list.
+    [Bug 1923] orphan parent favored over LOCAL, ACTS drivers.
+    [Bug 1924] Billboard tally codes sometimes do not match operation,
+      variables.
+    Enable tickadj-like taming of wildly off-spec Windows clock using
+      NTPD_TICKADJ_PPM env. var. specifying baseline slew.
+
+  include/ntp.h@1.174 +9 -9
+    [Bug 1924] Billboard tally codes sometimes do not match operation,
+      variables.
+    
+
+  libntp/mktime.c@1.9 +2 -2
+    leading spaces -> tabs
+
+  ntpd/ntp_loopfilter.c@1.154 +1 -1
+    Comment typo
+
+  ntpd/ntp_proto.c@1.300 +37 -29
+    [Bug 1554] peer may stay selected as system peer after becoming
+      unreachable.
+    [Bug 1921] LOCAL, ACTS drivers with "prefer" excluded from initial
+      candidate list.
+    [Bug 1923] orphan parent favored over LOCAL, ACTS drivers.
+    [Bug 1924] Billboard tally codes sometimes do not match operation,
+      variables.
+    
+
+  ports/winnt/include/config.h@1.84 +2 -0
+    Use _mkgmtime() for timegm() in Windows ports, resolves crash at startup
+      loading Autokey host certificate.
+
+  ports/winnt/ntpd/nt_clockstuff.c@1.43 +23 -0
+    Enable tickadj-like taming of wildly off-spec Windows clock using
+      NTPD_TICKADJ_PPM env. var. specifying baseline slew.
+
+ChangeSet@1.2295, 2011-05-11 04:40:35-04:00, stenn@deacon.udel.edu
+  Upgrade to AutoGen 5.11.9 (and require it)
+
+  ChangeLog@1.711 +1 -0
+    Upgrade to AutoGen 5.11.9 (and require it)
+
+  include/autogen-version.def@1.5 +1 -1
+    Upgrade to AutoGen 5.11.9 (and require it)
+
+ChangeSet@1.2294, 2011-05-01 10:37:55+00:00, davehart@shiny.ad.hartbrothers.com
+  [Bug 1904] New: 4.2.7p160 Windows build broken (POSIX_SHELL).
+
+  ports/winnt/include/config.h@1.83 +1 -0
+    [Bug 1904] New: 4.2.7p160 Windows build broken (POSIX_SHELL).
+
+ChangeSet@1.2293, 2011-05-01 02:47:38-04:00, stenn@deacon.udel.edu
+  hack around a possible regression in the new autogen
+
+  include/copyright.def@1.14 +4 -1
+    hack around a possible regression in the new autogen
+
+ChangeSet@1.2292, 2011-05-01 02:41:53-04:00, stenn@deacon.udel.edu
+  Upgrade to libopts 35.0.10 from AutoGen 5.11.9pre8
+
+  ChangeLog@1.710 +4 -0
+    Upgrade to libopts 35.0.10 from AutoGen 5.11.9pre8
+
+  sntp/libopts/Makefile.am@1.10 +16 -16
+    Updated to libopts-35.0.10
+
+  sntp/libopts/ag-char-map.h@1.13 +6 -6
+    Updated to libopts-35.0.10
+
+  sntp/libopts/autoopts.c@1.10 +2 -12
+    Updated to libopts-35.0.10
+
+  sntp/libopts/autoopts.h@1.9 +3 -37
+    Updated to libopts-35.0.10
+
+  sntp/libopts/autoopts/options.h@1.12 +21 -23
+    Updated to libopts-35.0.10
+
+  sntp/libopts/autoopts/project.h@1.1 +50 -0
+    BitKeeper file /deacon/backroom/ntp-stable/sntp/libopts/autoopts/project.h
+
+  sntp/libopts/autoopts/project.h@1.0 +0 -0
+
+  sntp/libopts/autoopts/usage-txt.h@1.12 +100 -95
+    Updated to libopts-35.0.10
+
+  sntp/libopts/configfile.c@1.11 +9 -9
+    Updated to libopts-35.0.10
+
+  sntp/libopts/cook.c@1.8 +85 -67
+    Updated to libopts-35.0.10
+
+  sntp/libopts/enumeration.c@1.8 +15 -10
+    Updated to libopts-35.0.10
+
+  sntp/libopts/environment.c@1.10 +22 -13
+    Updated to libopts-35.0.10
+
+  sntp/libopts/genshell.c@1.13 +58 -56
+    Updated to libopts-35.0.10
+
+  sntp/libopts/genshell.h@1.13 +46 -46
+    Updated to libopts-35.0.10
+
+  sntp/libopts/libopts.c@1.3 +5 -2
+    Updated to libopts-35.0.10
+
+  sntp/libopts/m4/libopts.m4@1.16 +22 -3
+    Updated to libopts-35.0.10
+
+  sntp/libopts/makeshell.c@1.9 +84 -58
+    Updated to libopts-35.0.10
+
+  sntp/libopts/numeric.c@1.8 +39 -47
+    Updated to libopts-35.0.10
+
+  sntp/libopts/parse-duration.c@1.5 +73 -54
+    Updated to libopts-35.0.10
+
+  sntp/libopts/parse-duration.h@1.5 +14 -14
+    Updated to libopts-35.0.10
+
+  sntp/libopts/pgusage.c@1.8 +1 -3
+    Updated to libopts-35.0.10
+
+  sntp/libopts/proto.h@1.13 +1 -4
+    Updated to libopts-35.0.10
+
+  sntp/libopts/save.c@1.9 +34 -41
+    Updated to libopts-35.0.10
+
+  sntp/libopts/time.c@1.8 +77 -29
+    Updated to libopts-35.0.10
+
+  sntp/libopts/value-type.h@1.13 +1 -1
+    Updated to libopts-35.0.10
+
+  sntp/libopts/version.c@1.8 +82 -51
+    Updated to libopts-35.0.10
+
+  sntp/libopts/xat-attribute.h@1.13 +1 -1
+    Updated to libopts-35.0.10
+
+ChangeSet@1.2291, 2011-02-22 00:38:53-05:00, stenn@deacon.udel.edu
+  upgrade to libopts-34.0.9
+
+  clockstuff/clktest-opts.c@1.13 +100 -76
+    upgrade to libopts-34.0.9
+
+  clockstuff/clktest-opts.h@1.13 +32 -25
+    upgrade to libopts-34.0.9
+
+  ntpd/ntpd-opts.c@1.282 +24 -8
+    upgrade to libopts-34.0.9
+
+  ntpd/ntpd-opts.h@1.282 +2 -2
+    upgrade to libopts-34.0.9
+
+  ntpd/ntpdsim-opts.c@1.18 +202 -171
+    upgrade to libopts-34.0.9
+
+  ntpd/ntpdsim-opts.h@1.18 +32 -28
+    upgrade to libopts-34.0.9
+
+  ntpdc/ntpdc-opts.c@1.278 +34 -25
+    upgrade to libopts-34.0.9
+
+  ntpdc/ntpdc-opts.h@1.278 +2 -2
+    upgrade to libopts-34.0.9
+
+  ntpq/ntpq-opts.c@1.279 +32 -18
+    upgrade to libopts-34.0.9
+
+  ntpq/ntpq-opts.h@1.279 +2 -2
+    upgrade to libopts-34.0.9
+
+  ntpsnmpd/ntpsnmpd-opts.c@1.158 +24 -8
+    upgrade to libopts-34.0.9
+
+  ntpsnmpd/ntpsnmpd-opts.h@1.158 +2 -2
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/COPYING.gplv3@1.4 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/COPYING.lgplv3@1.4 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/Makefile.am@1.9 +3 -3
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/README@1.6 +63 -34
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/ag-char-map.h@1.12 +3 -3
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/autoopts.c@1.9 +23 -19
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/autoopts.h@1.8 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/autoopts/options.h@1.11 +11 -10
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/autoopts/usage-txt.h@1.11 +4 -4
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/boolean.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/compat/compat.h@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/compat/windows-config.h@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/configfile.c@1.10 +174 -51
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/cook.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/enumeration.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/environment.c@1.9 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/file.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/genshell.c@1.12 +29 -13
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/genshell.h@1.12 +3 -3
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/load.c@1.9 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/m4/libopts.m4@1.15 +10 -21
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/m4/liboptschk.m4@1.8 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/makeshell.c@1.8 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/nested.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/numeric.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/parse-duration.c@1.4 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/parse-duration.h@1.4 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/pgusage.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/proto.h@1.12 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/putshell.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/reset.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/restore.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/save.c@1.8 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/sort.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/stack.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/streqvcmp.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/text_mmap.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/time.c@1.7 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/tokenize.c@1.5 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/usage.c@1.8 +11 -7
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/value-type.h@1.12 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/version.c@1.7 +9 -12
+    upgrade to libopts-34.0.9
+
+  sntp/libopts/xat-attribute.h@1.12 +1 -1
+    upgrade to libopts-34.0.9
+
+  sntp/sntp-opts.c@1.149 +27 -11
+    upgrade to libopts-34.0.9
+
+  sntp/sntp-opts.h@1.149 +2 -2
+    upgrade to libopts-34.0.9
+
+  util/ntp-keygen-opts.c@1.281 +28 -12
+    upgrade to libopts-34.0.9
+
+  util/ntp-keygen-opts.h@1.281 +2 -2
+    upgrade to libopts-34.0.9
+
 ChangeSet@1.2290, 2011-01-03 21:20:42-05:00, stenn@deacon.udel.edu
   NTP_4_2_6P3
   TAG: NTP_4_2_6P3

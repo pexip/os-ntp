@@ -18,11 +18,5 @@ if dpkg-maintscript-helper supports mv_conffile; then
 		1:4.2.6.p1+dfsg-1 -- "$@"
 fi
 
-if [ "$1" = install ] && [ -e /etc/ntp.conf ] && [ ! -s /etc/ntp.conf ]; then
-	# Work around system-tools-backends bug that left an empty file
-	# (https://bugs.launchpad.net/bugs/83604).
-	rm -f /etc/ntp.conf
-fi
-
 #DEBHELPER#
 

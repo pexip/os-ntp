@@ -852,7 +852,8 @@ peer_info (
 		addr.sa.sa_len = SOCKLEN(&addr);
 #endif
 		ipl++;
-		if ((pp = findexistingpeer(&addr, (struct peer *)0, -1)) == 0)
+		pp = findexistingpeer(&addr, NULL, -1, 0);
+		if (NULL == pp)
 			continue;
 		if (IS_IPV6(srcadr)) {
 			if (pp->dstadr)
@@ -990,7 +991,8 @@ peer_stats (
 		ipl = (struct info_peer_list *)((char *)ipl +
 		    INFO_ITEMSIZE(inpkt->mbz_itemsize));
 
-		if ((pp = findexistingpeer(&addr, (struct peer *)0, -1)) == NULL)
+		pp = findexistingpeer(&addr, NULL, -1, 0);
+		if (NULL == pp)
 			continue;
 
 		DPRINTF(1, ("peer_stats: found %s\n", stoa(&addr)));
@@ -1255,26 +1257,21 @@ io_stats(
  */
 static void
 timer_stats(
-	sockaddr_u *srcadr,
-	struct interface *inter,
-	struct req_pkt *inpkt
+	sockaddr_u *		srcadr,
+	struct interface *	inter,
+	struct req_pkt *	inpkt
 	)
 {
-	register struct info_timer_stats *ts;
+	struct info_timer_stats *	ts;
+	u_long				sincereset;
 
-	/*
-	 * Importations from the timer module
-	 */
-	extern u_long timer_timereset;
-	extern u_long timer_overflows;
-	extern u_long timer_xmtcalls;
+	ts = (struct info_timer_stats *)prepare_pkt(srcadr, inter,
+						    inpkt, sizeof(*ts));
 
-	ts = (struct info_timer_stats *)prepare_pkt(srcadr, inter, inpkt,
-						    sizeof(struct info_timer_stats));
-
-	ts->timereset = htonl((u_int32)(current_time - timer_timereset));
-	ts->alarms = htonl((u_int32)alarm_overflow);
-	ts->overflows = htonl((u_int32)timer_overflows);
+	sincereset = current_time - timer_timereset;
+	ts->timereset = htonl((u_int32)sincereset);
+	ts->alarms = ts->timereset;
+	ts->overflows = htonl((u_int32)alarm_overflow);
 	ts->xmtcalls = htonl((u_int32)timer_xmtcalls);
 
 	(void) more_pkt();
@@ -1580,7 +1577,7 @@ do_unconf(
 		DPRINTF(1, ("searching for %s\n", stoa(&peeraddr)));
 
 		while (!found) {
-			peer = findexistingpeer(&peeraddr, peer, -1);
+			peer = findexistingpeer(&peeraddr, peer, -1, 0);
 			if (!peer)
 				break;
 			if (peer->flags & FLAG_CONFIG)
@@ -1623,7 +1620,7 @@ do_unconf(
 		peer = NULL;
 
 		while (!found) {
-			peer = findexistingpeer(&peeraddr, peer, -1);
+			peer = findexistingpeer(&peeraddr, peer, -1, 0);
 			if (!peer)
 				break;
 			if (peer->flags & FLAG_CONFIG)
@@ -2140,7 +2137,7 @@ reset_peer(
 #ifdef ISC_PLATFORM_HAVESALEN
 		peeraddr.sa.sa_len = SOCKLEN(&peeraddr);
 #endif
-		peer = findexistingpeer(&peeraddr, NULL, -1);
+		peer = findexistingpeer(&peeraddr, NULL, -1, 0);
 		if (NULL == peer)
 			bad++;
 		cp = (struct conf_unpeer *)((char *)cp +
@@ -2171,10 +2168,10 @@ reset_peer(
 #ifdef ISC_PLATFORM_HAVESALEN
 		peeraddr.sa.sa_len = SOCKLEN(&peeraddr);
 #endif
-		peer = findexistingpeer(&peeraddr, NULL, -1);
+		peer = findexistingpeer(&peeraddr, NULL, -1, 0);
 		while (peer != NULL) {
 			peer_reset(peer);
-			peer = findexistingpeer(&peeraddr, peer, -1);
+			peer = findexistingpeer(&peeraddr, peer, -1, 0);
 		}
 		cp = (struct conf_unpeer *)((char *)cp +
 		    INFO_ITEMSIZE(inpkt->mbz_itemsize));
@@ -2687,7 +2684,7 @@ get_clock_info(
 	while (items-- > 0) {
 		NSRCADR(&addr) = *clkaddr++;
 		if (!ISREFCLOCKADR(&addr) ||
-		    findexistingpeer(&addr, NULL, -1) == NULL) {
+		    findexistingpeer(&addr, NULL, -1, 0) == NULL) {
 			req_ack(srcadr, inter, inpkt, INFO_ERR_NODATA);
 			return;
 		}
@@ -2711,7 +2708,7 @@ get_clock_info(
 		DTOLFP(clock_stat.fudgetime2, &ltmp);
 		HTONL_FP(&ltmp, &ic->fudgetime2);
 		ic->fudgeval1 = htonl((u_int32)clock_stat.fudgeval1);
-		ic->fudgeval2 = htonl((u_int32)clock_stat.fudgeval2);
+		ic->fudgeval2 = htonl(clock_stat.fudgeval2);
 
 		free_varlist(clock_stat.kv_list);
 
@@ -2751,7 +2748,7 @@ set_clock_fudge(
 #endif
 		SET_PORT(&addr, NTP_PORT);
 		if (!ISREFCLOCKADR(&addr) ||
-		    findexistingpeer(&addr, NULL, -1) == 0) {
+		    findexistingpeer(&addr, NULL, -1, 0) == 0) {
 			req_ack(srcadr, inter, inpkt, INFO_ERR_NODATA);
 			return;
 		}
@@ -2826,7 +2823,7 @@ get_clkbug_info(
 	while (items-- > 0) {
 		NSRCADR(&addr) = *clkaddr++;
 		if (!ISREFCLOCKADR(&addr) ||
-		    findexistingpeer(&addr, NULL, -1) == 0) {
+		    findexistingpeer(&addr, NULL, -1, 0) == 0) {
 			req_ack(srcadr, inter, inpkt, INFO_ERR_NODATA);
 			return;
 		}

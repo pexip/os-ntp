@@ -1,11 +1,11 @@
 /*  
  *  EDIT THIS FILE WITH CAUTION  (ntp-keygen-opts.h)
  *  
- *  It has been AutoGen-ed  January  3, 2011 at 09:18:50 PM by AutoGen 5.11.6pre7
+ *  It has been AutoGen-ed  December 24, 2011 at 06:34:40 PM by AutoGen 5.12
  *  From the definitions    ntp-keygen-opts.def
  *  and the template file   options
  *
- * Generated from AutoOpts 34:0:9 templates.
+ * Generated from AutoOpts 35:0:10 templates.
  *
  *  AutoOpts is a copyrighted work.  This header file is not encumbered
  *  by AutoOpts licensing, but is provided under the licensing terms chosen
@@ -17,9 +17,8 @@
  *
  * This source file is copyrighted and licensed under the following terms:
  *
- * ntp-keygen copyright (c) 1970-2011 David L. Mills and/or others - all rights reserved
- *
- * see html/copyright.html
+ *  see html/copyright.html
+ *  
  */
 /*
  *  This file contains the programmatic interface to the Automated
@@ -39,7 +38,7 @@
  *  tolerable version is at least as old as what was current when the header
  *  template was released.
  */
-#define AO_TEMPLATE_VERSION 139264
+#define AO_TEMPLATE_VERSION 143360
 #if (AO_TEMPLATE_VERSION < OPTIONS_MINIMUM_VERSION) \
  || (AO_TEMPLATE_VERSION > OPTIONS_STRUCT_VERSION)
 # error option template version mismatches autoopts/options.h header
@@ -76,8 +75,8 @@ typedef enum {
 } teOptIndex;
 
 #define OPTION_CT    23
-#define NTP_KEYGEN_VERSION       "4.2.6p3"
-#define NTP_KEYGEN_FULL_VERSION  "ntp-keygen (ntp) - Create a NTP host key - Ver. 4.2.6p3"
+#define NTP_KEYGEN_VERSION       "4.2.6p5"
+#define NTP_KEYGEN_FULL_VERSION  "ntp-keygen (ntp) 4.2.6p5"
 
 /*
  *  Interface defines for all options.  Replace "n" with the UPPER_CASED
@@ -108,7 +107,6 @@ typedef enum {
     NTP_KEYGEN_EXIT_SUCCESS = 0,
     NTP_KEYGEN_EXIT_FAILURE = 1
 } ntp_keygen_exit_code_t;
-
 /*
  *  Make sure there are no #define name conflicts with the option names
  */
@@ -259,25 +257,25 @@ typedef enum {
                 ntp_keygenOptions.pzCurOpt  = NULL)
 #define START_OPT       RESTART_OPT(1)
 #define USAGE(c)        (*ntp_keygenOptions.pUsageProc)(&ntp_keygenOptions, c)
-/* extracted from /usr/local/gnu/share/autogen/opthead.tpl near line 435 */
+/* extracted from opthead.tlib near line 451 */
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
 
 /* * * * * *
  *
  *  Declare the ntp-keygen option descriptor.
  */
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
-extern tOptions   ntp_keygenOptions;
+extern tOptions ntp_keygenOptions;
 
 #if defined(ENABLE_NLS)
 # ifndef _
 #   include <stdio.h>
-    static inline char* aoGetsText(char const* pz) {
-        if (pz == NULL) return NULL;
-        return (char*)gettext(pz);
-    }
+static inline char* aoGetsText(char const* pz) {
+    if (pz == NULL) return NULL;
+    return (char*)gettext(pz);
+}
 #   define _(s)  aoGetsText(s)
 # endif /* _() */
 

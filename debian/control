@@ -1,12 +1,11 @@
 Source: ntp
 Section: net
 Priority: optional
-Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
-XSBC-Original-Maintainer: Debian NTP Team <pkg-ntp-maintainers@lists.alioth.debian.org>
+Maintainer: Debian NTP Team <pkg-ntp-maintainers@lists.alioth.debian.org>
 Uploaders: Bdale Garbee <bdale@gag.com>, Peter Eisentraut <petere@debian.org>, Kurt Roeckx <kurt@roeckx.be>
-Build-Depends: autotools-dev, debhelper (>= 6), libedit-dev, libcap2-dev | not+linux-gnu, libssl-dev (>= 0.9), autogen (>= 1:5.11), hardening-wrapper, dh-apparmor, bison
+Build-Depends: dh-autoreconf, debhelper (>= 6), libedit-dev, libcap2-dev [linux-any], libssl-dev (>= 1.0.0e-1), autogen (>= 1:5.11), bison
 Build-Conflicts: libavahi-compat-libdnssd-dev, libwww-dev, libwww-ssl-dev
-Standards-Version: 3.8.1
+Standards-Version: 3.9.3
 Homepage: http://support.ntp.org/
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-ntp/ntp/trunk/
 Vcs-Svn: svn://svn.debian.org/pkg-ntp/ntp/trunk/
@@ -16,9 +15,7 @@ Architecture: any
 Depends: adduser, lsb-base (>= 3.2-13), netbase, ${misc:Depends}, ${shlibs:Depends}
 Pre-Depends: dpkg (>= 1.15.7.2)
 Recommends: ${perl:Depends}
-Suggests: ntp-doc, apparmor (>= 2.1+1075-0ubuntu6)
-Conflicts: apparmor-profiles (<< 2.3.1+1403-0ubuntu10), apparmor (<< 2.3.1+1403-0ubuntu10)
-Replaces: apparmor-profiles (<< 2.3.1+1403-0ubuntu10), apparmor (<< 2.3.1+1403-0ubuntu10)
+Suggests: ntp-doc
 Breaks: dhcp3-client (<< 4.1.0-1)
 Description: Network Time Protocol daemon and utility programs
  NTP, the Network Time Protocol, is used to keep computer clocks

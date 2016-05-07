@@ -1,274 +1,147 @@
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.11) precise-security; urgency=medium
+ntp (1:4.2.6.p5+dfsg-7+deb8u2) jessie-security; urgency=medium
 
-  * SECURITY UPDATE: Deja Vu replay attack on authenticated broadcast mode
-    - debian/patches/CVE-2015-7973.patch: improve timestamp verification in
-      include/ntp.h, ntpd/ntp_proto.c.
-    - CVE-2015-7973
-  * SECURITY UPDATE: impersonation between authenticated peers
-    - debian/patches/CVE-2015-7974.patch: check key ID in ntpd/ntp_proto.c.
-    - CVE-2015-7974
-  * SECURITY UPDATE: ntpq saveconfig command allows dangerous characters in
-    filenames
-    - debian/patches/CVE-2015-7976.patch: check filename in
-      ntpd/ntp_control.c.
-    - CVE-2015-7976
-  * SECURITY UPDATE: restrict list denial of service
-    - debian/patches/CVE-2015-7977-7978.patch: improve restrict list
-      processing in ntpd/ntp_request.c.
-    - CVE-2015-7977
-    - CVE-2015-7978
-  * SECURITY UPDATE: authenticated broadcast mode off-path denial of
-    service
-    - debian/patches/CVE-2015-7979.patch: add more checks to
-      ntpd/ntp_proto.c.
-    - CVE-2015-7979
-    - CVE-2016-1547
-  * SECURITY UPDATE: Zero Origin Timestamp Bypass
-    - debian/patches/CVE-2015-8138.patch: check p_org in ntpd/ntp_proto.c.
-    - CVE-2015-8138
-  * SECURITY UPDATE: potential infinite loop in ntpq
-    - debian/patches/CVE-2015-8158.patch: add time checks to ntpdc/ntpdc.c,
-      ntpq/ntpq.c.
-    - CVE-2015-8158
-  * SECURITY UPDATE: NTP statsdir cleanup cronjob insecure (LP: #1528050)
-    - debian/ntp.cron.daily: fix security issues, patch thanks to halfdog!
-    - CVE-2016-0727
-  * SECURITY UPDATE: time spoofing via interleaved symmetric mode
-    - debian/patches/CVE-2016-1548.patch: check for bogus packets in
-      ntpd/ntp_proto.c.
-    - CVE-2016-1548
-  * SECURITY UPDATE: buffer comparison timing attacks
-    - debian/patches/CVE-2016-1550.patch: use CRYPTO_memcmp in
-      libntp/a_md5encrypt.c, sntp/crypto.c.
-    - CVE-2016-1550
-  * SECURITY UPDATE: DoS via duplicate IPs on unconfig directives
-    - debian/patches/CVE-2016-2516.patch: improve logic in
-      ntpd/ntp_request.c.
-    - CVE-2016-2516
-  * SECURITY UPDATE: denial of service via crafted addpeer
-    - debian/patches/CVE-2016-2518.patch: check mode value in
-      ntpd/ntp_request.c.
-    - CVE-2016-2518
-  * SECURITY UPDATE: denial of service via spoofed packets
-    - debian/patches/CVE-2016-4954.patch: discard packet that fails tests
-      in ntpd/ntp_proto.c.
-    - CVE-2016-4954
-  * SECURITY UPDATE: denial of service via spoofed crypto-NAK or incorrect
-    MAC
-    - debian/patches/CVE-2016-4955.patch: fix checks in ntpd/ntp_proto.c.
-    - CVE-2016-4955
-  * SECURITY UPDATE: denial of service via spoofed broadcast packet
-    - debian/patches/CVE-2016-4956.patch: properly handle switch in
-      broadcast interleaved mode in ntpd/ntp_proto.c.
-    - CVE-2016-4956
+  * Rename and update some patches to be closer to what's in Fedora,
+    only some white space changes.
+  * Fix CVE-2015-7974
+  * Fix CVE-2015-7977, CVE-2015-7978
+  * Fix CVE-2015-7979
+  * Fix CVE-2015-8138
+  * Fix CVE-2015-8158
+  * Fix CVE-2016-1548
+  * Fix CVE-2016-1550
+  * Fix CVE-2016-2516
+  * Fix CVE-2016-2518
 
- -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Wed, 05 Oct 2016 08:19:03 -0400
+ -- Kurt Roeckx <kurt@roeckx.be>  Sat, 07 May 2016 18:08:49 +0200
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.9) precise; urgency=medium
+ntp (1:4.2.6.p5+dfsg-7+deb8u1) jessie-security; urgency=medium
 
-  * ntpd rejects source UDP ports less than 123 as bogus (closes: #691412)
-    - d/p/reject-UDP-ports-less-than-123-as-bogus.patch (LP: #1479652) 
+  * Fix CVE-2015-7850
+  * Fix CVE-2015-7704
+  * Fix CVE-2015-7701
+  * Fix CVE-2015-7852
+  * Fix CVE-2015-7851
+  * Fix CVE-2015-7855
+  * Fix CVE-2015-7871
+  * Rename CVE-2014-9297.patch to CVE-2014-9750.patch
+  * Rename CVE-2014-9298.patch to CVE-2014-9751.patch
+  * Rename bug-2797.patch to CVE-2015-3405.patch
+  * FIX CVE-2015-5146
+  * FIX CVE-2015-5194
+  * FIX CVE-2015-5195
+  * FIX CVE-2015-7703
+  * FIX CVE-2015-5219
+  * FIX CVE-2015-5300
+  * FIX CVE-2015-7691, CVE-2015-7692, CVE-2015-7702
+  * Add build-depends on bison since one of the patches update the .y file.
 
- -- Eric Desrochers <slashd@ubuntu.com>  Mon, 25 Jan 2016 12:28:25 -0500
+ -- Kurt Roeckx <kurt@roeckx.be>  Wed, 28 Oct 2015 21:05:21 +0100
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.8) precise; urgency=medium
+ntp (1:4.2.6.p5+dfsg-7) unstable; urgency=medium
 
-  * Use a single lockfile again - instead unlock the file before starting the
-    init script. The lock sho uld be shared - both services can't run at the
-    same time. (LP: #1125726)
+  * Fix endless loop and non-random key generation using
+    ntp-keygen on big endian machines.
 
- -- Cam Cope <mail@camcope.me>  Tue, 19 Jan 2016 10:20:07 +0000
+ -- Kurt Roeckx <kurt@roeckx.be>  Fri, 10 Apr 2015 21:01:32 +0200
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.7) precise; urgency=medium
+ntp (1:4.2.6.p5+dfsg-6) unstable; urgency=high
 
-  * Fix use-after-free in routing socket code (closes: #795315)
-    - debian/patches/use-after-free-in-routing-socket.patch: 
-      fix logic in ntpd/ntp_io.c (LP: #1481388)
+  * Fix CVE-2015-1798 and CVE-2015-1799 (Closes: #782095)
 
- -- Eric Desrochers <eric.desrochers@canonical.com>  Thu, 29 Oct 2015 09:47:20 -0400
+ -- Kurt Roeckx <kurt@roeckx.be>  Fri, 10 Apr 2015 20:08:24 +0200
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.6) precise-security; urgency=medium
+ntp (1:4.2.6.p5+dfsg-5) unstable; urgency=high
 
-  * SECURITY UPDATE: denial of service via crafted NUL-byte in
-    configuration directive
-    - debian/patches/CVE-2015-5146.patch: properly validate command in
-      ntpd/ntp_control.c.
-    - CVE-2015-5146
-  * SECURITY UPDATE: denial of service via malformed logconfig commands
-    - debian/patches/CVE-2015-5194.patch: fix logconfig logic in
-      ntpd/ntp_parser.y.
-    - CVE-2015-5194
-  * SECURITY UPDATE: denial of service via disabled statistics type
-    - debian/patches/CVE-2015-5195.patch: handle unrecognized types in
-      ntpd/ntp_config.c.
-    - CVE-2015-5195
-  * SECURITY UPDATE: file overwrite via remote pidfile and driftfile
-    configuration directives
-    - debian/patches/CVE-2015-5196.patch: disable remote configuration in
-      ntpd/ntp_parser.y.
-    - CVE-2015-5196
-    - CVE-2015-7703
-  * SECURITY UPDATE: denial of service via precision value conversion
-    - debian/patches/CVE-2015-5219.patch: use ldexp for LOGTOD in
-      include/ntp.h.
-    - CVE-2015-5219
-  * SECURITY UPDATE: timeshifting by reboot issue
-    - debian/patches/CVE-2015-5300.patch: disable panic in
-      ntpd/ntp_loopfilter.c.
-    - CVE-2015-5300
-  * SECURITY UPDATE: incomplete autokey data packet length checks
-    - debian/patches/CVE-2015-7691.patch: add length and size checks to
-      ntpd/ntp_crypto.c.
-    - CVE-2015-7691
-    - CVE-2015-7692
-    - CVE-2015-7702
-  * SECURITY UPDATE: memory leak in CRYPTO_ASSOC
-    - debian/patches/CVE-2015-7701.patch: add missing free in
-      ntpd/ntp_crypto.c.
-    - CVE-2015-7701
-  * SECURITY UPDATE: denial of service by spoofed KoD
-    - debian/patches/CVE-2015-7704.patch: add check to ntpd/ntp_proto.c.
-    - CVE-2015-7704
-    - CVE-2015-7705
-  * SECURITY UPDATE: denial of service via same logfile and keyfile
-    - debian/patches/CVE-2015-7850.patch: rate limit errors in
-      include/ntp_stdlib.h, include/ntp_syslog.h, libntp/authreadkeys.c,
-      libntp/msyslog.c.
-    - CVE-2015-7850
-  * SECURITY UPDATE: ntpq atoascii memory corruption
-    - debian/patches/CVE-2015-7852.patch: avoid buffer overrun in
-      ntpq/ntpq.c.
-    - CVE-2015-7852
-  * SECURITY UPDATE: buffer overflow via custom refclock driver
-    - debian/patches/CVE-2015-7853.patch: properly calculate length in
-      ntpd/ntp_io.c.
-    - CVE-2015-7853
-  * SECURITY UPDATE: denial of service via ASSERT in decodenetnum
-    - debian/patches/CVE-2015-7855.patch: simply return fail in
-      libntp/decodenetnum.c.
-    - CVE-2015-7855
-  * SECURITY UPDATE: symmetric association authentication bypass via
-    crypto-NAK
-    - debian/patches/CVE-2015-7871.patch: drop unhandled packet in
-      ntpd/ntp_proto.c.
-    - CVE-2015-7871
-  * debian/control: add bison to Build-Depends.
-  * debian/rules: remove ntp/ntp_parser.{c,h} or they don't get properly
-    regenerated for some reason.
-  * This package does _not_ contain the changes from
-    (1:4.2.6.p3+dfsg-1ubuntu3.5) in precise-proposed.
+  * Add missing fix for CVE-2014-9297
 
- -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Fri, 23 Oct 2015 11:57:50 -0400
+ -- Kurt Roeckx <kurt@roeckx.be>  Sat, 07 Feb 2015 12:20:44 +0100
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.4) precise-security; urgency=medium
+ntp (1:4.2.6.p5+dfsg-4) unstable; urgency=medium
 
-  * SECURITY UPDATE: symmetric key unauthenticated packet MITM attack
-    - debian/patches/CVE-2015-1798.patch: reject packets without MAC in
-      ntpd/ntp_proto.c.
-    - CVE-2015-1798
-  * SECURITY UPDATE: symmetric association DoS attack
-    - debian/patches/CVE-2015-1799.patch: don't update state variables when
-      authentication fails in ntpd/ntp_proto.c.
-    - CVE-2015-1799
-  * SECURITY UPDATE: ntp-keygen infinite loop or lack of randonmess on big
-    endian platforms
-    - debian/patches/ntp-keygen-endless-loop.patch: fix logic in
-      util/ntp-keygen.c.
-    - CVE number pending
+  * Fix CVE-2014-9297
+  * Fix CVE-2014-9298
 
- -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Mon, 13 Apr 2015 09:06:54 -0400
+ -- Kurt Roeckx <kurt@roeckx.be>  Thu, 05 Feb 2015 00:27:36 +0100
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.3) precise-security; urgency=medium
+ntp (1:4.2.6.p5+dfsg-3.2) unstable; urgency=medium
 
-  * SECURITY UPDATE: denial of service and possible info leakage via
-    extension fields
-    - debian/patches/CVE-2014-9297.patch: properly check lengths in
-      ntpd/ntp_crypto.c, ntpd/ntp_proto.c.
-    - CVE-2014-9297
-  * SECURITY UPDATE: IPv6 ACL bypass
-    - debian/patches/CVE-2014-9298.patch: check for spoofed ::1 in
-      ntpd/ntp_io.c.
-    - CVE-2014-9298
+  * Non-maintainer upload.
+  * Apply fixes for security updates (Closes: 773576)
+    - cve-2014-9293
+    - cve-2014-9294
+    - cve-2014-9295
+    - cve-2014-9296
 
- -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Fri, 06 Feb 2015 09:10:56 -0500
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 21 Dec 2014 12:01:50 -0800
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.2) precise-security; urgency=medium
+ntp (1:4.2.6.p5+dfsg-3.1) unstable; urgency=low
 
-  * SECURITY UPDATE: weak default key in config_auth()
-    - debian/patches/CVE-2014-9293.patch: use openssl for random key in
-      ntpd/ntp_config.c, ntpd/ntpd.c.
-    - CVE-2014-9293
-  * SECURITY UPDATE: non-cryptographic random number generator with weak
-    seed used by ntp-keygen to generate symmetric keys
-    - debian/patches/CVE-2014-9294.patch: use openssl for random key in
-      include/ntp_random.h, libntp/ntp_random.c, util/ntp-keygen.c.
-    - CVE-2014-9294
-  * SECURITY UPDATE: buffer overflows in crypto_recv(), ctl_putdata(),
-    configure()
-    - debian/patches/CVE-2014-9295.patch: check lengths in
-      ntpd/ntp_control.c, ntpd/ntp_crypto.c.
-    - CVE-2014-9295
-  * SECURITY UPDATE: missing return on error in receive()
-    - debian/patches/CVE-2015-9296.patch: add missing return in
-      ntpd/ntp_proto.c.
-    - CVE-2014-9296
+  * Non-maintainer upload.
+  * Use dh-autoreconf to ensure configurey is updated for new architectures
 
- -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Sat, 20 Dec 2014 06:07:49 -0500
+ -- Wookey <wookey@debian.org>  Tue, 15 Jul 2014 11:54:21 +0800
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3.1) precise-proposed; urgency=low
+ntp (1:4.2.6.p5+dfsg-3) unstable; urgency=low
 
-  * Re-enable crypto support by pointing openssl libdir to multiarch dir,
-    change backported from Debian, thanks Yves-Alexis Perez (lp: #998403)
+  * Look for <openssl/opensslv.h> rather than <openssl/opensslconf.h>, which
+    is due to move to a different location in order to support multiarch.
+    Patch by Colin Watson <cjwatson@ubuntu.com> (Closes: #696390)
 
- -- Sebastien Bacher <seb128@ubuntu.com>  Mon, 04 Jun 2012 16:35:25 +0200
+ -- Kurt Roeckx <kurt@roeckx.be>  Mon, 20 May 2013 16:14:07 +0200
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu3) precise; urgency=low
+ntp (1:4.2.6.p5+dfsg-2) unstable; urgency=medium
 
-  * debian/apparmor-profile: Add samba4 ntp signing socket to ntpd apparmor
-    profile (LP: #930266)
-  * debian/control: Build-Depends on dh-apparmor
+  * Re-enable crypto support by pointing openssl libdir to multiarch dir.
+    Also increase libssl-dev build dependency to the first multiarch
+    version. (closes: #670662)
 
- -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 06 Mar 2012 08:06:06 -0600
+ -- Peter Eisentraut <petere@debian.org>  Sat, 12 May 2012 12:04:06 +0300
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu2) precise; urgency=low
+ntp (1:4.2.6.p5+dfsg-1) unstable; urgency=low
 
-  * debian/apparmor-profile: adjust for IPv6 (LP: #892332)
+  * New upstream release (closes: #644673)
+  * Updated instructions on generating autotools.patch
+  * Updated standards version
 
- -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 03 Jan 2012 17:03:44 -0600
+ -- Peter Eisentraut <petere@debian.org>  Mon, 27 Feb 2012 13:55:56 +0200
 
-ntp (1:4.2.6.p3+dfsg-1ubuntu1) precise; urgency=low
+ntp (1:4.2.6.p3+dfsg-3) unstable; urgency=medium
 
-  * Merge from debian unstable, remaining changes are:
-    + debian/ntp.conf, debian/ntpdate.default: Change default server to
-      ntp.ubuntu.com.
-    + debian/ntpdate.ifup: Stop ntp before running ntpdate when an interface
-      comes up, then start again afterwards.
-    + debian/ntp.init, debian/rules: Only stop when entering single user mode.
-    + Add enforcing AppArmor profile (LP: #382905):
-      - debian/control: add Conflicts/Replaces on apparmor-profiles <
-        2.3.1+1403-0ubuntu10 (since we are now shipping usr.sbin.ntpd) and
-        apparmor < 2.3.1+1403-0ubuntu10 (since we are now shipping tunables/ntpd)
-      - debian/control: add Suggests on apparmor
-      - debian/ntp.dirs: add apparmor directories
-      - debian/ntp.preinst: force complain on certain upgrades
-      - debian/ntp.postinst: reload apparmor profile
-      - debian/ntp.postrm: remove the force-complain file
-      - add debian/apparmor-profile*
-      - debian/rules: install apparmor-profile and apparmor-profile.tunable
-      - debian/README.Debian: add note on AppArmor
-    + debian/{control,rules}: add and enable hardened build for PIE
-      (Debian bug 542721).
-    + debian/apparmor-profile: adjust location of drift files (LP: #456308)
-    + debian/rules, debian/ntp.dirs, debian/source_ntp.py: Add apport hook.
-    + debian/ntpdate-debian: Disregard empty ntp.conf files. (LP: #83604)
-    + debian/ntp.preinst: Remove empty /etc/ntp.conf on fresh intallation, 
-      to work around  the system-tools-backends part of LP #83604.
-    + debian/ntpdate.ifup: Fix interaction with openntpd. (LP: #877210)
-    + Dropped:
-      - ntpdate-accept-same-timestamp-replies.patch: Accepted upstream
- 
+  * Update format-security.patch to include kfreebsd-specific fixes
+    (closes: #653771)
 
- -- Chuck Short <zulcss@ubuntu.com>  Wed, 26 Oct 2011 10:24:21 -0400
+ -- Peter Eisentraut <petere@debian.org>  Thu, 05 Jan 2012 19:37:28 +0200
+
+ntp (1:4.2.6.p3+dfsg-2) unstable; urgency=low
+
+  * Use architecture wildcard for libcap2-dev build dependency, removing
+    type-handing dependency (closes: #528440, #587871)
+  * Updated standards version
+  * Get build flags from dpkg-buildflags, and fix the resulting
+    -Wformat-security errors using patch from Colin Watson (closes:
+    #542721, #627403)
+  * Add -Wl,--as-needed to LDFLAGS, which drops the dependency of ntpdate
+    on libcap2
+  * Add sntp-manpage.patch to fix some errors in sntp man page pointed out
+    by lintian
+  * Re-remove tickadj.  The previous method of achieving this by tweaking
+    configure cache variables apparently broke at some point, so this time
+    do it more directly.
+  * Explicitly disable building ntpsnmpd and remove man page (closes:
+    #608542; see also #622819)
+  * ntpdate-debian: Improve parsing of ntp.conf (closes: #606349)
+  * Add descriptions of -4/-6 options to ntpd man page (closes: #613349)
+  * Update options list on ntptrace man page to match reality (closes:
+    #593417)
+  * Add build-arch and build-indep debian/rules targets, per lintian
+  * Create ntp user and group separately, to handle the case where the
+    user already exists but not the group (closes: #624275)
+  * Don't ignore errors from adduser.  If the system user or group already
+    exist, this is ignored anyway.  Anything else we want to know about.
+  * Generalize ntp.cron.daily to cover all possible filegen stats files
+    (closes: #644120)
+
+ -- Peter Eisentraut <petere@debian.org>  Sat, 17 Dec 2011 19:00:10 +0200
 
 ntp (1:4.2.6.p3+dfsg-1) unstable; urgency=low
 
@@ -284,117 +157,6 @@ ntp (1:4.2.6.p3+dfsg-1) unstable; urgency=low
     that we get TAI offset support.
 
  -- Kurt Roeckx <kurt@roeckx.be>  Fri, 03 Jun 2011 16:39:02 +0200
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu13) precise; urgency=low
-
-  * debian/ntpdate.if-up: Fix interaction with openntpd, LP: #872210
-
- -- Reinhard Tartler <siretart@tauware.de>  Tue, 11 Oct 2011 12:33:01 +0200
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu12) oneiric; urgency=low
-
-  * debian/apparmor-profile: also allow access to /var/log/ntpstats/rawstats*
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Fri, 02 Sep 2011 12:35:08 -0500
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu11) oneiric; urgency=low
-
-  * debian/apparmor-profile: allow sys_nice for -N option to work. More
-    work is needed to make ntpd start niced, so not auto-closing the bug.
-    - LP: 229632
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Fri, 19 Aug 2011 07:39:20 -0500
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu10) oneiric; urgency=low
-
-  * debian/source_ntp.py: use new apport MAC function instead of parsing
-    and attaching AppArmor events here.
-
- -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Fri, 15 Jul 2011 08:33:08 -0400
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu9) oneiric; urgency=low
-
-  * debian/apparmor-profile: Allow /var/run and /run. (LP: #810270)
-
- -- Martin Pitt <martin.pitt@ubuntu.com>  Thu, 14 Jul 2011 15:12:09 +0200
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu8) oneiric; urgency=low
-
-  * debian/patches/ntpdate-accept-same-timestamp-replies.patch: 
-    Resolving regression where ntpdate ignores replies from some
-    ntp servers where recieve and transmit timestamps are equal.  
-    Patch cherry picked from upstream commit. (LP: #787551)
-
- -- Dave Walker (Daviey) <DaveWalker@ubuntu.com>  Mon, 13 Jun 2011 15:22:29 +0100
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu7) oneiric; urgency=low
-
-  * Fix a number of -Wformat-security warnings.
-
- -- Colin Watson <cjwatson@ubuntu.com>  Fri, 20 May 2011 12:20:07 +0100
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu6) oneiric; urgency=low
-
-  * Rebuild for OpenSSL 1.0.0.
-
- -- Colin Watson <cjwatson@ubuntu.com>  Tue, 17 May 2011 17:24:01 +0100
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu5) natty; urgency=low
-
-  * debian/apparmor-profile: add note about using shared memory for
-    a clock source (LP: #722815).
-
- -- Kees Cook <kees@ubuntu.com>  Thu, 10 Mar 2011 12:54:59 -0800
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu4) natty; urgency=low
-
-  * debian/ntp.conf: adjust to use X.ubuntu.pool.ntp.org in addition to
-    ntp.ubuntu.com (LP: #104525)
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 08 Feb 2011 10:03:19 -0600
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu3) natty; urgency=low
-
-  * debian/apparmor-profile: allow access to clockstats too (LP: #701896)
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Wed, 12 Jan 2011 10:05:41 -0600
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu2) natty; urgency=low
-
-  * debian/ntpdate-debian: Disregard empty ntp.conf files (thanks, Mika
-    Wahlroos; LP: #83604).
-  * debian/ntp.preinst: Remove empty /etc/ntp.conf on fresh installation, to
-    work around the system-tools-backends part of LP #83604.
-
- -- Colin Watson <cjwatson@ubuntu.com>  Mon, 06 Dec 2010 11:13:04 +0000
-
-ntp (1:4.2.6.p2+dfsg-1ubuntu1) natty; urgency=low
-
-  * Merge from debian unstable, remaining changes are:
-    + debian/ntp.conf, debian/ntpdate.default: Change default server to
-      ntp.ubuntu.com.
-    + debian/ntpdate.ifup: Stop ntp before running ntpdate when an interface
-      comes up, then start again afterwards.
-    + debian/ntp.init, debian/rules: Only stop when entering single user mode.
-    + Add enforcing AppArmor profile (LP: #382905):
-      - debian/control: add Conflicts/Replaces on apparmor-profiles <
-        2.3.1+1403-0ubuntu10 (since we are now shipping usr.sbin.ntpd) and
-        apparmor < 2.3.1+1403-0ubuntu10 (since we are now shipping tunables/ntpd)
-      - debian/control: add Suggests on apparmor
-      - debian/ntp.dirs: add apparmor directories
-      - debian/ntp.preinst: force complain on certain upgrades
-      - debian/ntp.postinst: reload apparmor profile
-      - debian/ntp.postrm: remove the force-complain file
-      - add debian/apparmor-profile*
-      - debian/rules: install apparmor-profile and apparmor-profile.tunable
-      - debian/README.Debian: add note on AppArmor
-    + debian/{control,rules}: add and enable hardened build for PIE
-      (Debian bug 542721).
-    + debian/apparmor-profile: adjust location of drift files (LP: #456308)
-    + debian/rules, debian/ntp.dirs, debian/source_ntp.py: Add apport hook.
-
-
- -- Chuck Short <zulcss@ubuntu.com>  Tue, 30 Nov 2010 11:14:31 -0500
 
 ntp (1:4.2.6.p2+dfsg-1) unstable; urgency=low
 
@@ -479,80 +241,6 @@ ntp (1:4.2.6+dfsg-1) unstable; urgency=low
 
  -- Kurt Roeckx <kurt@roeckx.be>  Sat, 26 Dec 2009 14:12:22 +0100
 
-ntp (1:4.2.4p8+dfsg-1ubuntu6) maverick; urgency=low
-
-  * debian/rules: move dh_apparmor before dh_installinit
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Fri, 06 Aug 2010 17:40:04 -0500
-
-ntp (1:4.2.4p8+dfsg-1ubuntu5) maverick; urgency=low
-
-  * convert to dh_apparmor:
-    - debian/rules, debian/ntp.postrm, debian/ntp.postinst: use dh_apparmor
-    - control: Build-Depends on debhelper >= 7.4.20ubuntu5
-  * debian/apparmor-profile: include local override
-  * remove now unneeded debian/ntp.preinst
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Fri, 06 Aug 2010 13:55:12 -0500
-
-ntp (1:4.2.4p8+dfsg-1ubuntu4) maverick; urgency=low
-
-  * debian/dhcp.ntp: Dont remove *all* ntp server from ntp.conf.
-    (LP: #575458) 
-  * debian/apparmor-profile: Allow access to /dev/ttyS* 
-    (LP: #596859)
-
- -- Chuck Short <zulcss@ubuntu.com>  Tue, 22 Jun 2010 09:24:02 -0400
-
-ntp (1:4.2.4p8+dfsg-1ubuntu3) maverick; urgency=low
-
-  * debian/apparmor-profile: allow access to /var/log/ntpstats/sysstats*
-    (LP: #574343)
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Fri, 18 Jun 2010 07:54:24 -0500
-
-ntp (1:4.2.4p8+dfsg-1ubuntu2) lucid; urgency=low
-
-  * debian/apparmor-profile: allow reading of /var/lib/ntp/ntp.conf.dhcp
-    (LP: #517701)
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Thu, 08 Apr 2010 16:24:42 -0500
-
-ntp (1:4.2.4p8+dfsg-1ubuntu1) lucid; urgency=low
-
-  * Merge from debian testing, remaining changes:
-    + debian/ntp.conf, debian/ntpdate.default: Change default server to
-      ntp.ubuntu.com.
-    + debian/ntpdate.ifup: Stop ntp before running ntpdate when an interface
-      comes up, then start again afterwards.
-    + debian/ntp.init, debian/rules: Only stop when entering single user mode.
-    + Add enforcing AppArmor profile (LP: #382905):
-      - debian/control: add Conflicts/Replaces on apparmor-profiles <
-        2.3.1+1403-0ubuntu10 (since we are now shipping usr.sbin.ntpd) and
-        apparmor < 2.3.1+1403-0ubuntu10 (since we are now shipping tunables/ntpd)
-      - debian/control: add Suggests on apparmor
-      - debian/ntp.dirs: add apparmor directories
-      - debian/ntp.preinst: force complain on certain upgrades
-      - debian/ntp.postinst: reload apparmor profile
-      - debian/ntp.postrm: remove the force-complain file
-      - add debian/apparmor-profile*
-      - debian/rules: install apparmor-profile and apparmor-profile.tunable
-      - debian/README.Debian: add note on AppArmor
-    + debian/{control,rules}: add and enable hardened build for PIE
-      (Debian bug 542721).
-    + debian/apparmor-profile: adjust location of drift files (LP: #456308)
-    + Dropped changes, merged in debian:
-      - fix-nano.patch: Use mod_nano.patch from debian.
-    + Dropped changes, superseded upstream/in Debian:
-      - debian/patches/CVE-2009-1252.patch: No longer needed.
-      - debian/patches/debian/patches/CVE-2009-0159.patch: No longer needed.
-
-   [Chuck Short]
-   + debian/rules, debian/ntp.dirs, debian/source_ntp.py: Add apport
-     hook, apart of the server-lucid-apport-hooks specification.
-
- -- Chuck Short <zulcss@ubuntu.com>  Tue, 02 Feb 2010 18:36:29 -0500
-
 ntp (1:4.2.4p8+dfsg-1) unstable; urgency=high
 
   * New upstream release.
@@ -603,65 +291,6 @@ ntp (1:4.2.4p7+dfsg-1) unstable; urgency=low
 
  -- Kurt Roeckx <kurt@roeckx.be>  Sat, 21 Nov 2009 17:27:11 +0100
 
-ntp (1:4.2.4p6+dfsg-2ubuntu4) lucid; urgency=low
-
-  * debian/rules: install symlink for early loading of per-interface
-    triggered ntp AppArmor profile.
-
- -- Kees Cook <kees@ubuntu.com>  Tue, 15 Dec 2009 11:35:33 -0800
-
-ntp (1:4.2.4p6+dfsg-2ubuntu3) lucid; urgency=low
-
-  * SECURITY UPDATE: fix DoS with mode 7 (MODE_PRIVATE) packets
-    - debian/patches/CVE-2009-3563.patch: update ntpd/ntp_request.c to
-      not send a response packet for and rate limit logging of invalid mode 7
-      requests and responses
-    - CVE-2009-3563
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 08 Dec 2009 13:52:12 -0600
-
-ntp (1:4.2.4p6+dfsg-2ubuntu2) lucid; urgency=low
-
-  * debian/rules: enable debugging (LP: #47683)
-  * debian/ntpdate-if.up: Hide invoke-rc.d output. (LP: #489585)
-  * debian/man/ntptrace.1:  Update man page removed ghost options. (LP: #351989)
-
- -- Chuck Short <zulcss@ubuntu.com>  Mon, 07 Dec 2009 14:59:28 -0500
-
-ntp (1:4.2.4p6+dfsg-2ubuntu1) lucid; urgency=low
-
-  * Merge from debian testing, remaining changes:
-    + debian/ntp.conf, debian/ntpdate.default: Change default server to
-      ntp.ubuntu.com.
-    + debian/ntpdate.ifup: Stop ntp before running ntpdate when an interface
-      comes up, then start again afterwards
-    + debian/ntp.init, debian/rules: Only stop when entering single user mode.
-    + Add enforcing AppArmor profile (LP: #382905)
-      - debian/control: add Conflicts/Replaces on apparmor-profiles <
-        2.3.1+1403-0ubuntu10 (since we are now shipping usr.sbin.ntpd) and
-        apparmor < 2.3.1+1403-0ubuntu10 (since we are now shipping
-        tunables/ntpd)
-      - debian/control: add Suggests on apparmor
-      - debian/ntp.dirs: add apparmor directories
-      - debian/ntp.preinst: force complain on certain upgrades
-      - debian/ntp.postinst: reload apparmor profile
-      - debian/ntp.postrm: remove the force-complain file
-      - add debian/apparmor-profile*
-      - debian/rules: install apparmor-profile and apparmor-profile.tunable
-      - debian/README.Debian: add note on AppArmor
-    + debian/patches/fix-nano.patch: enable nanokernel support (LP: #412242)
-    + debian/{control,rules}: add and enable hardened build for PIE
-      (Debian bug 542721).
-    + debian/apparmor-profile: adjust location of drift files (LP: #456308)
-    + Dropped changes, merged in Debian:
-      - debian/man/ntpdate.8 - fix debian shipped manpage; patch by
-        Josh Holland <jrh@joshh.co.uk>
-    + Dropped changes, superseded upstream/in Debian:
-      - debian/patches/CVE-2009-0159.patch: Use Debian's version of the patch.
-      - debian/patches/CVE-2009-1252.patch: Use Debian's version of the patch.
-
- -- Chuck Short <zulcss@ubuntu.com>  Fri, 06 Nov 2009 01:34:35 +0000
-
 ntp (1:4.2.4p6+dfsg-2) unstable; urgency=medium
 
   * Fixed typo in ntpdate man page (closes: #526086)
@@ -677,75 +306,6 @@ ntp (1:4.2.4p6+dfsg-2) unstable; urgency=medium
     not clutter the diff, added autotools-dev to build dependencies
 
  -- Peter Eisentraut <petere@debian.org>  Fri, 12 Jun 2009 17:24:22 +0300
-
-ntp (1:4.2.4p6+dfsg-1ubuntu5) karmic; urgency=low
-
-  * debian/apparmor-profile: adjust location of drift files (LP: #456308)
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Wed, 21 Oct 2009 07:07:31 -0500
-
-ntp (1:4.2.4p6+dfsg-1ubuntu4) karmic; urgency=low
-
-  * debian/{control,rules}: add and enable hardened build for PIE
-    (Debian bug 542721).
-
- -- Kees Cook <kees@ubuntu.com>  Thu, 20 Aug 2009 17:12:44 -0700
-
-ntp (1:4.2.4p6+dfsg-1ubuntu3) karmic; urgency=low
-
-  * Add enforcing AppArmor profile (LP: #382905)
-    - debian/control: add Conflicts/Replaces on apparmor-profiles <
-      2.3.1+1403-0ubuntu10 (since we are now shipping usr.sbin.ntpd) and
-      apparmor < 2.3.1+1403-0ubuntu10 (since we are now shipping
-      tunables/ntpd)
-    - debian/control: add Suggests on apparmor
-    - debian/ntp.dirs: add apparmor directories
-    - debian/ntp.preinst: force complain on certain upgrades
-    - debian/ntp.postinst: reload apparmor profile
-    - debian/ntp.postrm: remove the force-complain file
-    - add debian/apparmor-profile*
-    - debian/rules: install apparmor-profile and apparmor-profile.tunable
-    - debian/README.Debian: add note on AppArmor
-  * debian/patches/fix-nano.patch: enable nanokernel support (LP: #412242)
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 11 Aug 2009 18:25:50 -0500
-
-ntp (1:4.2.4p6+dfsg-1ubuntu2) karmic; urgency=low
-
-  * SECURITY UPDATE: stack overflow in ntpd when autokey is enabled
-    - debian/patches/CVE-2009-1252.patch: update ntpd/ntp_crypto.c to use
-      snprintf() with NTP_MAXSTRLEN when writing to statstr. Also defensively
-      adjust ntp_peer.c and ntp_timer.c to do the same.
-    - CVE-2009-1252
-  * SECURITY UPDATE: stack overflow in ntpq when contacting malicious ntp
-    server
-    - debian/patches/CVE-2009-0159.patch: increase size of buffer in
-      cookedprint() in ntpq/ntpq.c and adjust to use snprintf()
-    - CVE-2009-0159
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 19 May 2009 15:26:41 -0500
-
-ntp (1:4.2.4p6+dfsg-1ubuntu1) karmic; urgency=low
-
-  * Merge from Debian unstable, remaining changes:
-    - debian/ntp.conf, debian/ntpdate.default: Change default server to
-      ntp.ubuntu.com.
-    - debian/ntpdate.ifup: Stop ntp before running ntpdate when an interface 
-      comes up, then start again afterwards
-    - debian/ntp.init, debian/rules: Only stop when entering single user mode.
-    - debian/man/ntpdate.8 - fix debian shipped manpage; patch by
-      Josh Holland <jrh@joshh.co.uk>
-  * Dropped changes, merged in Debian:
-    - Build against libcap2 instead of libcap1, fixing a kernel warning
-      about using an old interface.
-  * Dropped changes, superseded upstream/in Debian:
-    - debian/patches/CVE-2009-0021.patch: update ntpd/ntp_crypto.c to properly
-      check the return code of EVP_VerifyFinal()
-    - debian/patches/ipv6-gnu-source.patch: Define _GNU_SOURCE to make IPv6
-      work.
-  * Fixes LP: #217699
-
- -- Steve Langasek <steve.langasek@ubuntu.com>  Wed, 29 Apr 2009 06:08:19 +0000
 
 ntp (1:4.2.4p6+dfsg-1) unstable; urgency=low
 
@@ -768,49 +328,6 @@ ntp (1:4.2.4p4+dfsg-8) unstable; urgency=low
 
  -- Kurt Roeckx <kurt@roeckx.be>  Mon, 05 Jan 2009 21:10:03 +0100
 
-ntp (1:4.2.4p4+dfsg-7ubuntu5) jaunty; urgency=low
-
-  * Build against libcap2 instead of libcap1, fixing a kernel warning
-    about using an old interface.  LP: #328376.
-
- -- Steve Langasek <steve.langasek@ubuntu.com>  Fri, 20 Mar 2009 19:53:25 +0000
-
-ntp (1:4.2.4p4+dfsg-7ubuntu4) jaunty; urgency=low
-
-  * LP: #314810 - ntpdate typo in manpage
-    - debian/man/ntpdate.8 - fix debian shipped manpage; patch by
-      Josh Holland <jrh@joshh.co.uk>
-
- -- Alexander Sack <asac@ubuntu.com>  Mon, 23 Feb 2009 11:57:32 +0100
-
-ntp (1:4.2.4p4+dfsg-7ubuntu3) jaunty; urgency=low
-
-  * SECURITY UPDATE: clients treat malformed signatures as good when verifying
-    server DSA and ECDSA certificates.
-    - debian/patches/CVE-2009-0021.patch: update ntpd/ntp_crypto.c to properly
-      check the return code of EVP_VerifyFinal()
-    - CVE-2009-0021
-
- -- Jamie Strandboge <jamie@ubuntu.com>  Tue, 06 Jan 2009 01:19:55 -0600
-
-ntp (1:4.2.4p4+dfsg-7ubuntu2) jaunty; urgency=low
-
-  * Add ipv6-gnu-source.patch: Define _GNU_SOURCE to make IPv6 work. 
-    (LP: #305043)
-
- -- Matt LaPlante <mattl@google.com>  Thu, 04 Dec 2008 00:39:51 -0600
-
-ntp (1:4.2.4p4+dfsg-7ubuntu1) jaunty; urgency=low
-
-  * Merge from debian unstable, remaining changes:
-    - debian/ntp.conf, debian/ntpdate.default: Change default server to
-      ntp.ubuntu.com.
-    - debian/ntpdate.ifup: Stop ntp before running ntpdate when an interface 
-      comes up, then start again afterwards (LP: #114505)
-    - debian/ntp.init, debian/rules: Only stop when entering single user mode.
-
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 11 Nov 2008 17:18:15 +0000
-
 ntp (1:4.2.4p4+dfsg-7) unstable; urgency=low
 
   * Added support for numeric IPv6 address in ntpdate-debian (closes: #489712)
@@ -818,39 +335,6 @@ ntp (1:4.2.4p4+dfsg-7) unstable; urgency=low
   * Added PATH to ntpdate.if-up (closes: #490061)
 
  -- Peter Eisentraut <petere@debian.org>  Wed, 16 Jul 2008 14:09:41 +0200
-
-ntp (1:4.2.4p4+dfsg-6ubuntu2) intrepid; urgency=low
-
-  * debian/ntpdate.ifup: use a different lockfile to avoid dead-locks
-    when restarting ntpd (LP: #246203).
-
- -- Kees Cook <kees@ubuntu.com>  Wed, 20 Aug 2008 09:48:33 -0700
-
-ntp (1:4.2.4p4+dfsg-6ubuntu1) intrepid; urgency=low
-
-  * Merge from debian unstable, remaining changes:
-    - debian/ntp.conf, debian/ntpdate.default:
-      - Change default server to ntp.ubuntu.com.
-    - debian/control:
-      - Set Ubuntu maintainer address.
-    - debian/ntpdate.ifup:
-      Stop ntp before running ntpdate when an interface 
-      comes up, then start again afterwards (LP: #114505)
-  * debian/rules:
-    - Call update-rcd-params with manual arguments instead of defaults.
-  * debian/ntp.init:
-    - Update LSB Default-Stop header.
-  * Dropped: 
-    - Update TearDown spec implementation:
-      - Update version in conflicts/replaces to that which was shipped in
-        edgy, which was later than that in Debian (due to the ubuntuX).
-      - Add sysv-rc dependency.
-      - debian/rules:
-        - Call update-rcd-params with multiuser instead defaults.
-    - debian/ntp-server.postinst (dapper upgrade):
-      - Remove stop script symlinks from rc0 and rc6.
-
- -- Mathias Gug <mathiaz@ubuntu.com>  Wed, 18 Jun 2008 22:28:16 -0400
 
 ntp (1:4.2.4p4+dfsg-6) unstable; urgency=low
 
@@ -898,30 +382,6 @@ ntp (1:4.2.4p4+dfsg-4) unstable; urgency=low
 
  -- Peter Eisentraut <petere@debian.org>  Tue, 29 Apr 2008 11:19:54 +0200
 
-ntp (1:4.2.4p4+dfsg-3ubuntu2) hardy; urgency=low
-
-  * Stop ntp before running ntpdate when an interface 
-    comes up, then start again afterwards (LP: #114505)
-
- -- Onno Benschop <onno@itmaze.com.au>  Thu,  6 Mar 2008 14:00:42 +0900
-
-ntp (1:4.2.4p4+dfsg-3ubuntu1) hardy; urgency=low
-
-  * Merge from debian unstable, remaining changes:
-    - debian/ntp.conf, debian/ntpdate.default:
-      - Change default server to ntp.ubuntu.com.
-    - debian/rules:
-      - Call update-rcd-params with multiuser instead defaults.
-    - debian/control:
-      - Set Ubuntu maintainer address.
-      - Update version in conflicts/replaces to that which was shipped in
-        edgy, which was later than that in Debian (due to the ubuntuX).
-      - Add sysv-rc dependency.
-    - debian/ntp-server.postinst:
-      - Remove stop script symlinks from rc0 and rc6.
-
- -- Scott Kitterman <scott@kitterman.com>  Mon, 25 Feb 2008 19:36:36 -0500
-
 ntp (1:4.2.4p4+dfsg-3) unstable; urgency=low
 
   * Various man page and NEWS fixes (patches by Justin Pryzby and Vincent
@@ -943,23 +403,6 @@ ntp (1:4.2.4p4+dfsg-3) unstable; urgency=low
   * Dropped some useless documentation files
 
  -- Peter Eisentraut <petere@debian.org>  Sun, 13 Jan 2008 12:18:13 +0100
-
-ntp (1:4.2.4p4+dfsg-2ubuntu1) hardy; urgency=low
-
-  * Merge from debian unstable, remaining changes:
-    - debian/ntp.conf, debian/ntpdate.default:
-      - Change default server to ntp.ubuntu.com.
-    - debian/rules:
-      - Call update-rcd-params with multiuser instead defaults.
-    - debian/control:
-      - Set Ubuntu maintainer address.
-      - Update version in conflicts/replaces to that which was shipped in edgy,
-        which was later than that in Debian (due to the ubuntuX).
-      - Add sysv-rc dependency.
-    - debian/ntp-server.postinst:
-      - Remove stop script symlinks from rc0 and rc6.
-
- -- Mathias Gug <mathiaz@ubuntu.com>  Mon, 26 Nov 2007 15:42:41 -0500
 
 ntp (1:4.2.4p4+dfsg-2) unstable; urgency=low
 
@@ -994,25 +437,6 @@ ntp (1:4.2.4p3+dfsg-1) unstable; urgency=low
     (closes: #427981)
 
  -- Kurt Roeckx <kurt@roeckx.be>  Mon, 13 Aug 2007 15:58:08 +0000
-
-ntp (1:4.2.4p0+dfsg-1ubuntu2) gutsy; urgency=low
-
-  * Trigger rebuild for hppa
-
- -- LaMont Jones <lamont@ubuntu.com>  Thu, 04 Oct 2007 12:15:33 -0600
-
-ntp (1:4.2.4p0+dfsg-1ubuntu1) gutsy; urgency=low
-
-  * Merge from Debian unstable.
-  * Remaining Ubuntu changes:
-    - Update version in conflicts/replaces to that which was shipped in edgy,
-      which was later than that in Debian (due to the ubuntuX).
-    - Change default server to ntp.ubuntu.com.
-    - Remove stop links from rc0 and rc6
-    - Call dh_installinit with --error-handler
-    - Set Ubuntu maintainer address.
-
- -- Steve Kowalik <stevenk@ubuntu.com>  Fri, 18 May 2007 22:41:56 +1000
 
 ntp (1:4.2.4p0+dfsg-1) unstable; urgency=low
 
@@ -1058,28 +482,6 @@ ntp (1:4.2.2.p4+dfsg-2) unstable; urgency=low
   * Make sure that we disable ntp-server for everybody. (Closes: #410383)
 
  -- Kurt Roeckx <kurt@roeckx.be>  Sun,  4 Mar 2007 13:01:11 +0000
-
-ntp (1:4.2.2.p4+dfsg-1ubuntu3) feisty; urgency=low
-
-  * Rebuild for changes in the amd64 toolchain.
-  * Set Ubuntu maintainer address.
-
- -- Matthias Klose <doko@ubuntu.com>  Mon,  5 Mar 2007 01:23:22 +0000
-
-ntp (1:4.2.2.p4+dfsg-1ubuntu2) feisty; urgency=low
-
-  * Update version in conflicts/replaces to that which was shipped in edgy,
-    which was later than that in Debian (due to the ubuntuX).  LP: #73506.
-
- -- Scott James Remnant <scott@ubuntu.com>  Tue, 28 Nov 2006 10:27:08 +0000
-
-ntp (1:4.2.2.p4+dfsg-1ubuntu1) feisty; urgency=low
-
-  * Merge from debian unstable, remaining changes:
-    - change default server to ntp.ubuntu.com
-    - remove stop links from rc0 and rc6
-
- -- Scott James Remnant <scott@ubuntu.com>  Mon, 27 Nov 2006 13:51:15 +0000
 
 ntp (1:4.2.2.p4+dfsg-1) unstable; urgency=low
 
@@ -1240,18 +642,6 @@ ntp (1:4.2.2+dfsg-1) unstable; urgency=low
 
  -- Peter Eisentraut <petere@debian.org>  Fri, 14 Jul 2006 22:55:36 +0200
 
-ntp (1:4.2.0a+stable-9ubuntu2) edgy; urgency=low
-
-  * Remove stop script symlinks from rc0 and rc6.
-
- -- Scott James Remnant <scott@ubuntu.com>  Fri, 15 Sep 2006 17:47:40 +0100
-
-ntp (1:4.2.0a+stable-9ubuntu1) edgy; urgency=low
-
-  * Resynchronise with Debian.
-
- -- Tollef Fog Heen <tfheen@ubuntu.com>  Fri, 30 Jun 2006 16:02:07 +0200
-
 ntp (1:4.2.0a+stable-9) unstable; urgency=low
 
   [ Peter Eisentraut ]
@@ -1285,51 +675,6 @@ ntp (1:4.2.0a+stable-8.2) unstable; urgency=high
 
  -- Peter Eisentraut <petere@debian.org>  Tue,  6 Jun 2006 02:27:42 +0200
 
-ntp (1:4.2.0a+stable-8.1ubuntu6) dapper; urgency=low
-
-  * Call dh_installinit with --error-handler=true, which will prevent
-    ntp-server's prerm and postinst from bombing out on upgrades from
-    previous broken versions.  ntp-{simple,refclock} still try to
-    restart the server in their postinst, so it won't be left dead.
-
- -- Adam Conrad <adconrad@ubuntu.com>  Mon, 29 May 2006 10:25:43 +1000
-
-ntp (1:4.2.0a+stable-8.1ubuntu5) dapper; urgency=low
-
-  * Attempt to create the ntp user in ntp-server's postinst, as the
-    dependency loops between ntp-server and ntp-* means we have no
-    way of knowing which gets configured first (launchpad.net/33351)
-
- -- Adam Conrad <adconrad@ubuntu.com>  Sun, 28 May 2006 02:20:57 +1000
-
-ntp (1:4.2.0a+stable-8.1ubuntu4) dapper; urgency=low
-
-  * Hide output from ntpdate unless ifup is run with -v.
-
- -- Scott James Remnant <scott@ubuntu.com>  Wed, 17 May 2006 22:45:19 +0100
-
-ntp (1:4.2.0a+stable-8.1ubuntu3) dapper; urgency=low
-
-  * Ignore errors from ntpdate, otherwise the interface might not come
-    fully up.
-
- -- Scott James Remnant <scott@ubuntu.com>  Wed,  8 Feb 2006 15:48:19 +0000
-
-ntp (1:4.2.0a+stable-8.1ubuntu2) dapper; urgency=low
-
-  * Remove ntpdate init script, instead install a script in
-    /etc/network/if-up.d that sets the clock whenever we bring up a network
-    interface.
-
- -- Scott James Remnant <scott@ubuntu.com>  Wed,  4 Jan 2006 15:56:23 +0000
-
-ntp (1:4.2.0a+stable-8.1ubuntu1) dapper; urgency=low
-
-  * Resynchronise with Debian.
-  * Use ntp.ubuntu.com rather than ntp.ubuntulinux.org.
-
- -- Colin Watson <cjwatson@ubuntu.com>  Tue,  1 Nov 2005 23:06:49 -0500
-
 ntp (1:4.2.0a+stable-8.1) unstable; urgency=low
 
   * 0-day BSP NMU.
@@ -1337,20 +682,6 @@ ntp (1:4.2.0a+stable-8.1) unstable; urgency=low
     (Closes: #327012).
 
  -- Christoph Berg <myon@debian.org>  Fri, 28 Oct 2005 15:33:37 +0200
-
-ntp (1:4.2.0a+stable-8ubuntu2) breezy; urgency=low
-
-  * Fix error message in ntp-server init script.
-  (Closes: #14726)
-
- -- Fabio M. Di Nitto <fabbione@ubuntu.com>  Fri, 09 Sep 2005 06:35:08 +0200
-
-ntp (1:4.2.0a+stable-8ubuntu1) breezy; urgency=low
-
-  * Resynchronise with Debian, resolving merge conflicts brought
-    on by Debian incorporating some of our changes upstream.
-
- -- Adam Conrad <adconrad@0c3.net>  Wed, 20 Apr 2005 04:18:50 +0000
 
 ntp (1:4.2.0a+stable-8) unstable; urgency=medium
 
@@ -1382,6 +713,22 @@ ntp (1:4.2.0a+stable-5) unstable; urgency=low
 
  -- Matthias Urlichs <smurf@debian.org>  Mon, 14 Mar 2005 15:25:03 +0100
 
+ntp (1:4.2.0a-11ubuntu3) hoary; urgency=low
+
+  * ntpd/ntpd.c:
+    - Revert the hardcoded root dropping parameters from previous version.
+      This is now done in init script.
+    - Bugfix: If group was specified as name, previous versions erroneously
+      used the uid as gid.
+  * debian/ntp-server.init.d:
+    - Run as user/group ntp by default (previously hardcoded in ntpd.c).
+    - Already determine the uid/gid of 'ntp' instead of doing it in ntpd.c
+      (for some reason this fails directly after boot). (Ubuntu #5399)
+    - Add -e to interpreter to stop on errors.
+    - append "/usr/bin/" to PATH setting (for getent and cut).
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Mar 2005 13:24:46 +0100
+
 ntp (1:4.2.0a+stable-4) unstable; urgency=low
 
   * Merged Upstream fix for ntpdate IPv4/IPv6 problems.
@@ -1403,6 +750,29 @@ ntp (1:4.2.0a+stable-4) unstable; urgency=low
   * Built against libreadline5.
 
  -- Matthias Urlichs <smurf@debian.org>  Sat, 12 Mar 2005 06:16:39 +0100
+
+ntp (1:4.2.0a-11ubuntu2) hoary; urgency=low
+
+  * Run ntpd as normal user (with CAP_SYS_TIME) instead of root
+  * ntpd/ntpd.c:
+    - activate root dropping to user and group "ntp"
+    - add runtime check whether the kernel really supports capabilities; do
+      not drop root privileges if not
+    - do not set CAP_SYS_TIME as inheritable
+  * debian/rules:
+    - configure with --enable-linuxcaps
+  * debian/control, packages ntp-simple/ntp-refclock:
+    - add "adduser" dependency
+  * debian/ntp-{simple,refclock}.postinst:
+    - create system user and group "ntp"
+    - chown /var/lib/ntp and /var/log/ntpstats to ntp:ntp to allow ntpd to
+      write into them
+    - restart the server (for the case that ntp-server's postinst ran before
+      ntp-{simple,refclock}'s)
+  * debian/ntp-{simple,refclock}.postrm:
+    - remove user and group ntp on package purge
+
+ -- Martin Pitt <martin.pitt@canonical.com>  Thu, 25 Nov 2004 15:23:53 +0100
 
 ntp (1:4.2.0a+stable-3) unstable; urgency=low
 
@@ -1455,63 +825,12 @@ ntp (1:4.2.0a+bk20040620-2) experimental; urgency=low
 
  -- Matthias Urlichs <smurf@debian.org>  Sat, 25 Sep 2004 11:43:37 +0200
 
-ntp (1:4.2.0a+bk20040620-1) experimental; urgency=low
-
-  * Merge current stable Upstream
-
- -- Matthias Urlichs <smurf@debian.org>  Mon, 21 Jun 2004 10:17:28 +0200
-
 ntp (1:4.2.0a-12) unstable; urgency=low
 
   * Doc how to use multiple servers in ntp.default.
     - Closes: #264569: please document format of NTPSERVERS option
 
  -- Matthias Urlichs <smurf@debian.org>  Mon,  9 Aug 2004 19:57:58 +0200
-
-ntp (1:4.2.0a-11ubuntu3) hoary; urgency=low
-
-  * ntpd/ntpd.c:
-    - Revert the hardcoded root dropping parameters from previous version.
-      This is now done in init script.
-    - Bugfix: If group was specified as name, previous versions erroneously
-      used the uid as gid.
-  * debian/ntp-server.init.d:
-    - Run as user/group ntp by default (previously hardcoded in ntpd.c).
-    - Already determine the uid/gid of 'ntp' instead of doing it in ntpd.c
-      (for some reason this fails directly after boot). (Ubuntu #5399)
-    - Add -e to interpreter to stop on errors.
-    - append "/usr/bin/" to PATH setting (for getent and cut).
-
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 14 Mar 2005 13:24:46 +0100
-
-ntp (1:4.2.0a-11ubuntu2) hoary; urgency=low
-
-  * Run ntpd as normal user (with CAP_SYS_TIME) instead of root
-  * ntpd/ntpd.c:
-    - activate root dropping to user and group "ntp"
-    - add runtime check whether the kernel really supports capabilities; do
-      not drop root privileges if not
-    - do not set CAP_SYS_TIME as inheritable
-  * debian/rules:
-    - configure with --enable-linuxcaps
-  * debian/control, packages ntp-simple/ntp-refclock:
-    - add "adduser" dependency
-  * debian/ntp-{simple,refclock}.postinst:
-    - create system user and group "ntp"
-    - chown /var/lib/ntp and /var/log/ntpstats to ntp:ntp to allow ntpd to
-      write into them
-    - restart the server (for the case that ntp-server's postinst ran before
-      ntp-{simple,refclock}'s)
-  * debian/ntp-{simple,refclock}.postrm:
-    - remove user and group ntp on package purge
-
- -- Martin Pitt <martin.pitt@canonical.com>  Thu, 25 Nov 2004 15:23:53 +0100
-
-ntp (1:4.2.0a-11ubuntu1) hoary; urgency=low
-
-  * Resynchronise with Debian.
-
- -- Scott James Remnant <scott@canonical.com>  Wed, 27 Oct 2004 13:54:06 +0100
 
 ntp (1:4.2.0a-11) unstable; urgency=low
 
@@ -1522,19 +841,6 @@ ntp (1:4.2.0a-11) unstable; urgency=low
       Thanks to Martin Michlmayr <tbm@cyrius.com>.
 
  -- Matthias Urlichs <smurf@debian.org>  Tue,  6 Jul 2004 05:26:07 +0200
-
-ntp (1:4.2.0a-10ubuntu2) warty; urgency=low
-
-  * Use ntp.ubuntulinux.org instead of pool.ntp.org
-
- -- Matt Zimmerman <mdz@canonical.com>  Mon, 11 Oct 2004 16:10:27 -0700
-
-ntp (1:4.2.0a-10ubuntu1) warty; urgency=low
-
-  * Added versioned depend on lsb-base
-  * debian/ntpdate.init.d,ntp-server.init.d: pretty initscripts
-
- -- Nathaniel McCallum <npmccallum@canonical.com>  Fri,  3 Sep 2004 15:12:27 -0400
 
 ntp (1:4.2.0a-10) unstable; urgency=medium
 
@@ -1554,6 +860,12 @@ ntp (1:4.2.0a-10) unstable; urgency=medium
     added a note to use 10 on exactly *one* local server.
 
  -- Matthias Urlichs <smurf@debian.org>  Mon, 21 Jun 2004 10:10:51 +0200
+
+ntp (1:4.2.0a+bk20040620-1) experimental; urgency=low
+
+  * Merge current stable Upstream
+
+ -- Matthias Urlichs <smurf@debian.org>  Mon, 21 Jun 2004 10:17:28 +0200
 
 ntp (1:4.2.0a-9) unstable; urgency=low
 
@@ -2016,200 +1328,6 @@ ntp (1:4.0.99g-1) frozen unstable; urgency=low
 
  -- Bdale Garbee <bdale@gag.com>  Sun, 12 Mar 2000 21:34:25 -0700
 
-xntp3 (5.93-3) unstable; urgency=low
-
-  * add dependency on awk, which is used in the postinst, closes 24821
-  * tweak postinst to fix problem with comments in ntp.conf breaking the
-    ntpdate call in init.d, closes 22796
-  * add patch to ntp_io.c to report exceeding max number of bindable interfaces
-    in xntpd, closes 23145
-  * update postinst to be more graceful if no NTP servers are specified, 
-    closes 24268
-  * update postrm to be more robust
-
- -- Bdale Garbee <bdale@gag.com>  Mon,  3 Aug 1998 23:00:24 -0600
-
-xntp3 (5.93-2) frozen unstable; urgency=low
-
-  * fix prerm to gracefully handle the case of a package remove or upgrade
-    when the daemon is not running.  Closes bugs 23565, 22384.
-  * push this into frozen since 23565 was quite rightly flagged as important,
-    and the 5.93 bits have been in unstable and working fine for over a month 
-    with no version-specific bug reports.
-
- -- Bdale Garbee <bdale@gag.com>  Sun,  3 May 1998 21:14:29 -0600
-
-xntp3 (5.93-1) unstable; urgency=low
-
-  * new upstream source
-  * apply 5.93->5.93a patch, even though it's not relevant for Linux, since
-    upstream maintainer wants my diffs for Linux relative to 5.93a.
-
- -- Bdale Garbee <bdale@gag.com>  Sun,  3 May 1998 21:14:29 -0600
-
-xntp3 (5.91-9) frozen unstable; urgency=low
-
-  * fix a conditional in postinst that fails with older versions of 
-    shellutils, closes 21988
-
- -- Bdale Garbee <bdale@gag.com>  Sat,  2 May 1998 01:57:32 -0600
-
-xntp3 (5.91-8) frozen unstable; urgency=medium
-
-  * finish the changes to make /etc/init.d/xntp3 not be a 'conffile', 
-    closes 21117 and 21119.    /o\
-  * clean up a few details in the pre and post scripts, making them a bit
-    more paranoid and better equipped to handle unexpected conditions.
-  * anyone running -7 really wants this version... mark it 'medium' urgency
-
- -- Bdale Garbee <bdale@gag.com>  Tue, 14 Apr 1998 23:24:11 -0600
-
-xntp3 (5.91-7) frozen unstable; urgency=low
-
-  * add a sleep between stop and start in init fragment to avoid race where
-    old daemon hasn't quite died yet, closes 18703
-  * fix a typo in the description, closes 18986
-  * add -9 to gzip call in rules file to close remaining lintian errors
-
- -- Bdale Garbee <bdale@gag.com>  Fri, 10 Apr 1998 00:36:41 -0600
-
-xntp3 (5.91-6) unstable; urgency=low
-
-  * add update-rc.d call to postrm for /etc/init.d/xntp3 (lintian)
-  * implement new required arguments to /etc/init.d/xntp3 (lintian)
-  * fix for missing __ntp_gettime in libc6 from Herbert Xu.  Closes 15362.
-
- -- Bdale Garbee <bdale@gag.com>  Sun, 15 Feb 1998 11:03:16 -0700
-
-xntp3 (5.91-5) unstable; urgency=low
-
-  * change sequence in postinst to quiet update-rc.d.  Closes 17327.
-
- -- Bdale Garbee <bdale@gag.com>  Tue, 27 Jan 1998 14:14:32 -0700
-
-xntp3 (5.91-4) unstable; urgency=low
-
-  * with inputs from Christian Schwarz and others, do a better job of handling
-    the package copyright policies regarding the xntp3-doc package.
-
- -- Bdale Garbee <bdale@gag.com>  Tue, 27 Jan 1998 13:03:32 -0700
-
-xntp3 (5.91-3) unstable; urgency=low
-
-  * make xntp3-doc depend on xntp3 to conform with policy regarding copyright
-    files
-
- -- Bdale Garbee <bdale@gag.com>  Mon, 26 Jan 1998 21:29:29 -0700
-
-xntp3 (5.91-2) unstable; urgency=low
-
-  * clean up rules file using suggestions from Mark Eichin, fixes a
-    small detail when building on other than i386, and moves to latest
-    debhelper calls.  Closes 16213.
-
- -- Bdale Garbee <bdale@gag.com>  Sat,  3 Jan 1998 01:48:23 -0700
-
-xntp3 (5.91-1) unstable; urgency=low
-
-  * new upstream version
-
- -- Bdale Garbee <bdale@gag.com>  Wed, 26 Nov 1997 23:36:22 -0700
-
-xntp3 (5.90-12) unstable; urgency=low
-
-  * update postinst and postrm to improve daemon handling.  Closes bug 15273
-  * modified rules file to indicate need for debhelper if dh_testdir fails 
-
- -- Bdale Garbee <bdale@gag.com>  Wed, 26 Nov 1997 22:47:00 -0700
-
-xntp3 (5.90-11) unstable; urgency=low
-
-  * reconfigure rules file to use debhelper, closes some bugs
-  * various cosmetic tweaks
-
- -- Bdale Garbee <bdale@gag.com>  Fri, 21 Nov 1997 22:16:48 -0700
-
-xntp3 (5.90-10) unstable; urgency=low
-
-  * fix a typo in the init.d usage message, closes bug 14999
-
- -- Bdale Garbee <bdale@gag.com>  Tue, 18 Nov 1997 09:54:27 -0700
-
-xntp3 (5.90-9) unstable; urgency=low
-
-  * don't have -doc package depend on www-browser, closes bug 12996
-
- -- Bdale Garbee <bdale@gag.com>  Sun, 21 Sep 1997 17:18:40 -0600
-
-xntp3 (5.90-8) unstable; urgency=low
-
-  * only do the work in postinst if called to configure, closes bug 12633
-
- -- Bdale Garbee <bdale@gag.com>  Wed, 10 Sep 1997 12:47:13 -0600
-
-xntp3 (5.90-7) unstable; urgency=low
-
-  * libc6
-  * remove log files in postrm if purging, closes bug 12037
-  * remove config file in postrm if purging, closes bug 12110
-  * fix typo in cron.weekly that prevents log file rotation, closes bug 12131
-
- -- Bdale Garbee <bdale@gag.com>  Fri,  5 Sep 1997 00:56:43 -0600
-
-xntp3 (5.90-6) stable unstable; urgency=medium
-
-  * Fix a security problem in the postinst script.  Closes bug 11773.
-  * Explicitly try to stop the daemon before starting it in the postinst,
-    just to make absolutely sure it's not already running.  This may quiet
-    the reports of lingering daemons.
-
- -- Bdale Garbee <bdale@gag.com>  Fri, 1 Aug 1997 23:26:35 -0600
-
-xntp3 (5.90-5) unstable; urgency=low
-
-  * Ensure that needed directories exist.  Closes bugs 10242 and 9979.
-  * Ignore ECONNREFUSED from peers that don't have xntpd running.  Closes
-    bug 8490.
-
- -- Bdale Garbee <bdale@gag.com>  Sat, 31 May 1997 16:34:47 -0600
-
-xntp3 (5.90-4) unstable; urgency=low
-
-  * Switch to using start-stop-daemon in the postinst.  Fixes bug 9271.
-
- -- Bdale Garbee <bdale@gag.com>  Mon, 12 May 1997 22:08:42 -0600
-
-xntp3 (5.90-3) unstable; urgency=low
-
-  * Create /usr/doc/xntp3-doc as a symlink to xntp3.  Closes bug 6081.
-  * Fix typo in glibc support in ntpdate.
-
- -- Bdale Garbee <bdale@gag.com>  Sat, 26 Apr 1997 23:19:15 -0600
-
-xntp3 (5.90-2) unstable; urgency=low
-
-  * Fix problem in packaging of doc package.
-
- -- Bdale Garbee <bdale@gag.com>  Sat, 26 Apr 1997 22:18:15 -0600
-
-xntp3 (5.90-1) unstable; urgency=low
-
-  * New upstream version.
-  * Apply patches for libc6 from Michael Dorman.  Closes bug 9078.
-  * Make directory /var/lib/ntp.  Closes bug 8783.
-
- -- Bdale Garbee <bdale@gag.com>  Sat, 26 Apr 1997 00:40:29 -0600
-
-xntp3 (5.89-1) unstable; urgency=low
-
-  * new upstream version
-  * changing package name from xntp to xntp3 to mirror upstream change
-  * ntp.conf no longer treated as conffile, closes bug 2051
-  * only run cron.weekly fragment if /usr/sbin/xntpd exists, closes bug 5857
-  * substantial improvement to the postinst script, closes several bugs
-
- -- Bdale Garbee <bdale@gag.com>  Wed, 26 Feb 1997 12:58:45 -0700
-
 ntp (4.0.99c-1) frozen unstable; urgency=low
 
   * change the xntp3 dependencies from suggest to depend so they're useful
@@ -2442,6 +1560,200 @@ ntp (4.0.91-1) unstable; urgency=low
 
  -- Bdale Garbee <bdale@gag.com>  Sun, 17 Jan 1999 15:05:18 -0700
 
+xntp3 (5.93-3) unstable; urgency=low
+
+  * add dependency on awk, which is used in the postinst, closes 24821
+  * tweak postinst to fix problem with comments in ntp.conf breaking the
+    ntpdate call in init.d, closes 22796
+  * add patch to ntp_io.c to report exceeding max number of bindable interfaces
+    in xntpd, closes 23145
+  * update postinst to be more graceful if no NTP servers are specified, 
+    closes 24268
+  * update postrm to be more robust
+
+ -- Bdale Garbee <bdale@gag.com>  Mon,  3 Aug 1998 23:00:24 -0600
+
+xntp3 (5.93-2) frozen unstable; urgency=low
+
+  * fix prerm to gracefully handle the case of a package remove or upgrade
+    when the daemon is not running.  Closes bugs 23565, 22384.
+  * push this into frozen since 23565 was quite rightly flagged as important,
+    and the 5.93 bits have been in unstable and working fine for over a month 
+    with no version-specific bug reports.
+
+ -- Bdale Garbee <bdale@gag.com>  Sun,  3 May 1998 21:14:29 -0600
+
+xntp3 (5.93-1) unstable; urgency=low
+
+  * new upstream source
+  * apply 5.93->5.93a patch, even though it's not relevant for Linux, since
+    upstream maintainer wants my diffs for Linux relative to 5.93a.
+
+ -- Bdale Garbee <bdale@gag.com>  Sun,  3 May 1998 21:14:29 -0600
+
+xntp3 (5.91-9) frozen unstable; urgency=low
+
+  * fix a conditional in postinst that fails with older versions of 
+    shellutils, closes 21988
+
+ -- Bdale Garbee <bdale@gag.com>  Sat,  2 May 1998 01:57:32 -0600
+
+xntp3 (5.91-8) frozen unstable; urgency=medium
+
+  * finish the changes to make /etc/init.d/xntp3 not be a 'conffile', 
+    closes 21117 and 21119.    /o\
+  * clean up a few details in the pre and post scripts, making them a bit
+    more paranoid and better equipped to handle unexpected conditions.
+  * anyone running -7 really wants this version... mark it 'medium' urgency
+
+ -- Bdale Garbee <bdale@gag.com>  Tue, 14 Apr 1998 23:24:11 -0600
+
+xntp3 (5.91-7) frozen unstable; urgency=low
+
+  * add a sleep between stop and start in init fragment to avoid race where
+    old daemon hasn't quite died yet, closes 18703
+  * fix a typo in the description, closes 18986
+  * add -9 to gzip call in rules file to close remaining lintian errors
+
+ -- Bdale Garbee <bdale@gag.com>  Fri, 10 Apr 1998 00:36:41 -0600
+
+xntp3 (5.91-6) unstable; urgency=low
+
+  * add update-rc.d call to postrm for /etc/init.d/xntp3 (lintian)
+  * implement new required arguments to /etc/init.d/xntp3 (lintian)
+  * fix for missing __ntp_gettime in libc6 from Herbert Xu.  Closes 15362.
+
+ -- Bdale Garbee <bdale@gag.com>  Sun, 15 Feb 1998 11:03:16 -0700
+
+xntp3 (5.91-5) unstable; urgency=low
+
+  * change sequence in postinst to quiet update-rc.d.  Closes 17327.
+
+ -- Bdale Garbee <bdale@gag.com>  Tue, 27 Jan 1998 14:14:32 -0700
+
+xntp3 (5.91-4) unstable; urgency=low
+
+  * with inputs from Christian Schwarz and others, do a better job of handling
+    the package copyright policies regarding the xntp3-doc package.
+
+ -- Bdale Garbee <bdale@gag.com>  Tue, 27 Jan 1998 13:03:32 -0700
+
+xntp3 (5.91-3) unstable; urgency=low
+
+  * make xntp3-doc depend on xntp3 to conform with policy regarding copyright
+    files
+
+ -- Bdale Garbee <bdale@gag.com>  Mon, 26 Jan 1998 21:29:29 -0700
+
+xntp3 (5.91-2) unstable; urgency=low
+
+  * clean up rules file using suggestions from Mark Eichin, fixes a
+    small detail when building on other than i386, and moves to latest
+    debhelper calls.  Closes 16213.
+
+ -- Bdale Garbee <bdale@gag.com>  Sat,  3 Jan 1998 01:48:23 -0700
+
+xntp3 (5.91-1) unstable; urgency=low
+
+  * new upstream version
+
+ -- Bdale Garbee <bdale@gag.com>  Wed, 26 Nov 1997 23:36:22 -0700
+
+xntp3 (5.90-12) unstable; urgency=low
+
+  * update postinst and postrm to improve daemon handling.  Closes bug 15273
+  * modified rules file to indicate need for debhelper if dh_testdir fails 
+
+ -- Bdale Garbee <bdale@gag.com>  Wed, 26 Nov 1997 22:47:00 -0700
+
+xntp3 (5.90-11) unstable; urgency=low
+
+  * reconfigure rules file to use debhelper, closes some bugs
+  * various cosmetic tweaks
+
+ -- Bdale Garbee <bdale@gag.com>  Fri, 21 Nov 1997 22:16:48 -0700
+
+xntp3 (5.90-10) unstable; urgency=low
+
+  * fix a typo in the init.d usage message, closes bug 14999
+
+ -- Bdale Garbee <bdale@gag.com>  Tue, 18 Nov 1997 09:54:27 -0700
+
+xntp3 (5.90-9) unstable; urgency=low
+
+  * don't have -doc package depend on www-browser, closes bug 12996
+
+ -- Bdale Garbee <bdale@gag.com>  Sun, 21 Sep 1997 17:18:40 -0600
+
+xntp3 (5.90-8) unstable; urgency=low
+
+  * only do the work in postinst if called to configure, closes bug 12633
+
+ -- Bdale Garbee <bdale@gag.com>  Wed, 10 Sep 1997 12:47:13 -0600
+
+xntp3 (5.90-7) unstable; urgency=low
+
+  * libc6
+  * remove log files in postrm if purging, closes bug 12037
+  * remove config file in postrm if purging, closes bug 12110
+  * fix typo in cron.weekly that prevents log file rotation, closes bug 12131
+
+ -- Bdale Garbee <bdale@gag.com>  Fri,  5 Sep 1997 00:56:43 -0600
+
+xntp3 (5.90-6) stable unstable; urgency=medium
+
+  * Fix a security problem in the postinst script.  Closes bug 11773.
+  * Explicitly try to stop the daemon before starting it in the postinst,
+    just to make absolutely sure it's not already running.  This may quiet
+    the reports of lingering daemons.
+
+ -- Bdale Garbee <bdale@gag.com>  Fri, 1 Aug 1997 23:26:35 -0600
+
+xntp3 (5.90-5) unstable; urgency=low
+
+  * Ensure that needed directories exist.  Closes bugs 10242 and 9979.
+  * Ignore ECONNREFUSED from peers that don't have xntpd running.  Closes
+    bug 8490.
+
+ -- Bdale Garbee <bdale@gag.com>  Sat, 31 May 1997 16:34:47 -0600
+
+xntp3 (5.90-4) unstable; urgency=low
+
+  * Switch to using start-stop-daemon in the postinst.  Fixes bug 9271.
+
+ -- Bdale Garbee <bdale@gag.com>  Mon, 12 May 1997 22:08:42 -0600
+
+xntp3 (5.90-3) unstable; urgency=low
+
+  * Create /usr/doc/xntp3-doc as a symlink to xntp3.  Closes bug 6081.
+  * Fix typo in glibc support in ntpdate.
+
+ -- Bdale Garbee <bdale@gag.com>  Sat, 26 Apr 1997 23:19:15 -0600
+
+xntp3 (5.90-2) unstable; urgency=low
+
+  * Fix problem in packaging of doc package.
+
+ -- Bdale Garbee <bdale@gag.com>  Sat, 26 Apr 1997 22:18:15 -0600
+
+xntp3 (5.90-1) unstable; urgency=low
+
+  * New upstream version.
+  * Apply patches for libc6 from Michael Dorman.  Closes bug 9078.
+  * Make directory /var/lib/ntp.  Closes bug 8783.
+
+ -- Bdale Garbee <bdale@gag.com>  Sat, 26 Apr 1997 00:40:29 -0600
+
+xntp3 (5.89-1) unstable; urgency=low
+
+  * new upstream version
+  * changing package name from xntp to xntp3 to mirror upstream change
+  * ntp.conf no longer treated as conffile, closes bug 2051
+  * only run cron.weekly fragment if /usr/sbin/xntpd exists, closes bug 5857
+  * substantial improvement to the postinst script, closes several bugs
+
+ -- Bdale Garbee <bdale@gag.com>  Wed, 26 Feb 1997 12:58:45 -0700
+
 xntp (3.5f-4) frozen unstable; urgency=medium
 
   * copyright for xntp-doc installed in the wrong place.  Fixes bug 5319.
@@ -2484,29 +1796,35 @@ xntp-3.5c-1:
  * Fixed Bug#2129: xntp startup should call ntpdate first
  * Fixed Bug#2250: xntpd log file rotation
  * Fixed Bug#2363: xntpd fails in 1.3.x kernels
+
 xntp-3.4x-2:
  951127
  * Converted to ELF.
  * Fixed bug #1656: moved /etc/ntp.drift to /var/lib/ntp/ntp.drift
  * Fixed bug #1770: xntp works under 1.3.x kernels now.
+
 xntp-3.4x-1:
  950928 Andrew Howell <andrew@it.com.au>
  * Updated to the newest version.
  * Made cronjob quiet. 
  * Postinst script will now run xntpd if you supply a NTP server.
+
 xntp-3.4s-0:
  * Updated to the newest version.
  * Fixed cronjob to delete logs older than 7 days, not just the 7th day. Oops :)
+
 xntp-3.4r-2:
  * Fixed permissions on cronjob
+
 xntp-3.4r-1:
  * Added cronjob to cleanup log files once a week.
  * Added postrm script to remove rcx.d links when purge option given to dpkg.
  * Fixed postinst script to only prompt user for NTP server once.
  * Removed default NTP server.
+
 xntp-3.4r-0:
  * added Debian GNU/Linux package maintenance system files
+
 Local variables:
 mode: debian-changelog
 End:
-

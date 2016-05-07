@@ -379,6 +379,7 @@ struct sock_timeval tvout = { DEFTIMEOUT, 0 };	/* time out for reads */
 struct sock_timeval tvsout = { DEFSTIMEOUT, 0 };/* secondary time out */
 l_fp delay_time;				/* delay time */
 char currenthost[LENHOSTNAME];			/* current host name */
+int currenthostisnum;				/* is prior text from IP? */
 struct sockaddr_in hostaddr = { 0 };		/* host address */
 int showhostnames = 1;				/* show host names by default */
 
@@ -657,11 +658,11 @@ openhost(
 	 * give it an IPv4 address to lookup.
 	 */
 	strcpy(service, "ntp");
-	memset((char *)&hints, 0, sizeof(struct addrinfo));
+	ZERO(hints);
 	hints.ai_family = ai_fam_templ;
 	hints.ai_protocol = IPPROTO_UDP;
 	hints.ai_socktype = SOCK_DGRAM;
-	hints.ai_flags = AI_NUMERICHOST;
+	hints.ai_flags = Z_AI_NUMERICHOST;
 
 	a_info = getaddrinfo(hname, service, &hints, &ai);
 	if (a_info == EAI_NONAME
@@ -687,13 +688,14 @@ openhost(
 		return 0;
 	}
 
-	if (ai->ai_canonname == NULL) {
+	if (!showhostnames || ai->ai_canonname == NULL) {
 		strncpy(temphost, 
 			stoa((sockaddr_u *)ai->ai_addr),
 			LENHOSTNAME);
-
+		currenthostisnum = TRUE;
 	} else {
 		strncpy(temphost, ai->ai_canonname, LENHOSTNAME);
+		currenthostisnum = FALSE;
 	}
 	temphost[LENHOSTNAME-1] = '\0';
 
@@ -1832,34 +1834,42 @@ getnetnum(
 	int af
 	)
 {
-	int sockaddr_len;
 	struct addrinfo hints, *ai = NULL;
 
-	sockaddr_len = SIZEOF_SOCKADDR(af);
-	memset(&hints, 0, sizeof(hints));
+	ZERO(hints);
 	hints.ai_flags = AI_CANONNAME;
 #ifdef AI_ADDRCONFIG
 	hints.ai_flags |= AI_ADDRCONFIG;
 #endif
 	
-	/* decodenetnum works with addresses only */
+	/*
+	 * decodenetnum only works with addresses, but handles syntax
+	 * that getaddrinfo doesn't:  [2001::1]:1234
+	 */
 	if (decodenetnum(hname, num)) {
-		if (fullhost != 0) {
-			getnameinfo((struct sockaddr *)num, sockaddr_len,
-					fullhost, sizeof(fullhost), NULL, 0,
-					NI_NUMERICHOST);
-		}
+		if (fullhost != NULL)
+			getnameinfo(&num->sa, SOCKLEN(num), fullhost,
+				    LENHOSTNAME, NULL, 0, 0);
 		return 1;
 	} else if (getaddrinfo(hname, "ntp", &hints, &ai) == 0) {
-		memmove((char *)num, ai->ai_addr, ai->ai_addrlen);
-		if (ai->ai_canonname != 0)
-		    (void) strcpy(fullhost, ai->ai_canonname);
+		NTP_INSIST(sizeof(*num) >= ai->ai_addrlen);
+		memcpy(num, ai->ai_addr, ai->ai_addrlen);
+		if (fullhost != NULL) {
+			if (ai->ai_canonname != NULL) {
+				strncpy(fullhost, ai->ai_canonname,
+					LENHOSTNAME);
+				fullhost[LENHOSTNAME - 1] = '\0';
+			} else {
+				getnameinfo(&num->sa, SOCKLEN(num),
+					    fullhost, LENHOSTNAME, NULL,
+					    0, 0);
+			}
+		}
 		return 1;
-	} else {
-		(void) fprintf(stderr, "***Can't find host %s\n", hname);
-		return 0;
 	}
-	/*NOTREACHED*/
+	fprintf(stderr, "***Can't find host %s\n", hname);
+
+	return 0;
 }
 
 /*
@@ -1871,12 +1881,39 @@ nntohost(
 	sockaddr_u *netnum
 	)
 {
-	if (!showhostnames)
-		return stoa(netnum);
-	else if (ISREFCLOCKADR(netnum))
-		return refnumtoa(netnum);
-	else
-		return socktohost(netnum);
+	return nntohost_col(netnum, LIB_BUFLENGTH - 1, FALSE);
+}
+
+
+/*
+ * nntohost_col - convert network number to host name in fixed width.
+ *		  This routine enforces the showhostnames setting.
+ *		  When displaying hostnames longer than the width,
+ *		  the first part of the hostname is displayed.  When
+ *		  displaying numeric addresses longer than the width,
+ *		  Such as IPv6 addresses, the caller decides whether
+ *		  the first or last of the numeric address is used.
+ */
+char *
+nntohost_col(
+	sockaddr_u *	addr,
+	size_t		width,
+	int		preserve_lowaddrbits
+	)
+{
+	const char *	out;
+
+	if (!showhostnames) {
+		if (preserve_lowaddrbits)
+			out = trunc_left(stoa(addr), width);
+		else
+			out = trunc_right(stoa(addr), width);
+	} else if (ISREFCLOCKADR(addr)) {
+		out = refnumtoa(addr);
+	} else {
+		out = trunc_right(socktohost(addr), width);
+	}
+	return out;
 }
 
 
@@ -2807,6 +2844,62 @@ asciize(
 {
 	makeascii(length, data, fp);
 	putc('\n', fp);
+}
+
+
+/*
+ * truncate string to fit clipping excess at end.
+ *	"too long"	->	"too l"
+ * Used for hostnames.
+ */
+char *
+trunc_right(
+	const char *	src,
+	size_t		width
+	)
+{
+	size_t	sl;
+	char *	out;
+
+	
+	sl = strlen(src);
+	if (sl > width && LIB_BUFLENGTH - 1 > width && width > 0) {
+		LIB_GETBUF(out);
+		memcpy(out, src, width);
+		out[width] = '\0';
+
+		return out;
+	}
+
+	return src;
+}
+
+
+/*
+ * truncate string to fit by preserving right side and using '_' to hint
+ *	"too long"	->	"_long"
+ * Used for local IPv6 addresses, where low bits differentiate.
+ */
+char *
+trunc_left(
+	const char *	src,
+	size_t		width
+	)
+{
+	size_t	sl;
+	char *	out;
+
+
+	sl = strlen(src);
+	if (sl > width && LIB_BUFLENGTH - 1 > width && width > 1) {
+		LIB_GETBUF(out);
+		out[0] = '_';
+		memcpy(&out[1], &src[sl + 1 - width], width);
+
+		return out;
+	}
+
+	return src;
 }
 
 

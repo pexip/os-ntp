@@ -1,13 +1,13 @@
 /**
  * \file configfile.c
  *
- *  Time-stamp:      "2010-12-16 14:03:06 bkorb"
+ *  Time-stamp:      "2011-04-06 09:31:24 bkorb"
  *
  *  configuration/rc/ini file handling.
  *
  *  This file is part of AutoOpts, a companion to AutoGen.
  *  AutoOpts is free software.
- *  AutoOpts is Copyright (c) 1992-2010 by Bruce Korb - all rights reserved
+ *  AutoOpts is Copyright (c) 1992-2011 by Bruce Korb - all rights reserved
  *
  *  AutoOpts is available under any one of two licenses.  The license
  *  in use must be one of these two and the choice is under the control
@@ -50,6 +50,15 @@ program_directive(tOptions * pOpts, char * pzText);
 
 static char *
 handle_section(tOptions * pOpts, char * pzText);
+
+static int
+parse_xml_encoding(char ** ppz);
+
+static char *
+trim_xml_text(char * pztxt, char const * pznm, tOptionLoadMode mode);
+
+static void
+cook_xml_text(char * pzData);
 
 static char *
 handle_struct(tOptions * pOpts, tOptState * pOS, char * pzText, int dir);
@@ -653,7 +662,7 @@ program_directive(tOptions * pOpts, char * pzText)
     size_t name_len = strlen(pOpts->pzProgName);
 
     memcpy(ttl, ttlfmt, sizeof(ttlfmt) - 1);
-    strcpy(ttl + sizeof(ttlfmt) - 1, zCfgProg);
+    memcpy(ttl + sizeof(ttlfmt) - 1, zCfgProg, ttl_len - (sizeof(ttlfmt) - 1));
 
     do  {
         while (IS_WHITESPACE_CHAR(*++pzText))  ;
@@ -709,6 +718,161 @@ handle_section(tOptions * pOpts, char * pzText)
     return pzText;
 }
 
+/**
+ * parse XML encodings
+ */
+static int
+parse_xml_encoding(char ** ppz)
+{
+#   define XMLTABLE             \
+        _xmlNm_(amp,   '&')     \
+        _xmlNm_(lt,    '<')     \
+        _xmlNm_(gt,    '>')     \
+        _xmlNm_(ff,    '\f')    \
+        _xmlNm_(ht,    '\t')    \
+        _xmlNm_(cr,    '\r')    \
+        _xmlNm_(vt,    '\v')    \
+        _xmlNm_(bel,   '\a')    \
+        _xmlNm_(nl,    '\n')    \
+        _xmlNm_(space, ' ')     \
+        _xmlNm_(quot,  '"')     \
+        _xmlNm_(apos,  '\'')
+
+    static struct {
+        char const * const  nm_str;
+        unsigned short      nm_len;
+        short               nm_val;
+    } const xml_names[] = {
+#   define _xmlNm_(_n, _v) { #_n ";", sizeof(#_n), _v },
+        XMLTABLE
+#   undef  _xmlNm_
+#   undef XMLTABLE
+    };
+
+    static int const nm_ct = sizeof(xml_names) / sizeof(xml_names[0]);
+    int    base = 10;
+
+    char * pz = *ppz;
+
+    if (*pz == '#') {
+        pz++;
+        goto parse_number;
+    }
+
+    if (IS_DEC_DIGIT_CHAR(*pz)) {
+        unsigned long v;
+
+    parse_number:
+        switch (*pz) {
+        case 'x': case 'X':
+            /*
+             * Some forms specify hex with:  &#xNN;
+             */
+            base = 16;
+            pz++;
+            break;
+
+        case '0':
+            /*
+             *  &#0022; is hex and &#22; is decimal.  Cool.
+             *  Ya gotta love it.
+             */
+            if (pz[1] == '0')
+                base = 16;
+            break;
+        }
+
+        v = strtoul(pz, &pz, base);
+        if ((*pz != ';') || (v > 0x7F))
+            return NUL;
+        *ppz = pz + 1;
+        return (int)v;
+    }
+
+    {
+        int ix = 0;
+        do  {
+            if (strncmp(pz, xml_names[ix].nm_str, xml_names[ix].nm_len)
+                == 0) {
+                *ppz = pz + xml_names[ix].nm_len;
+                return xml_names[ix].nm_val;
+            }
+        } while (++ix < nm_ct);
+    }
+
+    return NUL;
+}
+
+/**
+ * Find the end marker for the named section of XML.
+ * Trim that text there, trimming trailing white space for all modes
+ * except for OPTION_LOAD_UNCOOKED.
+ */
+static char *
+trim_xml_text(char * pztxt, char const * pznm, tOptionLoadMode mode)
+{
+    static char const fmt[] = "</%s>";
+    char   z[64], *pz = z;
+    size_t len = strlen(pznm) + sizeof(fmt) - 2 /* for %s */;
+
+    if (len > sizeof(z))
+        pz = AGALOC(len, "scan name");
+
+    sprintf(pz, fmt, pznm);
+    *pztxt = ' ';
+    pztxt = strstr(pztxt, pz);
+    if (pz != z) AGFREE(pz);
+
+    if (pztxt == NULL)
+        return pztxt;
+
+    if (mode != OPTION_LOAD_UNCOOKED)
+        while (IS_WHITESPACE_CHAR(pztxt[-1]))   len++, pztxt--;
+
+    *pztxt = NUL;
+    return pztxt + len - 1 /* for NUL byte */;
+}
+
+/**
+ */
+static void
+cook_xml_text(char * pzData)
+{
+    char * pzs = pzData;
+    char * pzd = pzData;
+    char   bf[4];
+    bf[2] = NUL;
+
+    for (;;) {
+        int ch = ((int)*(pzs++)) & 0xFF;
+        switch (ch) {
+        case NUL:
+            *pzd = NUL;
+            return;
+
+        case '&':
+            *(pzd++) = \
+                ch = parse_xml_encoding(&pzs);
+            if (ch == NUL)
+                return;
+            break;
+
+        case '%':
+            bf[0] = *(pzs++);
+            bf[1] = *(pzs++);
+            if ((bf[0] == NUL) || (bf[1] == NUL)) {
+                *pzd = NUL;
+                return;
+            }
+
+            ch = strtoul(bf, NULL, 16);
+            /* FALLTHROUGH */
+
+        default:
+            *(pzd++) = ch;
+        }
+    }
+}
 
 /**
  *  "pzText" points to a '<' character, followed by an alpha.
@@ -763,28 +927,9 @@ handle_struct(tOptions * pOpts, tOptState * pOS, char * pzText, int dir)
      */
     *pcNulPoint = NUL;
     pzData = ++pzText;
-
-    /*
-     *  Find the end of the option text and NUL terminate it
-     */
-    {
-        char   z[64], *pz = z;
-        size_t len = strlen(pzName) + 4;
-        if (len > sizeof(z))
-            pz = AGALOC(len, "scan name");
-
-        sprintf(pz, "</%s>", pzName);
-        *pzText = ' ';
-        pzText = strstr(pzText, pz);
-        if (pz != z) AGFREE(pz);
-
-        if (pzText == NULL)
-            return pzText;
-
-        *pzText = NUL;
-
-        pzText += len-1;
-    }
+    pzText = trim_xml_text(pzText, pzName, mode);
+    if (pzText == NULL)
+        return pzText;
 
     /*
      *  Rejoin the name and value for parsing by "loadOptionLine()".
@@ -793,34 +938,12 @@ handle_struct(tOptions * pOpts, tOptState * pOS, char * pzText, int dir)
     memset(pcNulPoint, ' ', pzData - pcNulPoint);
 
     /*
-     *  If we are getting a "string" value, the process the XML-ish
-     *  %XX hex characters.
+     *  If we are getting a "string" value that is to be cooked,
+     *  then process the XML-ish &xx; XML-ish and %XX hex characters.
      */
-    if (valu.valType == OPARG_TYPE_STRING) {
-        char * pzSrc = pzData;
-        char * pzDst = pzData;
-        char bf[4];
-        bf[2] = NUL;
-
-        for (;;) {
-            int ch = ((int)*(pzSrc++)) & 0xFF;
-            switch (ch) {
-            case NUL: goto string_fixup_done;
-
-            case '%':
-                bf[0] = *(pzSrc++);
-                bf[1] = *(pzSrc++);
-                if ((bf[0] == NUL) || (bf[1] == NUL))
-                    goto string_fixup_done;
-                ch = strtoul(bf, NULL, 16);
-                /* FALLTHROUGH */
-
-            default:
-                *(pzDst++) = ch;
-            }
-        } string_fixup_done:;
-        *pzDst = NUL;
-    }
+    if (  (valu.valType == OPARG_TYPE_STRING)
+       && (mode == OPTION_LOAD_COOKED))
+        cook_xml_text(pzData);
 
     /*
      *  "pzName" points to what looks like text for one option/configurable.
@@ -903,15 +1026,15 @@ internalFileLoad(tOptions* pOpts)
 
         if (S_ISDIR(StatBuf.st_mode)) {
             size_t len = strlen(zFileName);
-            char* pz;
+            size_t nln = strlen(pOpts->pzRcName) + 1;
+            char * pz  = zFileName + len;
 
-            if (len + 1 + strlen(pOpts->pzRcName) >= sizeof(zFileName))
+            if (len + 1 + nln >= sizeof(zFileName))
                 continue;
 
-            pz = zFileName + len;
             if (pz[-1] != DIRCH)
                 *(pz++) = DIRCH;
-            strcpy(pz, pOpts->pzRcName);
+            memcpy(pz, pOpts->pzRcName, nln);
         }
 
         file_preset(pOpts, zFileName, inc);
@@ -1239,6 +1362,8 @@ validateOptionsStruct(tOptions* pOpts, char const* pzProgram)
        && (  (pOpts->structVersion > OPTIONS_STRUCT_VERSION  )
           || (pOpts->structVersion < OPTIONS_MINIMUM_VERSION )
        )  )  {
+        static char const aover[] =
+            __STR(AO_CURRENT)":"__STR(AO_REVISION)":"__STR(AO_AGE)"\n";
 
         fprintf(stderr, zAO_Err, pzProgram, NUM_TO_VER(pOpts->structVersion));
         if (pOpts->structVersion > OPTIONS_STRUCT_VERSION )
@@ -1246,9 +1371,7 @@ validateOptionsStruct(tOptions* pOpts, char const* pzProgram)
         else
             fputs(zAO_Sml, stderr);
 
-        fputs(ShellAsString(AO_CURRENT)  ":"
-              ShellAsString(AO_REVISION) ":"
-              ShellAsString(AO_AGE)      "\n", stderr);
+        fwrite(aover, sizeof(aover) - 1, 1, stderr);
         return FAILURE;
     }
 
