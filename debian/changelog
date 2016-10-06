@@ -1,3 +1,98 @@
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.11pexip1) pexip; urgency=medium
+
+  * New upstream release
+
+ -- John-Mark Bell <jmb@pexip.com>  Thu, 06 Oct 2016 16:59:12 +0100
+
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.11) precise-security; urgency=medium
+
+  * SECURITY UPDATE: Deja Vu replay attack on authenticated broadcast mode
+    - debian/patches/CVE-2015-7973.patch: improve timestamp verification in
+      include/ntp.h, ntpd/ntp_proto.c.
+    - CVE-2015-7973
+  * SECURITY UPDATE: impersonation between authenticated peers
+    - debian/patches/CVE-2015-7974.patch: check key ID in ntpd/ntp_proto.c.
+    - CVE-2015-7974
+  * SECURITY UPDATE: ntpq saveconfig command allows dangerous characters in
+    filenames
+    - debian/patches/CVE-2015-7976.patch: check filename in
+      ntpd/ntp_control.c.
+    - CVE-2015-7976
+  * SECURITY UPDATE: restrict list denial of service
+    - debian/patches/CVE-2015-7977-7978.patch: improve restrict list
+      processing in ntpd/ntp_request.c.
+    - CVE-2015-7977
+    - CVE-2015-7978
+  * SECURITY UPDATE: authenticated broadcast mode off-path denial of
+    service
+    - debian/patches/CVE-2015-7979.patch: add more checks to
+      ntpd/ntp_proto.c.
+    - CVE-2015-7979
+    - CVE-2016-1547
+  * SECURITY UPDATE: Zero Origin Timestamp Bypass
+    - debian/patches/CVE-2015-8138.patch: check p_org in ntpd/ntp_proto.c.
+    - CVE-2015-8138
+  * SECURITY UPDATE: potential infinite loop in ntpq
+    - debian/patches/CVE-2015-8158.patch: add time checks to ntpdc/ntpdc.c,
+      ntpq/ntpq.c.
+    - CVE-2015-8158
+  * SECURITY UPDATE: NTP statsdir cleanup cronjob insecure (LP: #1528050)
+    - debian/ntp.cron.daily: fix security issues, patch thanks to halfdog!
+    - CVE-2016-0727
+  * SECURITY UPDATE: time spoofing via interleaved symmetric mode
+    - debian/patches/CVE-2016-1548.patch: check for bogus packets in
+      ntpd/ntp_proto.c.
+    - CVE-2016-1548
+  * SECURITY UPDATE: buffer comparison timing attacks
+    - debian/patches/CVE-2016-1550.patch: use CRYPTO_memcmp in
+      libntp/a_md5encrypt.c, sntp/crypto.c.
+    - CVE-2016-1550
+  * SECURITY UPDATE: DoS via duplicate IPs on unconfig directives
+    - debian/patches/CVE-2016-2516.patch: improve logic in
+      ntpd/ntp_request.c.
+    - CVE-2016-2516
+  * SECURITY UPDATE: denial of service via crafted addpeer
+    - debian/patches/CVE-2016-2518.patch: check mode value in
+      ntpd/ntp_request.c.
+    - CVE-2016-2518
+  * SECURITY UPDATE: denial of service via spoofed packets
+    - debian/patches/CVE-2016-4954.patch: discard packet that fails tests
+      in ntpd/ntp_proto.c.
+    - CVE-2016-4954
+  * SECURITY UPDATE: denial of service via spoofed crypto-NAK or incorrect
+    MAC
+    - debian/patches/CVE-2016-4955.patch: fix checks in ntpd/ntp_proto.c.
+    - CVE-2016-4955
+  * SECURITY UPDATE: denial of service via spoofed broadcast packet
+    - debian/patches/CVE-2016-4956.patch: properly handle switch in
+      broadcast interleaved mode in ntpd/ntp_proto.c.
+    - CVE-2016-4956
+
+ -- Marc Deslauriers <marc.deslauriers@ubuntu.com>  Wed, 05 Oct 2016 08:19:03 -0400
+
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.9) precise; urgency=medium
+
+  * ntpd rejects source UDP ports less than 123 as bogus (closes: #691412)
+    - d/p/reject-UDP-ports-less-than-123-as-bogus.patch (LP: #1479652) 
+
+ -- Eric Desrochers <slashd@ubuntu.com>  Mon, 25 Jan 2016 12:28:25 -0500
+
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.8) precise; urgency=medium
+
+  * Use a single lockfile again - instead unlock the file before starting the
+    init script. The lock sho uld be shared - both services can't run at the
+    same time. (LP: #1125726)
+
+ -- Cam Cope <mail@camcope.me>  Tue, 19 Jan 2016 10:20:07 +0000
+
+ntp (1:4.2.6.p3+dfsg-1ubuntu3.7) precise; urgency=medium
+
+  * Fix use-after-free in routing socket code (closes: #795315)
+    - debian/patches/use-after-free-in-routing-socket.patch: 
+      fix logic in ntpd/ntp_io.c (LP: #1481388)
+
+ -- Eric Desrochers <eric.desrochers@canonical.com>  Thu, 29 Oct 2015 09:47:20 -0400
+
 ntp (1:4.2.6.p3+dfsg-1ubuntu3.6pexip1) pexip; urgency=medium
 
   * New upstream release

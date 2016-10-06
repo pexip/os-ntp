@@ -1,0 +1,34 @@
+Description: [Bug 2174] ntpd rejects source UDP ports less than 123 as bogus.
+
+If an NTP client sends a request with a source port less than 123, the packet 
+is silently ignored by ntpd. This is occurring in our environment due to NAT.
+
+Author: davehart@dlh-7551.ad.hartbrothers.com
+Bug: http://bugs.ntp.org/show_bug.cgi?id=2174
+Bug-Ubuntu: https://launchpad.net/bugs/1479652
+Origin: backport, http://bk.ntp.org/ntp-dev/?PAGE=patch&REV=4f977538lZC_iBKp-J-Xg1LFrR9foQ
+
+--- a/ntpd/ntp_proto.c
++++ b/ntpd/ntp_proto.c
+@@ -332,18 +332,15 @@
+ 	 * reveals a clogging attack.
+ 	 */
+ 	sys_received++;
+-	if (SRCPORT(&rbufp->recv_srcadr) < NTP_PORT) {
++	if (0 == SRCPORT(&rbufp->recv_srcadr)) {
+ 		sys_badlength++;
+ 		return;				/* bogus port */
+ 	}
+ 	restrict_mask = restrictions(&rbufp->recv_srcadr);
+-#ifdef DEBUG
+-	if (debug > 1)
+-		printf("receive: at %ld %s<-%s flags %x restrict %03x\n",
++	DPRINTF(2, ("receive: at %ld %s<-%s flags %x restrict %03x\n",
+ 		    current_time, stoa(&rbufp->dstadr->sin),
+ 		    stoa(&rbufp->recv_srcadr),
+-		    rbufp->dstadr->flags, restrict_mask);
+-#endif
++		    rbufp->dstadr->flags, restrict_mask));
+ 	pkt = &rbufp->recv_pkt;
+ 	hisversion = PKT_VERSION(pkt->li_vn_mode);
+ 	hisleap = PKT_LEAP(pkt->li_vn_mode);
