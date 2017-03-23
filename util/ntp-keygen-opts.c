@@ -1,11 +1,11 @@
 /*  
  *  EDIT THIS FILE WITH CAUTION  (ntp-keygen-opts.c)
  *  
- *  It has been AutoGen-ed  January  3, 2011 at 09:18:50 PM by AutoGen 5.11.6pre7
+ *  It has been AutoGen-ed  December 24, 2011 at 06:34:40 PM by AutoGen 5.12
  *  From the definitions    ntp-keygen-opts.def
  *  and the template file   options
  *
- * Generated from AutoOpts 34:0:9 templates.
+ * Generated from AutoOpts 35:0:10 templates.
  *
  *  AutoOpts is a copyrighted work.  This source file is not encumbered
  *  by AutoOpts licensing, but is provided under the licensing terms chosen
@@ -17,32 +17,31 @@
  *
  * This source file is copyrighted and licensed under the following terms:
  *
- * ntp-keygen copyright (c) 1970-2011 David L. Mills and/or others - all rights reserved
- *
- * see html/copyright.html
+ *  see html/copyright.html
+ *  
  */
 
 #include <sys/types.h>
+
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-extern FILE * option_usage_fp;
 #define OPTION_CODE_COMPILE 1
 #include "ntp-keygen-opts.h"
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
+extern FILE * option_usage_fp;
 
 /* TRANSLATORS: choose the translation for option names wisely because you
                 cannot ever change your mind. */
-tSCC zCopyright[] =
-       "ntp-keygen copyright (c) 1970-2011 David L. Mills and/or others, all rights reserved"
-/* extracted from ../include/copyright.def near line 8 */
-;
-tSCC zCopyrightNotice[24] =
-"see html/copyright.html";
+static char const zCopyright[50] =
+"ntp-keygen (ntp) 4.2.6p5\n\
+see html/copyright.html\n";
+static char const zLicenseDescrip[25] =
+"see html/copyright.html\n";
 
 extern tUsageProc optionUsage;
 
@@ -58,12 +57,6 @@ extern tUsageProc optionUsage;
 
 #ifndef NULL
 #  define NULL 0
-#endif
-#ifndef EXIT_SUCCESS
-#  define  EXIT_SUCCESS 0
-#endif
-#ifndef EXIT_FAILURE
-#  define  EXIT_FAILURE 1
 #endif
 
 /*
@@ -402,7 +395,7 @@ static char const zNotLoad_Opts_Pfx[]  = "no";
  *  if multiple copies are allowed.
  */
 static tOptProc
-    doOptModulus, doUsageOpt;
+    doUsageOpt;
 
 /*
  *  #define map the "normal" callout procs to the test ones...
@@ -417,8 +410,8 @@ static tOptProc
 extern tOptProc
     optionBooleanVal,    optionNestedVal,     optionNumericVal,
     optionPagedUsage,    optionPrintVersion,  optionResetOpt,
-    optionStackArg,      optionTimeVal,       optionUnstackArg,
-    optionVersionStderr;
+    optionStackArg,      optionTimeDate,      optionTimeVal,
+    optionUnstackArg,    optionVersionStderr;
 static tOptProc
     doOptSet_Debug_Level, doUsageOpt;
 
@@ -439,7 +432,7 @@ static tOptProc
  *
  *  Define the Ntp_Keygen Option Descriptions.
  */
-static tOptDesc optDesc[ OPTION_CT ] = {
+static tOptDesc optDesc[OPTION_CT] = {
   {  /* entry idx, value */ 0, VALUE_OPT_CERTIFICATE,
      /* equiv idx, value */ 0, VALUE_OPT_CERTIFICATE,
      /* equivalenced to  */ NO_EQUIVALENT,
@@ -727,7 +720,7 @@ static tOptDesc optDesc[ OPTION_CT ] = {
  */
 static char const zPROGNAME[11] = "NTP_KEYGEN";
 static char const zUsageTitle[114] =
-"ntp-keygen (ntp) - Create a NTP host key - Ver. 4.2.6p3\n\
+"ntp-keygen (ntp) - Create a NTP host key - Ver. 4.2.6p5\n\
 USAGE:  %s [ -<flag> [<val>] | --<name>[{=| }<val>] ]...\n";
 static char const zRcName[7] = ".ntprc";
 static char const * const apzHomeList[3] = {
@@ -737,11 +730,11 @@ static char const * const apzHomeList[3] = {
 
 static char const zBugsAddr[34]    = "http://bugs.ntp.org, bugs@ntp.org";
 #define zExplain NULL
-static char const zDetail[98] = "\n\
-If there is no new host key, look for an existing one.\n\
-If one is not found, create it.\n";
+static char const zDetail[99] = "\n\
+If there is no new host key, look for an existing one.  If one is not\n\
+found, create it.\n";
 static char const zFullVersion[] = NTP_KEYGEN_FULL_VERSION;
-/* extracted from /usr/local/gnu/share/autogen/optcode.tpl near line 504 */
+/* extracted from optcode.tlib near line 515 */
 
 #if defined(ENABLE_NLS)
 # define OPTPROC_BASE OPTPROC_TRANSLATE
@@ -758,6 +751,22 @@ static char const zFullVersion[] = NTP_KEYGEN_FULL_VERSION;
 # define PKGDATADIR ""
 #endif
 
+#ifndef  WITH_PACKAGER
+# define ntp_keygen_packager_info NULL
+#else
+static char const ntp_keygen_packager_info[] =
+    "Packaged by " WITH_PACKAGER
+
+# ifdef WITH_PACKAGER_VERSION
+        " ("WITH_PACKAGER_VERSION")"
+# endif
+
+# ifdef WITH_PACKAGER_BUG_REPORTS
+    "\nReport ntp_keygen bugs to " WITH_PACKAGER_BUG_REPORTS
+# endif
+    "\n";
+#endif
+
 tOptions ntp_keygenOptions = {
     OPTIONS_STRUCT_VERSION,
     0, NULL,                    /* original argc + argv    */
@@ -771,12 +780,12 @@ tOptions ntp_keygenOptions = {
     + OPTPROC_MISUSE ),
     0, NULL,                    /* current option index, current option */
     NULL,         NULL,         zPROGNAME,
-    zRcName,      zCopyright,   zCopyrightNotice,
+    zRcName,      zCopyright,   zLicenseDescrip,
     zFullVersion, apzHomeList,  zUsageTitle,
     zExplain,     zDetail,      optDesc,
     zBugsAddr,                  /* address to send bugs to */
     NULL, NULL,                 /* extensions/saved state  */
-    optionUsage,       /* usage procedure */
+    optionUsage, /* usage procedure */
     translate_option_strings,   /* translation procedure */
     /*
      *  Indexes to special options
@@ -789,19 +798,17 @@ tOptions ntp_keygenOptions = {
     23 /* full option count */, 18 /* user option count */,
     ntp_keygen_full_usage, ntp_keygen_short_usage,
     NULL, NULL,
-    PKGDATADIR
+    PKGDATADIR, ntp_keygen_packager_info
 };
 
 /*
  *  Create the static procedure(s) declared above.
  */
 static void
-doUsageOpt(
-    tOptions*   pOptions,
-    tOptDesc*   pOptDesc )
+doUsageOpt(tOptions * pOptions, tOptDesc * pOptDesc)
 {
     (void)pOptions;
-    USAGE(EXIT_SUCCESS);
+    USAGE(NTP_KEYGEN_EXIT_SUCCESS);
 }
 
 #if ! defined(TEST_NTP_KEYGEN_OPTS)
@@ -813,7 +820,7 @@ doUsageOpt(
 static void
 doOptSet_Debug_Level(tOptions* pOptions, tOptDesc* pOptDesc)
 {
-    /* extracted from ../include/debug-opt.def, line 27 */
+    /* extracted from debug-opt.def, line 27 */
 DESC(DEBUG_LEVEL).optOccCt = atoi( pOptDesc->pzLastArg );
 }
 #endif /* defined(TEST_NTP_KEYGEN_OPTS) */
@@ -828,57 +835,40 @@ doOptModulus(tOptions* pOptions, tOptDesc* pOptDesc)
 {
     static const struct {long const rmin, rmax;} rng[1] = {
         { 256, 2048 } };
-    long val;
     int  ix;
-    char * pzEnd;
 
     if (pOptions <= OPTPROC_EMIT_LIMIT)
         goto emit_ranges;
+    optionNumericVal(pOptions, pOptDesc);
 
-    errno = 0;
-    val = strtol(pOptDesc->optArg.argString, &pzEnd, 0);
-    if ((pOptDesc->optArg.argString == pzEnd) || (errno != 0))
-        goto bad_value;
-
-    if (*pzEnd != '\0')
-        goto bad_value;
     for (ix = 0; ix < 1; ix++) {
-        if (val < rng[ix].rmin)
+        if (pOptDesc->optArg.argInt < rng[ix].rmin)
             continue;  /* ranges need not be ordered. */
-        if (val == rng[ix].rmin)
-            goto valid_return;
+        if (pOptDesc->optArg.argInt == rng[ix].rmin)
+            return;
         if (rng[ix].rmax == LONG_MIN)
             continue;
-        if (val <= rng[ix].rmax)
-            goto valid_return;
+        if (pOptDesc->optArg.argInt <= rng[ix].rmax)
+            return;
     }
-
-  bad_value:
 
     option_usage_fp = stderr;
 
-  emit_ranges:
-    optionShowRange(pOptions, pOptDesc, (void *)rng, 1);
-    return;
+emit_ranges:
 
-  valid_return:
-    if ((pOptDesc->fOptState & OPTST_ALLOC_ARG) != 0) {
-        free((void *)pOptDesc->optArg.argString);
-        pOptDesc->fOptState &= ~OPTST_ALLOC_ARG;
-    }
-    pOptDesc->optArg.argInt = val;
+    optionShowRange(pOptions, pOptDesc, (void *)rng, 1);
 }
 #endif /* defined OPENSSL */
-/* extracted from /usr/local/gnu/share/autogen/optmain.tpl near line 107 */
+/* extracted from optmain.tlib near line 128 */
 
 #if defined(TEST_NTP_KEYGEN_OPTS) /* TEST MAIN PROCEDURE: */
 
 extern void optionPutShell(tOptions*);
 
 int
-main(int argc, char** argv)
+main(int argc, char ** argv)
 {
-    int res = EXIT_SUCCESS;
+    int res = NTP_KEYGEN_EXIT_SUCCESS;
     (void)optionProcess(&ntp_keygenOptions, argc, argv);
     optionPutShell(&ntp_keygenOptions);
     res = ferror(stdout);
@@ -887,7 +877,7 @@ main(int argc, char** argv)
     return res;
 }
 #endif  /* defined TEST_NTP_KEYGEN_OPTS */
-/* extracted from /usr/local/gnu/share/autogen/optcode.tpl near line 641 */
+/* extracted from optcode.tlib near line 666 */
 
 #if ENABLE_NLS
 #include <stdio.h>
@@ -911,14 +901,13 @@ AO_gettext(char const* pz)
     pzRes = strdup(pzRes);
     if (pzRes == NULL) {
         fputs(_("No memory for duping translated strings\n"), stderr);
-        exit(EXIT_FAILURE);
+        exit(NTP_KEYGEN_EXIT_FAILURE);
     }
     return pzRes;
 }
 
-static void coerce_it(void** s) { *s = AO_gettext(*s); }
-#define COERSION(_f) \
-  coerce_it((void*)&(ntp_keygenOptions._f))
+static void coerce_it(void** s) { *s = AO_gettext(*s);
+}
 
 /*
  *  This invokes the translation code (e.g. gettext(3)).
@@ -926,42 +915,44 @@ static void coerce_it(void** s) { *s = AO_gettext(*s); }
 static void
 translate_option_strings(void)
 {
+    tOptions * const pOpt = &ntp_keygenOptions;
+
     /*
      *  Guard against re-translation.  It won't work.  The strings will have
      *  been changed by the first pass through this code.  One shot only.
      */
     if (option_usage_text.field_ct != 0) {
-
         /*
          *  Do the translations.  The first pointer follows the field count
          *  field.  The field count field is the size of a pointer.
          */
-        tOptDesc* pOD = ntp_keygenOptions.pOptDesc;
-        char**    ppz = (char**)(void*)&(option_usage_text);
-        int       ix  = option_usage_text.field_ct;
+        tOptDesc * pOD = pOpt->pOptDesc;
+        char **    ppz = (char**)(void*)&(option_usage_text);
+        int        ix  = option_usage_text.field_ct;
 
         do {
             ppz++;
             *ppz = AO_gettext(*ppz);
         } while (--ix > 0);
 
-        COERSION(pzCopyright);
-        COERSION(pzCopyNotice);
-        COERSION(pzFullVersion);
-        COERSION(pzUsageTitle);
-        COERSION(pzExplain);
-        COERSION(pzDetail);
+        coerce_it((void*)&(pOpt->pzCopyright));
+        coerce_it((void*)&(pOpt->pzCopyNotice));
+        coerce_it((void*)&(pOpt->pzFullVersion));
+        coerce_it((void*)&(pOpt->pzUsageTitle));
+        coerce_it((void*)&(pOpt->pzExplain));
+        coerce_it((void*)&(pOpt->pzDetail));
+        coerce_it((void*)&(pOpt->pzPackager));
         option_usage_text.field_ct = 0;
 
-        for (ix = ntp_keygenOptions.optCt; ix > 0; ix--, pOD++)
+        for (ix = pOpt->optCt; ix > 0; ix--, pOD++)
             coerce_it((void*)&(pOD->pzText));
     }
 
-    if ((ntp_keygenOptions.fOptSet & OPTPROC_NXLAT_OPT_CFG) == 0) {
-        tOptDesc* pOD = ntp_keygenOptions.pOptDesc;
-        int       ix;
+    if ((pOpt->fOptSet & OPTPROC_NXLAT_OPT_CFG) == 0) {
+        tOptDesc * pOD = pOpt->pOptDesc;
+        int        ix;
 
-        for (ix = ntp_keygenOptions.optCt; ix > 0; ix--, pOD++) {
+        for (ix = pOpt->optCt; ix > 0; ix--, pOD++) {
             coerce_it((void*)&(pOD->pz_Name));
             coerce_it((void*)&(pOD->pz_DisableName));
             coerce_it((void*)&(pOD->pz_DisablePfx));

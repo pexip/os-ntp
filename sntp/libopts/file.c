@@ -6,7 +6,7 @@
  *
  *  This file is part of AutoOpts, a companion to AutoGen.
  *  AutoOpts is free software.
- *  AutoOpts is Copyright (c) 1992-2010 by Bruce Korb - all rights reserved
+ *  AutoOpts is Copyright (c) 1992-2011 by Bruce Korb - all rights reserved
  *
  *  AutoOpts is available under any one of two licenses.  The license
  *  in use must be one of these two and the choice is under the control
@@ -89,8 +89,10 @@ optionFileCheck(tOptions* pOpts, tOptDesc* pOD,
         case FTYPE_MODE_MAY_EXIST:
         {
             char * p = strrchr(pOD->optArg.argString, DIRCH);
-            if (p != NULL)
-                *p = NUL;
+            if (p == NULL)
+                break; /* assume "." always exists. */
+
+            *p = NUL;
             if (  (stat(pOD->optArg.argString, &sb) != 0)
                || (errno = EINVAL, ! S_ISDIR(sb.st_mode)) ){
                 fprintf(stderr, zFSOptError, errno, strerror(errno),

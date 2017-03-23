@@ -1,7 +1,7 @@
 /* -*- buffer-read-only: t -*- vi: set ro:
  *
  * Prototypes for autoopts
- * Generated Sat Dec 18 12:13:39 PST 2010
+ * Generated Fri Apr 29 15:44:06 PDT 2011
  */
 #ifndef AUTOOPTS_PROTO_H_GUARD
 #define AUTOOPTS_PROTO_H_GUARD 1
@@ -20,9 +20,6 @@ ao_malloc(size_t sz);
 
 LOCAL void *
 ao_realloc(void *p, size_t sz);
-
-LOCAL void
-ao_free(void *p);
 
 LOCAL char *
 ao_strdup(char const *str);

@@ -1,11 +1,11 @@
 /*  
  *  EDIT THIS FILE WITH CAUTION  (ntpq-opts.c)
  *  
- *  It has been AutoGen-ed  January  3, 2011 at 09:18:23 PM by AutoGen 5.11.6pre7
+ *  It has been AutoGen-ed  December 24, 2011 at 06:34:27 PM by AutoGen 5.12
  *  From the definitions    ntpq-opts.def
  *  and the template file   options
  *
- * Generated from AutoOpts 34:0:9 templates.
+ * Generated from AutoOpts 35:0:10 templates.
  *
  *  AutoOpts is a copyrighted work.  This source file is not encumbered
  *  by AutoOpts licensing, but is provided under the licensing terms chosen
@@ -17,12 +17,12 @@
  *
  * This source file is copyrighted and licensed under the following terms:
  *
- * ntpq copyright (c) 1970-2011 David L. Mills and/or others - all rights reserved
- *
- * see html/copyright.html
+ *  see html/copyright.html
+ *  
  */
 
 #include <sys/types.h>
+
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,15 +33,15 @@
 #ifdef  __cplusplus
 extern "C" {
 #endif
+extern FILE * option_usage_fp;
 
 /* TRANSLATORS: choose the translation for option names wisely because you
                 cannot ever change your mind. */
-tSCC zCopyright[] =
-       "ntpq copyright (c) 1970-2011 David L. Mills and/or others, all rights reserved"
-/* extracted from ../include/copyright.def near line 8 */
-;
-tSCC zCopyrightNotice[24] =
-"see html/copyright.html";
+static char const zCopyright[38] =
+"ntpq 4.2.6p5\n\
+see html/copyright.html\n";
+static char const zLicenseDescrip[25] =
+"see html/copyright.html\n";
 
 extern tUsageProc optionUsage;
 
@@ -56,12 +56,6 @@ extern tUsageProc optionUsage;
 
 #ifndef NULL
 #  define NULL 0
-#endif
-#ifndef EXIT_SUCCESS
-#  define  EXIT_SUCCESS 0
-#endif
-#ifndef EXIT_FAILURE
-#  define  EXIT_FAILURE 1
 #endif
 
 /*
@@ -222,8 +216,8 @@ static tOptProc
 extern tOptProc
     ntpq_custom_opt_handler, optionBooleanVal,        optionNestedVal,
     optionNumericVal,        optionPagedUsage,        optionPrintVersion,
-    optionResetOpt,          optionStackArg,          optionTimeVal,
-    optionUnstackArg,        optionVersionStderr;
+    optionResetOpt,          optionStackArg,          optionTimeDate,
+    optionTimeVal,           optionUnstackArg,        optionVersionStderr;
 static tOptProc
     doOptSet_Debug_Level, doUsageOpt;
 
@@ -248,7 +242,7 @@ static tOptProc
  *
  *  Define the Ntpq Option Descriptions.
  */
-static tOptDesc optDesc[ OPTION_CT ] = {
+static tOptDesc optDesc[OPTION_CT] = {
   {  /* entry idx, value */ 0, VALUE_OPT_IPV4,
      /* equiv idx, value */ 0, VALUE_OPT_IPV4,
      /* equivalenced to  */ NO_EQUIVALENT,
@@ -428,7 +422,7 @@ static tOptDesc optDesc[ OPTION_CT ] = {
  */
 static char const zPROGNAME[5] = "NTPQ";
 static char const zUsageTitle[119] =
-"ntpq - standard NTP query program - Ver. 4.2.6p3\n\
+"ntpq - standard NTP query program - Ver. 4.2.6p5\n\
 USAGE:  %s [ -<flag> [<val>] | --<name>[{=| }<val>] ]... [ host ...]\n";
 static char const zRcName[7] = ".ntprc";
 static char const * const apzHomeList[3] = {
@@ -438,17 +432,15 @@ static char const * const apzHomeList[3] = {
 
 static char const zBugsAddr[34]    = "http://bugs.ntp.org, bugs@ntp.org";
 #define zExplain NULL
-static char const zDetail[389] = "\n\
-The\n\
-[= prog-name =]\n\
-utility program is used to query NTP servers which\n\
-implement the standard NTP mode 6 control message formats defined\n\
-in Appendix B of the NTPv3 specification RFC1305, requesting\n\
-information about current state and/or changes in that state.\n\
-The same formats are used in NTPv4, although some of the\n\
-variables have changed and new ones added.\n";
+static char const zDetail[384] = "\n\
+The [= prog-name =] utility program is used to query NTP servers which\n\
+implement the standard NTP mode 6 control message formats defined in\n\
+Appendix B of the NTPv3 specification RFC1305, requesting information\n\
+about current state and/or changes in that state.  The same formats are\n\
+used in NTPv4, although some of the variables have changed and new ones\n\
+added.\n";
 static char const zFullVersion[] = NTPQ_FULL_VERSION;
-/* extracted from /usr/local/gnu/share/autogen/optcode.tpl near line 504 */
+/* extracted from optcode.tlib near line 515 */
 
 #if defined(ENABLE_NLS)
 # define OPTPROC_BASE OPTPROC_TRANSLATE
@@ -465,6 +457,22 @@ static char const zFullVersion[] = NTPQ_FULL_VERSION;
 # define PKGDATADIR ""
 #endif
 
+#ifndef  WITH_PACKAGER
+# define ntpq_packager_info NULL
+#else
+static char const ntpq_packager_info[] =
+    "Packaged by " WITH_PACKAGER
+
+# ifdef WITH_PACKAGER_VERSION
+        " ("WITH_PACKAGER_VERSION")"
+# endif
+
+# ifdef WITH_PACKAGER_BUG_REPORTS
+    "\nReport ntpq bugs to " WITH_PACKAGER_BUG_REPORTS
+# endif
+    "\n";
+#endif
+
 tOptions ntpqOptions = {
     OPTIONS_STRUCT_VERSION,
     0, NULL,                    /* original argc + argv    */
@@ -477,12 +485,12 @@ tOptions ntpqOptions = {
     + OPTPROC_MISUSE ),
     0, NULL,                    /* current option index, current option */
     NULL,         NULL,         zPROGNAME,
-    zRcName,      zCopyright,   zCopyrightNotice,
+    zRcName,      zCopyright,   zLicenseDescrip,
     zFullVersion, apzHomeList,  zUsageTitle,
     zExplain,     zDetail,      optDesc,
     zBugsAddr,                  /* address to send bugs to */
     NULL, NULL,                 /* extensions/saved state  */
-    optionUsage,       /* usage procedure */
+    optionUsage, /* usage procedure */
     translate_option_strings,   /* translation procedure */
     /*
      *  Indexes to special options
@@ -495,19 +503,17 @@ tOptions ntpqOptions = {
     14 /* full option count */, 9 /* user option count */,
     ntpq_full_usage, ntpq_short_usage,
     NULL, NULL,
-    PKGDATADIR
+    PKGDATADIR, ntpq_packager_info
 };
 
 /*
  *  Create the static procedure(s) declared above.
  */
 static void
-doUsageOpt(
-    tOptions*   pOptions,
-    tOptDesc*   pOptDesc )
+doUsageOpt(tOptions * pOptions, tOptDesc * pOptDesc)
 {
     (void)pOptions;
-    USAGE(EXIT_SUCCESS);
+    USAGE(NTPQ_EXIT_SUCCESS);
 }
 
 #if ! defined(TEST_NTPQ_OPTS)
@@ -519,20 +525,20 @@ doUsageOpt(
 static void
 doOptSet_Debug_Level(tOptions* pOptions, tOptDesc* pOptDesc)
 {
-    /* extracted from ../include/debug-opt.def, line 27 */
+    /* extracted from debug-opt.def, line 27 */
 DESC(DEBUG_LEVEL).optOccCt = atoi( pOptDesc->pzLastArg );
 }
 #endif /* defined(TEST_NTPQ_OPTS) */
-/* extracted from /usr/local/gnu/share/autogen/optmain.tpl near line 107 */
+/* extracted from optmain.tlib near line 128 */
 
 #if defined(TEST_NTPQ_OPTS) /* TEST MAIN PROCEDURE: */
 
 extern void optionPutShell(tOptions*);
 
 int
-main(int argc, char** argv)
+main(int argc, char ** argv)
 {
-    int res = EXIT_SUCCESS;
+    int res = NTPQ_EXIT_SUCCESS;
     (void)optionProcess(&ntpqOptions, argc, argv);
     optionPutShell(&ntpqOptions);
     res = ferror(stdout);
@@ -541,7 +547,7 @@ main(int argc, char** argv)
     return res;
 }
 #endif  /* defined TEST_NTPQ_OPTS */
-/* extracted from /usr/local/gnu/share/autogen/optcode.tpl near line 641 */
+/* extracted from optcode.tlib near line 666 */
 
 #if ENABLE_NLS
 #include <stdio.h>
@@ -565,14 +571,13 @@ AO_gettext(char const* pz)
     pzRes = strdup(pzRes);
     if (pzRes == NULL) {
         fputs(_("No memory for duping translated strings\n"), stderr);
-        exit(EXIT_FAILURE);
+        exit(NTPQ_EXIT_FAILURE);
     }
     return pzRes;
 }
 
-static void coerce_it(void** s) { *s = AO_gettext(*s); }
-#define COERSION(_f) \
-  coerce_it((void*)&(ntpqOptions._f))
+static void coerce_it(void** s) { *s = AO_gettext(*s);
+}
 
 /*
  *  This invokes the translation code (e.g. gettext(3)).
@@ -580,42 +585,44 @@ static void coerce_it(void** s) { *s = AO_gettext(*s); }
 static void
 translate_option_strings(void)
 {
+    tOptions * const pOpt = &ntpqOptions;
+
     /*
      *  Guard against re-translation.  It won't work.  The strings will have
      *  been changed by the first pass through this code.  One shot only.
      */
     if (option_usage_text.field_ct != 0) {
-
         /*
          *  Do the translations.  The first pointer follows the field count
          *  field.  The field count field is the size of a pointer.
          */
-        tOptDesc* pOD = ntpqOptions.pOptDesc;
-        char**    ppz = (char**)(void*)&(option_usage_text);
-        int       ix  = option_usage_text.field_ct;
+        tOptDesc * pOD = pOpt->pOptDesc;
+        char **    ppz = (char**)(void*)&(option_usage_text);
+        int        ix  = option_usage_text.field_ct;
 
         do {
             ppz++;
             *ppz = AO_gettext(*ppz);
         } while (--ix > 0);
 
-        COERSION(pzCopyright);
-        COERSION(pzCopyNotice);
-        COERSION(pzFullVersion);
-        COERSION(pzUsageTitle);
-        COERSION(pzExplain);
-        COERSION(pzDetail);
+        coerce_it((void*)&(pOpt->pzCopyright));
+        coerce_it((void*)&(pOpt->pzCopyNotice));
+        coerce_it((void*)&(pOpt->pzFullVersion));
+        coerce_it((void*)&(pOpt->pzUsageTitle));
+        coerce_it((void*)&(pOpt->pzExplain));
+        coerce_it((void*)&(pOpt->pzDetail));
+        coerce_it((void*)&(pOpt->pzPackager));
         option_usage_text.field_ct = 0;
 
-        for (ix = ntpqOptions.optCt; ix > 0; ix--, pOD++)
+        for (ix = pOpt->optCt; ix > 0; ix--, pOD++)
             coerce_it((void*)&(pOD->pzText));
     }
 
-    if ((ntpqOptions.fOptSet & OPTPROC_NXLAT_OPT_CFG) == 0) {
-        tOptDesc* pOD = ntpqOptions.pOptDesc;
-        int       ix;
+    if ((pOpt->fOptSet & OPTPROC_NXLAT_OPT_CFG) == 0) {
+        tOptDesc * pOD = pOpt->pOptDesc;
+        int        ix;
 
-        for (ix = ntpqOptions.optCt; ix > 0; ix--, pOD++) {
+        for (ix = pOpt->optCt; ix > 0; ix--, pOD++) {
             coerce_it((void*)&(pOD->pz_Name));
             coerce_it((void*)&(pOD->pz_DisableName));
             coerce_it((void*)&(pOD->pz_DisablePfx));
