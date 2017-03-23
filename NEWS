@@ -1,3 +1,107 @@
+--- 
+NTP 4.2.6p5 (Harlan Stenn <stenn@ntp.org>, 2011/12/24) 
+ 
+Focus: Bug fixes
+ 
+Severity: Medium 
+ 
+This is a recommended upgrade. 
+
+This release updates sys_rootdisp and sys_jitter calculations to match the
+RFC specification, fixes a potential IPv6 address matching error for the
+"nic" and "interface" configuration directives, suppresses the creation of
+extraneous ephemeral associations for certain broadcastclient and
+multicastclient configurations, cleans up some ntpq display issues, and
+includes improvements to orphan mode, minor bugs fixes and code clean-ups.
+
+New features / changes in this release:
+
+ntpd
+
+ * Updated "nic" and "interface" IPv6 address handling to prevent 
+   mismatches with localhost [::1] and wildcard [::] which resulted from
+   using the address/prefix format (e.g. fe80::/64)
+ * Fix orphan mode stratum incorrectly counting to infinity
+ * Orphan parent selection metric updated to includes missing ntohl()
+ * Non-printable stratum 16 refid no longer sent to ntp
+ * Duplicate ephemeral associations suppressed for broadcastclient and
+   multicastclient without broadcastdelay
+ * Exclude undetermined sys_refid from use in loopback TEST12
+ * Exclude MODE_SERVER responses from KoD rate limiting
+ * Include root delay in clock_update() sys_rootdisp calculations
+ * get_systime() updated to exclude sys_residual offset (which only
+   affected bits "below" sys_tick, the precision threshold)
+ * sys.peer jitter weighting corrected in sys_jitter calculation
+
+ntpq
+
+ * -n option extended to include the billboard "server" column
+ * IPv6 addresses in the local column truncated to prevent overruns
+
+--- 
+NTP 4.2.6p4 (Harlan Stenn <stenn@ntp.org>, 2011/09/22) 
+ 
+Focus: Bug fixes and portability improvements 
+ 
+Severity: Medium 
+ 
+This is a recommended upgrade. 
+ 
+This release includes build infrastructure updates, code 
+clean-ups, minor bug fixes, fixes for a number of minor 
+ref-clock issues, and documentation revisions. 
+ 
+Portability improvements affect AIX, HP-UX, Linux, OS X and 64-bit time_t. 
+ 
+New features / changes in this release: 
+ 
+Build system 
+ 
+* Fix checking for struct rtattr 
+* Update config.guess and config.sub for AIX 
+* Upgrade required version of autogen and libopts for building 
+  from our source code repository 
+ 
+ntpd 
+ 
+* Back-ported several fixes for Coverity warnings from ntp-dev 
+* Fix a rare boundary condition in UNLINK_EXPR_SLIST() 
+* Allow "logconfig =allall" configuration directive 
+* Bind tentative IPv6 addresses on Linux 
+* Correct WWVB/Spectracom driver to timestamp CR instead of LF 
+* Improved tally bit handling to prevent incorrect ntpq peer status reports 
+* Exclude the Undisciplined Local Clock and ACTS drivers from the initial 
+  candidate list unless they are designated a "prefer peer" 
+* Prevent the consideration of Undisciplined Local Clock or ACTS drivers for 
+  selection during the 'tos orphanwait' period 
+* Prefer an Orphan Mode Parent over the Undisciplined Local Clock or ACTS 
+  drivers 
+* Improved support of the Parse Refclock trusttime flag in Meinberg mode 
+* Back-port utility routines from ntp-dev: mprintf(), emalloc_zero() 
+* Added the NTPD_TICKADJ_PPM environment variable for specifying baseline 
+  clock slew on Microsoft Windows 
+* Code cleanup in libntpq 
+ 
+ntpdc 
+ 
+* Fix timerstats reporting 
+ 
+ntpdate 
+ 
+* Reduce time required to set clock 
+* Allow a timeout greater than 2 seconds 
+ 
+sntp 
+ 
+* Backward incompatible command-line option change: 
+  -l/--filelog changed -l/--logfile (to be consistent with ntpd) 
+ 
+Documentation 
+ 
+* Update html2man. Fix some tags in the .html files 
+* Distribute ntp-wait.html 
+
+---
 NTP 4.2.6p3 (Harlan Stenn <stenn@ntp.org>, 2011/01/03)
 
 Focus: Bug fixes and portability improvements
@@ -36,7 +140,7 @@ ntpd
 * NMEA refclock improvements.
 * Oncore debug message cleanup.
 * Palisade refclock now builds under Linux.
-* Give RAWDCF more baudrates.
+* Give RAWDCF more baud rates.
 * Support Truetime Satellite clocks under Windows.
 * Support Arbiter 1093C Satellite clocks under Windows.
 * Make sure that the "filegen" configuration command defaults to "enable".
@@ -163,7 +267,7 @@ THIS IS A STRONGLY RECOMMENDED UPGRADE.
 ---
 ntpd now syncs to refclocks right away.
 
-Backward-Incomatible changes:
+Backward-Incompatible changes:
 
 ntpd no longer accepts '-v name' or '-V name' to define internal variables.
 Use '--var name' or '--dvar name' instead. (Bug 817)

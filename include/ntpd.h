@@ -2,10 +2,9 @@
  * ntpd.h - Prototypes for ntpd.
  */
 
-#include "ntp_syslog.h"
-#include "ntp_fp.h"
 #include "ntp.h"
 #include "ntp_debug.h"
+#include "ntp_syslog.h"
 #include "ntp_select.h"
 #include "ntp_malloc.h"
 #include "ntp_refclock.h"
@@ -108,6 +107,8 @@ extern	void	block_io_and_alarm	(void);
 #define UNBLOCK_IO_AND_ALARM()
 #define BLOCK_IO_AND_ALARM()
 #endif
+#define		latoa(pif)	localaddrtoa(pif)
+extern const char * localaddrtoa(endpt *);
 
 /* ntp_loopfilter.c */
 extern	void	init_loopfilter(void);
@@ -127,7 +128,7 @@ extern  void    ntp_monclearinterface (struct interface *interface);
 
 /* ntp_peer.c */
 extern	void	init_peer	(void);
-extern	struct peer *findexistingpeer (sockaddr_u *, struct peer *, int);
+extern	struct peer *findexistingpeer (sockaddr_u *, struct peer *, int, u_char);
 extern	struct peer *findpeer	(struct recvbuf *, int, int *);
 extern	struct peer *findpeerbyassoc (u_int);
 extern  void	set_peerdstadr	(struct peer *peer, struct interface *interface);

@@ -1,6 +1,3 @@
 usr/sbin
 var/lib/ntp
 var/log/ntpstats
-etc/apparmor.d/force-complain
-etc/apparmor.d/tunables
-usr/share/apport/package-hooks

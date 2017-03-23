@@ -451,6 +451,9 @@
 /* Do we have Linux capabilities? */
 #undef HAVE_LINUX_CAPABILITIES
 
+/* Define to 1 if you have the <linux/if_addr.h> header file. */
+#undef HAVE_LINUX_IF_ADDR_H
+
 /* Define to 1 if the system has the type `long'. */
 #undef HAVE_LONG
 
@@ -1105,6 +1108,10 @@
 /* Should we align with the NIST lockclock scheme? */
 #undef LOCKCLOCK
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
 /* Does the target support multicast IP? */
 #undef MCAST
 
@@ -1200,6 +1207,9 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* define to a working POSIX compliant shell */
+#undef POSIX_SHELL
 
 /* Do we have the ppsclock streams module? */
 #undef PPS
@@ -1361,6 +1371,9 @@ typedef unsigned int	uintptr_t;
 
 /* Define to 1 if you need to in order for `stat' and other things to work. */
 #undef _POSIX_SOURCE
+
+/* Are we _special_? */
+#undef __APPLE_USE_RFC_3542
 
 /* Define to 1 if type `char' is unsigned and you are not using gcc.  */
 #ifndef __CHAR_UNSIGNED__

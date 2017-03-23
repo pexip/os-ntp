@@ -516,6 +516,15 @@ typedef union mpinfou {		/* For lint */
     ;;
 esac
 
+case "$host" in
+ *-linux*)
+    AC_CHECK_HEADERS([linux/if_addr.h], [], [], [
+	#ifdef HAVE_SYS_SOCKET_H
+	# include <sys/socket.h>
+	#endif
+    ])
+esac
+
 AC_CHECK_HEADERS([net/if.h], [], [],
 [#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -942,27 +951,28 @@ AC_CACHE_CHECK(
 
 AC_CACHE_CHECK(
     [for struct rtattr],
-    [ntp_cv_struct_rtattr],
+    [ntp_cv_rtattr],
     [AC_COMPILE_IFELSE(
 	[AC_LANG_PROGRAM(
 	    [[
 		#include <stddef.h>
+		#include <sys/socket.h>
 		#include <linux/rtnetlink.h>
 	    ]],
 	    [[
 		struct rtattr p;
 	    ]]
 	)],
-	[ntp_cv_struct_rtattr=yes],
-	[ntp_cv_struct_rtattr=no]
+	[ntp_cv_rtattr=yes],
+	[ntp_cv_rtattr=no]
     )]
 )
 
-case "$ntp_cv_struct_rt_msghdr$ntp_cv_struct_rtattr" in
+case "$ntp_cv_struct_rt_msghdr$ntp_cv_rtattr" in
  *yes*)
     AC_DEFINE([HAS_ROUTING_SOCKET], [1],
 	[Do we have a routing socket (rt_msghdr or rtattr)?])
-    case "$ntp_cv_struct_rtattr" in
+    case "$ntp_cv_rtattr" in
      yes)
 	AC_DEFINE([HAVE_RTNETLINK], [1],
 	    [Do we have Linux routing socket?])
@@ -1567,21 +1577,15 @@ esac])
 #
 # Check for if_nametoindex() for IPv6 scoped addresses support
 #
-AC_CHECK_FUNCS([if_nametoindex])
-case "$ac_cv_func_if_nametoindex" in
- no)
-	case "$host" in
-  	*-hp-hpux*)
-  		AC_CHECK_LIB([ipv6], [if_nametoindex],
-		    [ac_cv_func_if_nametoindex=yes ; LIBS="-lipv6 $LIBS"])
-  	;;
-	esac
+case "$host" in
+ *-hp-hpux*)
+    AC_SEARCH_LIBS([if_nametoindex], [ipv6])
 esac
+AC_CHECK_FUNCS([if_nametoindex])
 case "$ac_cv_func_if_nametoindex" in
  yes)
 	AC_DEFINE([ISC_PLATFORM_HAVEIFNAMETOINDEX], [1],
 	    [ISC: do we have if_nametoindex()?])
-	;;
 esac
 
 AC_SEARCH_LIBS([inet_ntop], [resolv], , , [-lsocket -lnsl])
@@ -5307,6 +5311,13 @@ case "$enable_ipv6" in
     ;;
  no)
     ;;
+esac
+
+
+dnl [Bug 1984] ntp/libisc fails to compile on OS X 10.7 (Lion)
+case "$host" in
+ *-*-darwin*)
+    AC_DEFINE([__APPLE_USE_RFC_3542], [1], [Are we _special_?])
 esac
 
 

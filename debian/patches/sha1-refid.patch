@@ -9,9 +9,9 @@ index 05c109a..6338f12 100644
 - * address, use it as is. If it is an IPv6 address, do a md5 on
 + * address, use it as is. If it is an IPv6 address, do a sha1 on
   * it and use the bottom 4 bytes.
+  * The result is in network byte order.
   */
- u_int32
-@@ -100,7 +100,7 @@ addr2refid(sockaddr_u *addr)
+@@ -101,7 +101,7 @@ addr2refid(sockaddr_u *addr)
  		return (NSRCADR(addr));
  
  	INIT_SSL();
