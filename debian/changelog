@@ -1,3 +1,10 @@
+ntp (1:4.2.6.p5+dfsg-7+deb8u2pexip2) pexip; urgency=medium
+
+  * debian/ntp.{post,pre}inst, debian/ntp.postrm:
+    remove AppArmor profile on upgrade
+
+ -- John-Mark Bell <jmb@pexip.com>  Fri, 26 May 2017 12:52:41 +0100
+
 ntp (1:4.2.6.p5+dfsg-7+deb8u2pexip1) pexip; urgency=medium
 
   * Migrate to Jessie
