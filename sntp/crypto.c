@@ -1,22 +1,24 @@
 #include <config.h>
 #include "crypto.h"
 #include <ctype.h>
+#include "isc/string.h"
+#include "ntp_md5.h"
 
 struct key *key_ptr;
-int key_cnt = 0;
+size_t key_cnt = 0;
 
 int
 make_mac(
-	char *pkt_data,
+	const void *pkt_data,
 	int pkt_size,
 	int mac_size,
-	struct key *cmp_key,
-	char * digest
+	const struct key *cmp_key,
+	void * digest
 	)
 {
 	u_int		len = mac_size;
 	int		key_type;
-	EVP_MD_CTX	ctx;
+	EVP_MD_CTX *	ctx;
 	
 	if (cmp_key->key_len > 64)
 		return 0;
@@ -25,41 +27,50 @@ make_mac(
 
 	INIT_SSL();
 	key_type = keytype_from_text(cmp_key->type, NULL);
-	EVP_DigestInit(&ctx, EVP_get_digestbynid(key_type));
-	EVP_DigestUpdate(&ctx, (u_char *)cmp_key->key_seq, (u_int)cmp_key->key_len);
-	EVP_DigestUpdate(&ctx, (u_char *)pkt_data, (u_int)pkt_size);
-	EVP_DigestFinal(&ctx, (u_char *)digest, &len);
-
+	
+	ctx = EVP_MD_CTX_new();
+	EVP_DigestInit(ctx, EVP_get_digestbynid(key_type));
+	EVP_DigestUpdate(ctx, (const u_char *)cmp_key->key_seq, (u_int)cmp_key->key_len);
+	EVP_DigestUpdate(ctx, pkt_data, (u_int)pkt_size);
+	EVP_DigestFinal(ctx, digest, &len);
+	EVP_MD_CTX_free(ctx);
+	
 	return (int)len;
 }
 
 
-/* Generates a md5 digest of the key specified in keyid concatinated with the 
+/* Generates a md5 digest of the key specified in keyid concatenated with the 
  * ntp packet (exluding the MAC) and compares this digest to the digest in
  * the packet's MAC. If they're equal this function returns 1 (packet is 
  * authentic) or else 0 (not authentic).
  */
 int
 auth_md5(
-	char *pkt_data,
+	const void *pkt_data,
 	int pkt_size,
 	int mac_size,
-	struct key *cmp_key
+	const struct key *cmp_key
 	)
 {
 	int  hash_len;
 	int  authentic;
 	char digest[20];
-
-	if (mac_size > sizeof(digest))
+	const u_char *pkt_ptr; 
+	if (mac_size > (int)sizeof(digest))
 		return 0;
-	hash_len = make_mac(pkt_data, pkt_size, sizeof(digest), cmp_key,
+	pkt_ptr = pkt_data;
+	hash_len = make_mac(pkt_ptr, pkt_size, sizeof(digest), cmp_key,
 			    digest);
-	if (!hash_len)
+	if (!hash_len) {
 		authentic = FALSE;
-	else
-		authentic = !memcmp(digest, pkt_data + pkt_size + 4,
+	} else {
+		/* isc_tsmemcmp will be better when its easy to link
+		 * with.  sntp is a 1-shot program, so snooping for
+		 * timing attacks is Harder.
+		 */
+		authentic = !memcmp(digest, (const char*)pkt_data + pkt_size + 4,
 				    hash_len);
+	}
 	return authentic;
 }
 
@@ -99,12 +110,12 @@ auth_init(
 	char keystring[129];
 
 	if (keyf == NULL) {
-		if (ENABLED_OPT(NORMALVERBOSE))
+		if (debug)
 			printf("sntp auth_init: Couldn't open key file %s for reading!\n", keyfile);
 		return -1;
 	}
 	if (feof(keyf)) {
-		if (ENABLED_OPT(NORMALVERBOSE))
+		if (debug)
 			printf("sntp auth_init: Key file %s is empty!\n", keyfile);
 		fclose(keyf);
 		return -1;
@@ -112,7 +123,7 @@ auth_init(
 	key_cnt = 0;
 	while (!feof(keyf)) {
 		char * octothorpe;
-		struct key *act = emalloc(sizeof(struct key));
+		struct key *act;
 		int goodline = 0;
 
 		if (NULL == fgets(kbuf, sizeof(kbuf), keyf))
@@ -122,6 +133,7 @@ auth_init(
 		octothorpe = strchr(kbuf, '#');
 		if (octothorpe)
 			*octothorpe = '\0';
+		act = emalloc(sizeof(*act));
 		scan_cnt = sscanf(kbuf, "%d %9s %128s", &act->key_id, act->type, keystring);
 		if (scan_cnt == 3) {
 			int len = strlen(keystring);

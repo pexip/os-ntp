@@ -1,41 +1,205 @@
-ntp (1:4.2.6.p5+dfsg-7+deb8u2) jessie-security; urgency=medium
+ntp (1:4.2.8p10+dfsg-3+deb9u2) stretch; urgency=medium
 
-  * Rename and update some patches to be closer to what's in Fedora,
-    only some white space changes.
-  * Fix CVE-2015-7974
-  * Fix CVE-2015-7977, CVE-2015-7978
-  * Fix CVE-2015-7979
-  * Fix CVE-2015-8138
-  * Fix CVE-2015-8158
-  * Fix CVE-2016-1548
-  * Fix CVE-2016-1550
-  * Fix CVE-2016-2516
-  * Fix CVE-2016-2518
+  * Cherry-pick patch from upstream to increase stack size.
+    Thanks to Frederic Endner-Dühr for testing (Closes: #887385)
+  * Add d/gbp.conf for stretch branch
 
- -- Kurt Roeckx <kurt@roeckx.be>  Sat, 07 May 2016 18:08:49 +0200
+ -- Bernhard Schmidt <berni@debian.org>  Thu, 15 Feb 2018 12:45:57 +0100
 
-ntp (1:4.2.6.p5+dfsg-7+deb8u1) jessie-security; urgency=medium
+ntp (1:4.2.8p10+dfsg-3+deb9u1) stretch; urgency=medium
 
-  * Fix CVE-2015-7850
-  * Fix CVE-2015-7704
-  * Fix CVE-2015-7701
-  * Fix CVE-2015-7852
-  * Fix CVE-2015-7851
-  * Fix CVE-2015-7855
-  * Fix CVE-2015-7871
-  * Rename CVE-2014-9297.patch to CVE-2014-9750.patch
-  * Rename CVE-2014-9298.patch to CVE-2014-9751.patch
-  * Rename bug-2797.patch to CVE-2015-3405.patch
-  * FIX CVE-2015-5146
-  * FIX CVE-2015-5194
-  * FIX CVE-2015-5195
-  * FIX CVE-2015-7703
-  * FIX CVE-2015-5219
-  * FIX CVE-2015-5300
-  * FIX CVE-2015-7691, CVE-2015-7692, CVE-2015-7702
-  * Add build-depends on bison since one of the patches update the .y file.
+  * Build and install /usr/bin/sntp (Closes: #793837)
+    sntp (the successor of ntpdate as general purpose NTP client) has
+    been accidentally included in Jessie, dropped after Jessie,
+    reintroduced too late for Stretch and is now included in Buster.
+    Fix regression by building sntp and shipping it in ntp:any
 
- -- Kurt Roeckx <kurt@roeckx.be>  Wed, 28 Oct 2015 21:05:21 +0100
+ -- Bernhard Schmidt <berni@debian.org>  Tue, 08 Aug 2017 22:44:37 +0200
+
+ntp (1:4.2.8p10+dfsg-3) unstable; urgency=medium
+
+  * No-change upload to supersede accidental upload of experimental
+    to unstable
+
+ -- Bernhard Schmidt <berni@debian.org>  Sun, 07 May 2017 23:04:52 +0200
+
+ntp (1:4.2.8p10+dfsg-2) unstable; urgency=medium
+
+  * Support pool statement in ntpdate-debian (Closes: #854432, #823120)
+  * Point Vcs-* to pkg-ntp git repository
+  * Add Bernhard Schmidt to Uploaders
+
+ -- Bernhard Schmidt <berni@debian.org>  Sun, 07 May 2017 14:49:22 +0200
+
+ntp (1:4.2.8p10+dfsg-1) unstable; urgency=high
+
+  * New upstream version
+    - Fix security issues
+  * Update openssl-disable-check.patch
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Wed, 22 Mar 2017 21:53:40 +0100
+
+ntp (1:4.2.8p9+dfsg-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Force program locations to use 'legacy' defaults (Closes: #851803)
+
+ -- Daniel Silverstone <dsilvers@digital-scurf.org>  Sat, 28 Jan 2017 11:58:18 +0000
+
+ntp (1:4.2.8p9+dfsg-2) unstable; urgency=medium
+
+  * CVE-2016-0727: NTP statsdir cleanup cronjob insecure (Closes: #839998)
+    Patch by Salvatore Bonaccorso <carnil@debian.org>. Patch was dropped
+    in 1:4.2.8p9+dfsg-1.
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Mon, 21 Nov 2016 20:09:17 +0100
+
+ntp (1:4.2.8p9+dfsg-1) unstable; urgency=medium
+
+  * New usptream version
+    - Adds OpenSSL 1.1.0 support (Closes: #828461)
+    - Fix CVE-2016-9311
+    - Fix CVE-2016-9310
+    - Fix CVE-2016-7427
+    - Fix CVE-2016-7428
+    - Fix CVE-2016-9312
+    - Fix CVE-2016-7431
+    - Fix CVE-2016-7434
+    - Fix CVE-2016-7429
+    - Fix CVE-2016-7426
+    - Fix CVE-2016-7433
+  * Update watch for new version specific URL. Patch from 
+    Nicholas Luedtke <nicholas.luedtke@hpe.com> (Closes: #823269)
+  * Make ntpdate-debian use the DHCP servers. Patch from 
+    Christian Ehrhardt <christian.ehrhardt@canonical.com> (Closes: #617965)
+  * Move dhcp temporary files from /var/lib to /run. (Closes: #600661)
+  * Wait for ntp to die in the stop target. Patch from Christoph Biedl
+    <debian.axhn@manchmal.in-ulm.de> (Closes: #802040)
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Mon, 21 Nov 2016 19:30:02 +0100
+
+ntp (1:4.2.8p8+dfsg-1) unstable; urgency=high
+
+  * New usptream version
+    - Fixes security issues
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Tue, 07 Jun 2016 22:29:17 +0200
+
+ntp (1:4.2.8p7+dfsg-4) unstable; urgency=high
+
+  * Update apparmor-profiles-extra again now we now in which version they
+    removed it.
+  * Call dh_apparmor.  Add build-depends on dh-apparmor.  (Closes: #824767)
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Thu, 19 May 2016 20:44:08 +0200
+
+ntp (1:4.2.8p7+dfsg-3) unstable; urgency=medium
+
+  [ Hideki Yamane ]
+  * Properly enable Apparmor profile from Ubuntu (Closes: #823024)
+    Patch from Hideki Yamane <henrich@debian.or.jp>
+  * Update replace/breaks versions of apparmor-profiles-extra
+    (Closes: #805183)
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Sat, 30 Apr 2016 12:14:14 +0200
+
+ntp (1:4.2.8p7+dfsg-2) unstable; urgency=medium
+
+  * Only build-depend on pps-tools on Linux
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Fri, 29 Apr 2016 18:32:39 +0200
+
+ntp (1:4.2.8p7+dfsg-1) unstable; urgency=medium
+
+  * New upstream version
+    This might fix a few CVEs.
+  * Drop CVE-2015-5300.patch and CVE-2015-7704.patch now claimed to
+    be fixed upstream.
+  * Remove Bdale from uploaders (Closes: #804377)
+  * Remove section about patching the kernel for PPS support, it's already
+    included in the kernel (Closes: #811171)
+  * Pass --build and --host to configure. (Closes: #315935)
+    Patch from Helmut Grohne <helmut@subdivi.de>
+  * Missing Build-Depends libopts25-dev (which is not implicit in autogen,
+    because autogen is M-A:foreign).
+    Patch from Helmut Grohne <helmut@subdivi.de>
+  * Fix ntp.dhcp to also check for pool and better handle spaces and tabs.
+    (Closes: #809344, #806676)
+  * Change watch file to use https (Closes: #793926)
+  * Hook into NetworkManager to update ntp servers from dhcp. (Closes:
+    #778415).  Patch from Helmut Grohne <helmut@subdivi.de>
+  * Build Depend on pps-tools (Closes: #691672)
+  * Don't run ntpdate when method is none.  Patch from
+    Dmitry Borisyuk <q1werty@i.com.ua>
+  * Also use flock to in the ntp init script, and update the lock file
+    location.  (Closes: #806556)
+  * Move apparmor profile from apparmor-profiles-extra. Add Breaks/Replaces.
+    (Closes: #805183)
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Sun, 24 Jan 2016 22:57:40 +0100
+
+ntp (1:4.2.8p4+dfsg-3) unstable; urgency=medium
+
+  * Remove rlimit memlock from default config file, the default is now
+    to no longer lock.  (Closes: #793745)
+  * Really properly fix CVE-2015-7704, thanks to Miroslav Lichvar
+    <mlichvar@redhat.com>
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Thu, 22 Oct 2015 20:44:44 +0200
+
+ntp (1:4.2.8p4+dfsg-2) unstable; urgency=medium
+
+  * Change rlimit memlock default to -1.  (Closes: #802638)
+  * Fix CVE-2015-5300
+  * Properly fix CVE-2015-7704
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Thu, 22 Oct 2015 19:06:16 +0200
+
+ntp (1:4.2.8p4+dfsg-1) unstable; urgency=high
+
+  * New upstream release.
+    - Fixes CVE-2015-7850 CVE-2015-7704 CVE-2015-7701 CVE-2015-5196
+      CVE-2015-7848 CVE-2015-7849 CVE-2015-7854 CVE-2015-7852 CVE-2015-7853
+      CVE-2015-7851 CVE-2015-7705 CVE-2015-7855 CVE-2015-7871
+    - Drop format-security.patch, applied upstream.
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Wed, 21 Oct 2015 20:00:31 +0200
+
+ntp (1:4.2.8p3+dfsg-1) unstable; urgency=medium
+
+  * New upstream version
+   - Patches applied upstream: ntpd-linux-caps-inheritable.patch,
+     ntp-4.2.6p5-cve-2014-9293.patch, ntp-4.2.6p5-cve-2014-9294.patch,
+     ntp-4.2.6p5-cve-2014-9295.patch, ntp-4.2.6p5-cve-2014-9296.patch,
+     CVE-2014-9297.patch, CVE-2014-9298.patch, CVE-2015-1798.patch,
+     CVE-2015-1799.patch, bug-2797.patch, ntpd-ni-maxhost.patch,
+     format-security.patch, sntp-manpage.patch, openssl-headers.patch
+  * Remove autotools.patch since we run dh_autoreconf
+  * Fix a new issue reported by -Werror=format-security
+  * Adjust location in source file for ntpsweep
+  * Upstream doesn't ship ntpsnmpd.1 anymore, so don't remove it
+  * Update the default config to use the new pool method:
+    - Use pool instead of server
+    - Add restrict source line so servers can be added and removed
+    - Add an rlimit memlock so that ntpd actually starts
+  * Change the default restrict line to have a rate limit
+  * Remove empty directory /usr/libexec
+  * Prevent rpaths being set for all binaries
+  * Install files to debian/tmp and use dh_install instead of dh_movefiles
+
+ -- Kurt Roeckx <kurt@roeckx.be>  Sat, 25 Jul 2015 16:37:34 +0200
+
+ntp (1:4.2.6.p5+dfsg-8) UNRELEASED; urgency=low
+
+  * Fix Lintian warning vcs-field-not-canonical
+  * Update standards version
+  * Remove obsolete "start" option to update-rc.d (closes: #755936)
+  * Use flock instead of lockfile-progs for ntpdate.if-up (closes:
+    #731976); change lock file location to /run/lock
+  * Allow for multiple spaces or tabs for statsdir in /etc/ntp.conf
+    (closes: #749761)
+
+ -- Peter Eisentraut <petere@debian.org>  Wed, 01 Oct 2014 00:41:49 -0400
 
 ntp (1:4.2.6.p5+dfsg-7) unstable; urgency=medium
 

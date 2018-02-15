@@ -57,41 +57,44 @@ struct ntpq_varlist ntpq_varlist[MAXLIST];
 
 int ntpq_stripquotes ( char *resultbuf, char *srcbuf, int datalen, int maxlen )
 {
-	char* tmpbuf = srcbuf;
-
-	while ( *tmpbuf != 0 )
-	{
-		if ( *tmpbuf == '\"' )
-		{
-			tmpbuf++;
-			continue;
-		}
-		
-		if ( *tmpbuf == '\\' )
-		{
-			tmpbuf++;
-			switch ( *tmpbuf )
-			{
-				/* ignore if end of string */
-				case 0:
-					continue;
-				/* skip and do not copy */
-				case '\"': /* quotes */
-				case 'n': /*newline*/
-				case 'r': /*carriage return*/
-				case 'g': /*bell*/
-				case 't': /*tab*/
-					tmpbuf++;
-					continue;
-			}
-		} 
-
-		*resultbuf++ = *tmpbuf++;
-		
-	}
+	char* dst = resultbuf;
+	char* dep = resultbuf + maxlen - 1;
+	char* src = srcbuf;
+	char* sep = srcbuf + (datalen >= 0 ? datalen : 0); 
+	int   esc = 0;
+	int   ch;
 	
-	*resultbuf = 0;
-	return strlen(resultbuf);
+	if (maxlen <= 0)
+		return 0;
+	
+	while ((dst != dep) && (src != sep) && (ch = (u_char)*src++) != 0) {
+		if (esc) {
+			esc = 0;
+			switch (ch) {
+				/* skip and do not copy */
+				/* case '"':*/ /* quotes */
+			case 'n': /*newline*/
+			case 'r': /*carriage return*/
+			case 'g': /*bell*/
+			case 't': /*tab*/
+				continue;
+			default:
+				break;
+			}
+		} else {
+			switch (ch) {
+			case '\\':
+				esc = 1;
+			case '"':
+				continue;
+			default:
+				break;
+			}
+		}
+		*dst++ = (char)ch;
+	}
+	*dst = '\0';
+	return (int)(dst - resultbuf);
 }			
 
 
@@ -132,7 +135,7 @@ ntpq_getvar(
 {
 	char *	name;
 	char *	value;
-	int	idatalen;
+	size_t	idatalen;
 
 	value = NULL;
 	idatalen = (int)datalen;
@@ -181,8 +184,8 @@ int ntpq_queryhost(unsigned short VARSET, unsigned short association, char *resu
 {
 	const char *datap;
 	int res;
-	int dsize;
-	u_short rstatus;
+	size_t	dsize;
+	u_short	rstatus;
 	
 	if ( numhosts > 0 )
 		res = doquery(VARSET,association,0,0, (char *)0, &rstatus, &dsize, &datap);
@@ -215,6 +218,7 @@ int ntpq_queryhost(unsigned short VARSET, unsigned short association, char *resu
  ****************************************************************************
  * Parameters:
  *	hostname	char*	Hostname/IP of the host running ntpd
+ *	fam		int	Address Family (AF_INET, AF_INET6, or 0)
  *
  * Returns:
  *	int		1 if the host connection could be set up, i.e. 
@@ -224,9 +228,13 @@ int ntpq_queryhost(unsigned short VARSET, unsigned short association, char *resu
  *			0 (zero) if a failure occured
  ****************************************************************************/
 
-int ntpq_openhost(char *hostname)
+int
+ntpq_openhost(
+	char *hostname,
+	int fam
+	)
 {
-	if ( openhost(hostname) )
+	if ( openhost(hostname, fam) )
 	{
 		numhosts = 1;
 	} else {
@@ -412,7 +420,7 @@ ntpq_read_assoc_peervars(
 {
 	const char *	datap;
 	int		res;
-	int		dsize;
+	size_t		dsize;
 	u_short		rstatus;
 
 	res = doquery(CTL_OP_READVAR, associd, 0, 0, NULL, &rstatus,
@@ -469,24 +477,22 @@ ntpq_read_sysvars(
 {
 	const char *	datap;
 	int		res;
-	int		i_dsize;
 	size_t		dsize;
 	u_short		rstatus;
 
 	res = doquery(CTL_OP_READVAR, 0, 0, 0, NULL, &rstatus,
-		      &i_dsize, &datap);
+		      &dsize, &datap);
 
 	if (res != 0)
 		return 0;
 
-	if (i_dsize == 0) {
+	if (dsize == 0) {
 		if (numhosts > 1)
 			fprintf(stderr, "server=%s ", currenthost);
 		fprintf(stderr, "***No sysvar information returned\n");
 
 		return 0;
 	} else {
-		dsize = max(0, i_dsize);
 		dsize = min(dsize, maxsize);
 		memcpy(resultbuf, datap, dsize);
 	}
@@ -656,7 +662,7 @@ ntpq_read_assoc_clockvars(
 {
 	const char *datap;
 	int res;
-	int dsize;
+	size_t dsize;
 	u_short rstatus;
 
 	res = ntpq_doquerylist(ntpq_varlist, CTL_OP_READCLOCK, associd,

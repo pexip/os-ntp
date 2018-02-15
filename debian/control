@@ -2,13 +2,13 @@ Source: ntp
 Section: net
 Priority: optional
 Maintainer: Debian NTP Team <pkg-ntp-maintainers@lists.alioth.debian.org>
-Uploaders: Bdale Garbee <bdale@gag.com>, Peter Eisentraut <petere@debian.org>, Kurt Roeckx <kurt@roeckx.be>
-Build-Depends: dh-autoreconf, debhelper (>= 6), libedit-dev, libcap2-dev [linux-any], libssl-dev (>= 1.0.0e-1), autogen (>= 1:5.11), bison
+Uploaders: Peter Eisentraut <petere@debian.org>, Kurt Roeckx <kurt@roeckx.be>, Bernhard Schmidt <berni@debian.org>
+Build-Depends: dh-autoreconf, debhelper (>= 6), libedit-dev, libcap2-dev [linux-any], libssl-dev (>= 1.0.0e-1), autogen (>= 1:5.11), libopts25-dev (>= 1:5.11), pps-tools [linux-any], dh-apparmor
 Build-Conflicts: libavahi-compat-libdnssd-dev, libwww-dev, libwww-ssl-dev
-Standards-Version: 3.9.3
+Standards-Version: 3.9.5
 Homepage: http://support.ntp.org/
-Vcs-Browser: http://svn.debian.org/wsvn/pkg-ntp/ntp/trunk/
-Vcs-Svn: svn://svn.debian.org/pkg-ntp/ntp/trunk/
+Vcs-Browser: https://anonscm.debian.org/git/pkg-ntp/pkg-ntp.git/
+Vcs-Git: https://anonscm.debian.org/git/pkg-ntp/pkg-ntp.git/
 
 Package: ntp
 Architecture: any
@@ -16,7 +16,8 @@ Depends: adduser, lsb-base (>= 3.2-13), netbase, ${misc:Depends}, ${shlibs:Depen
 Pre-Depends: dpkg (>= 1.15.7.2)
 Recommends: ${perl:Depends}
 Suggests: ntp-doc
-Breaks: dhcp3-client (<< 4.1.0-1)
+Breaks: dhcp3-client (<< 4.1.0-1), apparmor-profiles-extra (<< 1.8)
+Replaces: apparmor-profiles-extra (<< 1.8)
 Description: Network Time Protocol daemon and utility programs
  NTP, the Network Time Protocol, is used to keep computer clocks
  accurate by synchronizing them over the Internet or a local network,
@@ -35,7 +36,6 @@ Package: ntpdate
 Architecture: any
 Depends: netbase, ${misc:Depends}, ${shlibs:Depends}
 Pre-Depends: dpkg (>= 1.15.7.2)
-Recommends: lockfile-progs
 Breaks: dhcp3-client (<< 4.1.0-1)
 Description: client for setting system time from NTP servers
  NTP, the Network Time Protocol, is used to keep computer clocks

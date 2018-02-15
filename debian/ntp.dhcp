@@ -1,5 +1,5 @@
 NTP_CONF=/etc/ntp.conf
-NTP_DHCP_CONF=/var/lib/ntp/ntp.conf.dhcp
+NTP_DHCP_CONF=/run/ntp.conf.dhcp
 
 
 ntp_server_restart() {
@@ -40,7 +40,7 @@ ntp_servers_setup_add() {
 		echo "server $server iburst"
 	  done
 	  echo
-	  sed -r -e '/^ *(server|peer).*$/d' $NTP_CONF
+	  sed '/^[[:space:]]*\(server\|peer\|pool\)[[:space:]]/d' $NTP_CONF
 	) >>$tmp
 	
 	mv $tmp $NTP_DHCP_CONF

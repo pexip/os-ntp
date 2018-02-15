@@ -43,6 +43,7 @@ static char rcsid[] =
 
 static int inet_pton4(const char *src, unsigned char *dst);
 static int inet_pton6(const char *src, unsigned char *dst);
+int isc_net_pton(int af, const char *src, void *dst);
 
 /*% 
  *	convert from presentation format (which usually means ASCII printable)
@@ -91,7 +92,7 @@ inet_pton4(const char *src, unsigned char *dst) {
 		const char *pch;
 
 		if ((pch = strchr(digits, ch)) != NULL) {
-			unsigned int newv = *tp * 10 + (pch - digits);
+			size_t newv = *tp * 10 + (pch - digits);
 
 			if (saw_digit && *tp == 0)
 				return (0);
@@ -169,7 +170,7 @@ inet_pton6(const char *src, unsigned char *dst) {
 				colonp = tp;
 				continue;
 			}
-			if (tp + NS_INT16SZ > endp)
+			if (NS_INT16SZ > endp - tp)
 				return (0);
 			*tp++ = (unsigned char) (val >> 8) & 0xff;
 			*tp++ = (unsigned char) val & 0xff;
@@ -177,7 +178,7 @@ inet_pton6(const char *src, unsigned char *dst) {
 			val = 0;
 			continue;
 		}
-		if (ch == '.' && ((tp + NS_INADDRSZ) <= endp) &&
+		if (ch == '.' && (NS_INADDRSZ <= endp - tp) &&
 		    inet_pton4(curtok, tp) > 0) {
 			tp += NS_INADDRSZ;
 			seen_xdigits = 0;
@@ -186,7 +187,7 @@ inet_pton6(const char *src, unsigned char *dst) {
 		return (0);
 	}
 	if (seen_xdigits) {
-		if (tp + NS_INT16SZ > endp)
+		if (NS_INT16SZ > endp - tp)
 			return (0);
 		*tp++ = (unsigned char) (val >> 8) & 0xff;
 		*tp++ = (unsigned char) val & 0xff;
@@ -196,12 +197,12 @@ inet_pton6(const char *src, unsigned char *dst) {
 		 * Since some memmove()'s erroneously fail to handle
 		 * overlapping regions, we'll do the shift by hand.
 		 */
-		const int n = tp - colonp;
+		const size_t n = tp - colonp;
 		int i;
 
 		if (tp == endp)
 			return (0);
-		for (i = 1; i <= n; i++) {
+		for (i = 1; (size_t)i <= n; i++) {
 			endp[- i] = colonp[n - i];
 			colonp[n - i] = 0;
 		}

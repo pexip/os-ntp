@@ -14,13 +14,12 @@
 #include "ntp_fp.h"
 #include "ntp.h"
 #include "ntp_io.h"
-#include "ntp_unixtime.h"
+#include "timevalops.h"
 #include "ntpdate.h"
 #include "ntp_string.h"
 #include "ntp_syslog.h"
 #include "ntp_select.h"
 #include "ntp_stdlib.h"
-#include "ntp_assert.h"
 #include <ssl_applink.c>
 
 #include "isc/net.h"
@@ -111,11 +110,6 @@ static timer_t ntpdate_timerid;
 s_char	sys_precision;		/* local clock precision (log2 s) */
 
 /*
- * Debugging flag
- */
-volatile int debug = 0;
-
-/*
  * File descriptor masks etc. for call to select
  */
 
@@ -155,7 +149,7 @@ int unpriv_port = 0;
 /*
  * Program name.
  */
-char *progname;
+char const *progname;
 
 /*
  * Systemwide parameters and flags
@@ -330,7 +324,7 @@ ntpdatemain (
 	key_file = key_file_storage;
 
 	if (!ExpandEnvironmentStrings(KEYFILE, key_file, MAX_PATH))
-		msyslog(LOG_ERR, "ExpandEnvironmentStrings(KEYFILE) failed: %m\n");
+		msyslog(LOG_ERR, "ExpandEnvironmentStrings(KEYFILE) failed: %m");
 
 	ssl_applink();
 #endif /* SYS_WINNT */
@@ -567,8 +561,8 @@ ntpdatemain (
 			nfound = poll(rdfdes, (unsigned int)nbsock, timeout.tv_sec * 1000);
 
 #else
-			nfound = select(maxfd, &rdfdes, (fd_set *)0,
-					(fd_set *)0, &timeout);
+			nfound = select(maxfd, &rdfdes, NULL, NULL,
+					&timeout);
 #endif
 			if (nfound > 0)
 				input_handler();
@@ -702,7 +696,7 @@ transmit(
 	 * If not, just timestamp it and send it away.
 	 */
 	if (sys_authenticate) {
-		int len;
+		size_t len;
 
 		xpkt.exten[0] = htonl(sys_authkey);
 		get_systime(&server->xmt);
@@ -757,7 +751,7 @@ receive(
 	 */
 	if (rbufp->recv_length == LEN_PKT_NOMAC)
 		has_mac = 0;
-	else if (rbufp->recv_length >= LEN_PKT_NOMAC)
+	else if (rbufp->recv_length >= (int)LEN_PKT_NOMAC)
 		has_mac = 1;
 	else {
 		if (debug)
@@ -814,11 +808,11 @@ receive(
 			printf("receive: rpkt keyid=%ld sys_authkey=%ld decrypt=%ld\n",
 			   (long int)ntohl(rpkt->exten[0]), (long int)sys_authkey,
 			   (long int)authdecrypt(sys_authkey, (u_int32 *)rpkt,
-				LEN_PKT_NOMAC, (int)(rbufp->recv_length - LEN_PKT_NOMAC)));
+				LEN_PKT_NOMAC, (size_t)(rbufp->recv_length - LEN_PKT_NOMAC)));
 
 		if (has_mac && ntohl(rpkt->exten[0]) == sys_authkey &&
 			authdecrypt(sys_authkey, (u_int32 *)rpkt, LEN_PKT_NOMAC,
-			(int)(rbufp->recv_length - LEN_PKT_NOMAC)))
+			(size_t)(rbufp->recv_length - LEN_PKT_NOMAC)))
 			is_authentic = 1;
 		if (debug)
 			printf("receive: authentication %s\n",
@@ -834,7 +828,7 @@ receive(
 	if (LEAP_NOTINSYNC == PKT_LEAP(rpkt->li_vn_mode) &&
 	    STRATUM_PKT_UNSPEC == rpkt->stratum &&
 	    !memcmp("RATE", &rpkt->refid, 4)) {
-		msyslog(LOG_ERR, "%s rate limit response from server.\n",
+		msyslog(LOG_ERR, "%s rate limit response from server.",
 			stoa(&rbufp->recv_srcadr));
 		server->event_time = 0;
 		complete_servers++;
@@ -961,6 +955,8 @@ clock_filter(
 	register int i, j;
 	int ord[NTP_SHIFT];
 
+	INSIST((0 < sys_samples) && (sys_samples <= NTP_SHIFT));
+	
 	/*
 	 * Sort indices into increasing delay order
 	 */
@@ -1253,7 +1249,6 @@ static int
 clock_adjust(void)
 {
 	register struct server *sp, *server;
-	s_fp absoffset;
 	int dostep;
 
 	for (sp = sys_servers; sp != NULL; sp = sp->next_server)
@@ -1276,10 +1271,15 @@ clock_adjust(void)
 	} else if (never_step) {
 		dostep = 0;
 	} else {
-		absoffset = server->soffset;
-		if (absoffset < 0)
-			absoffset = -absoffset;
-		dostep = (absoffset >= NTPDATE_THRESHOLD || absoffset < 0);
+		/* [Bug 3023] get absolute difference, avoiding signed
+		 * integer overflow like hell.
+		 */
+		u_fp absoffset;
+		if (server->soffset < 0)
+			absoffset = 1u + (u_fp)(-(server->soffset + 1));
+		else
+			absoffset = (u_fp)server->soffset;
+		dostep = (absoffset >= NTPDATE_THRESHOLD);
 	}
 
 	if (dostep) {
@@ -1358,7 +1358,7 @@ addserver(
 	char service[5];
 	sockaddr_u addr;
 
-	strncpy(service, "ntp", sizeof(service));
+	strlcpy(service, "ntp", sizeof(service));
 
 	/* Get host address. Looking for UDP datagram connection. */
 	ZERO(hints);
@@ -1379,13 +1379,13 @@ addserver(
 			   by waiting for resolution of several servers */
 			fprintf(stderr, "Exiting, name server cannot be used: %s (%d)",
 				gai_strerror(error), error);
-			msyslog(LOG_ERR, "name server cannot be used: %s (%d)\n",
+			msyslog(LOG_ERR, "name server cannot be used: %s (%d)",
 				gai_strerror(error), error);
 			exit(1);
 		}
 		fprintf(stderr, "Error resolving %s: %s (%d)\n", serv,
 			gai_strerror(error), error);
-		msyslog(LOG_ERR, "Can't find host %s: %s (%d)\n", serv,
+		msyslog(LOG_ERR, "Can't find host %s: %s (%d)", serv,
 			gai_strerror(error), error);
 		return;
 	}
@@ -1695,7 +1695,7 @@ init_io(void)
 	 * Open the socket
 	 */
 
-	strncpy(service, "ntp", sizeof(service));
+	strlcpy(service, "ntp", sizeof(service));
 
 	/*
 	 * Init hints addrinfo structure
@@ -1894,7 +1894,7 @@ input_handler(void)
 #else
 	fd_set fds;
 #endif
-	int fdc = 0;
+	SOCKET fdc = 0;
 
 	/*
 	 * Do a poll to see if we have data
@@ -1918,7 +1918,7 @@ input_handler(void)
 
 #else
 		fds = fdmask;
-		n = select(maxfd, &fds, (fd_set *)0, (fd_set *)0, &tvzero);
+		n = select(maxfd, &fds, NULL, NULL, &tvzero);
 
 		/*
 		 * Determine which socket received data
@@ -2044,7 +2044,7 @@ l_adj_systime(
 	if (adjtv.tv_usec != 0 && !debug) {
 		if (adjtime(&adjtv, &oadjtv) < 0) {
 			msyslog(LOG_ERR, "Can't adjust the time of day: %m");
-			return 0;
+			exit(1);
 		}
 	}
 	return 1;

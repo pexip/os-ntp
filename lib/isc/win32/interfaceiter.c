@@ -15,17 +15,17 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* $Id: interfaceiter.c,v 1.13.110.2 2009/01/18 23:47:41 tbox Exp $ */
+/* $Id: interfaceiter.c,v 1.15 2009/01/18 23:48:14 tbox Exp $ */
 
 #include <config.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <iphlpapi.h>
-#include <sys/types.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <gaa_compat.h>
 
 #include <isc/interfaceiter.h>
 #include <isc/mem.h>
@@ -54,7 +54,7 @@ struct isc_interfaceiter {
 	IP_ADAPTER_ADDRESSES *	ipaaCur;	/* enumeration position */
 	IP_ADAPTER_UNICAST_ADDRESS *ipuaCur;	/* enumeration subposition */
 	/* fields used for the older address enumeration ioctls */
-	int			socket;
+	SOCKET			socket;
 	INTERFACE_INFO		IFData;		/* Current Interface Info */
 	int			numIF;		/* Current Interface count */
 	int			v4IF;		/* Number of IPv4 Interfaces */

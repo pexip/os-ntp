@@ -31,9 +31,9 @@
 /*
  * utility functions
  */
-static	int	checkitems	(int, FILE *);
-static	int	checkitemsize	(int, int);
-static	int	check1item	(int, FILE *);
+static	int	checkitems	(size_t, FILE *);
+static	int	checkitemsize	(size_t, size_t);
+static	int	check1item	(size_t, FILE *);
 
 /*
  * Declarations for command handlers in here
@@ -86,8 +86,8 @@ static	void	clockstat	(struct parse *, FILE *);
 static	void	fudge		(struct parse *, FILE *);
 static	void	clkbug		(struct parse *, FILE *);
 static	void	kerninfo	(struct parse *, FILE *);
-static  void    get_if_stats    (struct parse *, FILE *);
-static  void    do_if_reload    (struct parse *, FILE *);
+static	void	get_if_stats	(struct parse *, FILE *);
+static	void	do_if_reload	(struct parse *, FILE *);
 
 /*
  * Commands we understand.  Ntpdc imports this.
@@ -144,7 +144,7 @@ struct xcmd opcmds[] = {
 	{ "enable",	set,		{ NTP_STR, OPT|NTP_STR, OPT|NTP_STR, OPT|NTP_STR },
 	  { "auth|bclient|monitor|pll|kernel|stats", "...", "...", "..." },
 	  "set a system flag (auth, bclient, monitor, pll, kernel, stats)" },
-        { "disable",	sys_clear,      { NTP_STR, OPT|NTP_STR, OPT|NTP_STR, OPT|NTP_STR },
+	{ "disable",	sys_clear,	{ NTP_STR, OPT|NTP_STR, OPT|NTP_STR, OPT|NTP_STR },
 	  { "auth|bclient|monitor|pll|kernel|stats", "...", "...", "..." },
 	  "clear a system flag (auth, bclient, monitor, pll, kernel, stats)" },
 	{ "reslist",	reslist,	{OPT|IP_VERSION, NO, NO, NO },
@@ -167,7 +167,7 @@ struct xcmd opcmds[] = {
 	  { "version", "", "", "" },
 	  "display data the server's monitor routines have collected" },
 	{ "reset",	reset,		{ NTP_STR, OPT|NTP_STR, OPT|NTP_STR, OPT|NTP_STR },
-	  { "io|sys|mem|timer|auth|allpeers", "...", "...", "..." },
+	  { "io|sys|mem|timer|auth|ctl|allpeers", "...", "...", "..." },
 	  "reset various subsystem statistics counters" },
 	{ "preset",	preset,		{ NTP_ADD, OPT|NTP_ADD, OPT|NTP_ADD, OPT|NTP_ADD },
 	  { "peer_address", "peer2_addr", "peer3_addr", "peer4_addr" },
@@ -247,7 +247,7 @@ struct xcmd opcmds[] = {
  */
 #define SET_ADDR(address, v6flag, v4addr, v6addr)		\
 do {								\
-	memset(&(address), 0, sizeof(address));			\
+	ZERO(address);						\
 	if (v6flag) {						\
 		AF(&(address)) = AF_INET6;			\
 		SOCK_ADDR6(&(address)) = (v6addr);		\
@@ -265,8 +265,8 @@ do {								\
  */
 #define SET_ADDRS(a1, a2, info, a1prefix, a2prefix)		\
 do {								\
-	memset(&(a1), 0, sizeof(a1));				\
-	memset(&(a2), 0, sizeof(a2));				\
+	ZERO(a1);						\
+	ZERO(a2);						\
 	if ((info)->v6_flag) {					\
 		AF(&(a1)) = AF_INET6;				\
 		AF(&(a2)) = AF_INET6;				\
@@ -284,36 +284,11 @@ do {								\
 
 
 /*
- * SET_ADDRS - setup source and destination addresses for 
- * v4/v6 as needed
- */
-#if 0
-#define SET_ADDR_MASK(address, addrmask, info)			\
-do {								\
-	memset(&(address), 0, sizeof(address));			\
-	memset(&(mask), 0, sizeof(mask));			\
-	if ((info)->v6_flag) {					\
-		AF(&(address)) = AF_INET6;			\
-		AF(&(addrmask)) = AF_INET6;			\
-		SOCK_ADDR6(&(address)) = (info)->addr6;		\
-		SOCK_ADDR6(&(addrmask)) = (info)->mask6;	\
-	} else {						\
-		AF(&(address)) = AF_INET;			\
-		AF(&(addrmask)) = AF_INET;			\
-		NSRCADR(&(address)) = (info)->addr;		\
-		NSRCADR(&(addrmask)) = (info)->mask;		\
-	}							\
-	SET_SS_LEN_IF_PRESENT(&(address));			\
-	SET_SS_LEN_IF_PRESENT(&(addrmask));			\
-} while (0)
-#endif
-
-/*
  * checkitems - utility to print a message if no items were returned
  */
 static int
 checkitems(
-	int items,
+	size_t items,
 	FILE *fp
 	)
 {
@@ -330,14 +305,14 @@ checkitems(
  */
 static int
 checkitemsize(
-	int itemsize,
-	int expected
+	size_t itemsize,
+	size_t expected
 	)
 {
 	if (itemsize != expected) {
 		(void) fprintf(stderr,
-			       "***Incorrect item size returned by remote host (%d should be %d)\n",
-			       itemsize, expected);
+			       "***Incorrect item size returned by remote host (%lu should be %lu)\n",
+			       (u_long)itemsize, (u_long)expected);
 		return 0;
 	}
 	return 1;
@@ -349,7 +324,7 @@ checkitemsize(
  */
 static int
 check1item(
-	int items,
+	size_t items,
 	FILE *fp
 	)
 {
@@ -358,8 +333,8 @@ check1item(
 		return 0;
 	}
 	if (items > 1) {
-		(void) fprintf(fp, "Expected one item in response, got %d\n",
-			       items);
+		(void) fprintf(fp, "Expected one item in response, got %lu\n",
+			       (u_long)items);
 		return 0;
 	}
 	return 1;
@@ -378,8 +353,8 @@ peerlist(
 {
 	struct info_peer_list *plist;
 	sockaddr_u paddr;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 again:
@@ -455,8 +430,8 @@ dopeers(
 	struct info_peer_summary *plist;
 	sockaddr_u dstadr;
 	sockaddr_u srcadr;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int ntp_poll;
 	int res;
 	int c;
@@ -532,7 +507,7 @@ again:
 }
 
 /* Convert a refid & stratum (in host order) to a string */
-static char*
+static char *
 refid_string(
 	u_int32 refid,
 	int stratum
@@ -541,7 +516,7 @@ refid_string(
 	if (stratum <= 1) {
 		static char junk[5];
 		junk[4] = 0;
-		memmove(junk, (char *)&refid, 4);
+		memcpy(junk, &refid, 4);
 		return junk;
 	}
 
@@ -550,49 +525,56 @@ refid_string(
 
 static void
 print_pflag(
-	    FILE *fp,
-	    u_int32 flags
-	    )
+	FILE *	fp,
+	u_int32	flags
+	)
 {
-     const char *str;
+	static const char none[] = "";
+	static const char comma[] = ",";
+	const char *dlim;
 
-     if (flags == 0) {
-		(void) fprintf(fp, " none\n");
-	} else {
-		str = "";
-		if (flags & INFO_FLAG_SYSPEER) {
-			(void) fprintf(fp, " system_peer");
-			str = ",";
-		}
-		if (flags & INFO_FLAG_CONFIG) {
-			(void) fprintf(fp, "%s config", str);
-			str = ",";
-		}
-		if (flags & INFO_FLAG_REFCLOCK) {
-			(void) fprintf(fp, "%s refclock", str);
-			str = ",";
-		}
-		if (flags & INFO_FLAG_AUTHENABLE) {
-			(void) fprintf(fp, "%s auth", str);
-			str = ",";
-		}
-		if (flags & INFO_FLAG_BCLIENT) {
-			(void) fprintf(fp, "%s bclient", str);
-			str = ",";
-		}
-		if (flags & INFO_FLAG_PREFER) {
-			(void) fprintf(fp, "%s prefer", str);
-			str = ",";
-		}
-		if (flags & INFO_FLAG_IBURST) {
-			(void) fprintf(fp, "%s iburst", str);
-			str = ",";
-		}
-		if (flags & INFO_FLAG_BURST) {
-			(void) fprintf(fp, "%s burst", str);
-		}
-		(void) fprintf(fp, "\n");
+	if (0 == flags) {
+		fprintf(fp, " none\n");
+		return;
 	}
+	dlim = none;
+	if (flags & INFO_FLAG_SYSPEER) {
+		fprintf(fp, " system_peer");
+		dlim = comma;
+	}
+	if (flags & INFO_FLAG_CONFIG) {
+		fprintf(fp, "%s config", dlim);
+		dlim = comma;
+	}
+	if (flags & INFO_FLAG_REFCLOCK) {
+		fprintf(fp, "%s refclock", dlim);
+		dlim = comma;
+	}
+	if (flags & INFO_FLAG_AUTHENABLE) {
+		fprintf(fp, "%s auth", dlim);
+		dlim = comma;
+	}
+	if (flags & INFO_FLAG_PREFER) {
+		fprintf(fp, "%s prefer", dlim);
+		dlim = comma;
+	}
+	if (flags & INFO_FLAG_IBURST) {
+		fprintf(fp, "%s iburst", dlim);
+		dlim = comma;
+	}
+	if (flags & INFO_FLAG_BURST) {
+		fprintf(fp, "%s burst", dlim);
+		dlim = comma;
+	}
+	if (flags & INFO_FLAG_SEL_CANDIDATE) {
+		fprintf(fp, "%s candidate", dlim);
+		dlim = comma;
+	}
+	if (flags & INFO_FLAG_SHORTLIST) {
+		fprintf(fp, "%s shortlist", dlim);
+		dlim = comma;
+	}
+	fprintf(fp, "\n");
 }
 /*
  * printpeer - print detail information for a peer
@@ -697,10 +679,10 @@ showpeer(
 	struct info_peer *pp;
 	/* 4 is the maximum number of peers which will fit in a packet */
 	struct info_peer_list *pl, plist[min(MAXARGS, 4)];
-	int qitemlim;
-	int qitems;
-	int items;
-	int itemsize;
+	size_t qitemlim;
+	size_t qitems;
+	size_t items;
+	size_t itemsize;
 	int res;
 	int sendsize;
 
@@ -727,7 +709,7 @@ again:
 		}
 		pl->port = (u_short)s_port;
 		pl->hmode = pl->flags = 0;
-		pl = (struct info_peer_list *)((char *)pl + sendsize);
+		pl = (void *)((char *)pl + sendsize);
 	}
 
 	res = doquery(impl_ver, REQ_PEER_INFO, 0, qitems,
@@ -740,19 +722,19 @@ again:
 	}
 
 	if (res != 0)
-	    return;
+		return;
 
 	if (!checkitems(items, fp))
-	    return;
+		return;
 
 	if (!checkitemsize(itemsize, sizeof(struct info_peer)) &&
 	    !checkitemsize(itemsize, v4sizeof(struct info_peer)))
-	    return;
+		return;
 
 	while (items-- > 0) {
 		printpeer(pp, fp);
 		if (items > 0)
-		    (void) fprintf(fp, "\n");
+			fprintf(fp, "\n");
 		pp++;
 	}
 }
@@ -771,12 +753,12 @@ peerstats(
 	/* 4 is the maximum number of peers which will fit in a packet */
 	struct info_peer_list *pl, plist[min(MAXARGS, 4)];
 	sockaddr_u src, dst;
-	int qitemlim;
-	int qitems;
-	int items;
-	int itemsize;
+	size_t qitemlim;
+	size_t qitems;
+	size_t items;
+	size_t itemsize;
 	int res;
-	int sendsize;
+	size_t sendsize;
 
 again:
 	if (impl_ver == IMPL_XNTPD)
@@ -784,7 +766,7 @@ again:
 	else
 		sendsize = v4sizeof(struct info_peer_list);
 
-	memset(plist, 0, sizeof(plist));
+	ZERO(plist);
 
 	qitemlim = min(pcmd->nargs, COUNTOF(plist));
 	for (qitems = 0, pl = plist; qitems < qitemlim; qitems++) {
@@ -803,7 +785,7 @@ again:
 		}
 		pl->port = (u_short)s_port;
 		pl->hmode = plist[qitems].flags = 0;
-		pl = (struct info_peer_list *)((char *)pl + sendsize);
+		pl = (void *)((char *)pl + sendsize);
 	}
 
 	res = doquery(impl_ver, REQ_PEER_STATS, 0, qitems,
@@ -817,7 +799,7 @@ again:
 	}
 
 	if (res != 0)
-	    return;
+		return;
 
 	if (!checkitems(items, fp))
 	    return;
@@ -889,8 +871,8 @@ loopinfo(
 	)
 {
 	struct info_loop *il;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int oneline = 0;
 	int res;
 	l_fp tempts;
@@ -964,8 +946,8 @@ sysinfo(
 {
 	struct info_sys *is;
 	sockaddr_u peeraddr;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 	l_fp tempts;
 
@@ -1053,8 +1035,8 @@ sysstats(
 	)
 {
 	struct info_sys_stats *ss;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 again:
@@ -1119,8 +1101,8 @@ iostats(
 	)
 {
 	struct info_io_stats *io;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 again:
@@ -1180,8 +1162,8 @@ memstats(
 {
 	struct info_mem_stats *mem;
 	int i;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 again:
@@ -1237,8 +1219,8 @@ timerstats(
 	)
 {
 	struct info_timer_stats *tim;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 again:
@@ -1332,9 +1314,9 @@ doconfig(
 	)
 {
 	struct conf_peer cpeer;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	u_long keyid;
 	u_int version;
 	u_char minpoll;
@@ -1364,7 +1346,7 @@ again:
 		sendsize = v4sizeof(struct conf_peer);
 
 	items = 1;
-	while (pcmd->nargs > items) {
+	while (pcmd->nargs > (size_t)items) {
 		if (STREQ(pcmd->argval[items].string, "prefer"))
 			flags |= CONF_FLAG_PREFER;
 		else if (STREQ(pcmd->argval[items].string, "burst"))
@@ -1441,7 +1423,7 @@ again:
 	if (res)
 		return;
 
-	memset(&cpeer, 0, sizeof(cpeer));
+	ZERO(cpeer);
 
 	if (IS_IPV4(&pcmd->argval[0].netnum)) {
 		cpeer.peeraddr = NSRCADR(&pcmd->argval[0].netnum);
@@ -1498,13 +1480,13 @@ unconfig(
 {
 	/* 8 is the maximum number of peers which will fit in a packet */
 	struct conf_unpeer *pl, plist[min(MAXARGS, 8)];
-	int qitemlim;
-	int qitems;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t qitemlim;
+	size_t qitems;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	int res;
-	int sendsize;
+	size_t sendsize;
 
 again:
 	if (impl_ver == IMPL_XNTPD)
@@ -1528,7 +1510,7 @@ again:
 			    SOCK_ADDR6(&pcmd->argval[qitems].netnum);
 			pl->v6_flag = 1;
 		}
-		pl = (struct conf_unpeer *)((char *)pl + sendsize);
+		pl = (void *)((char *)pl + sendsize);
 	}
 
 	res = doquery(impl_ver, REQ_UNCONFIG, 1, qitems,
@@ -1582,14 +1564,14 @@ doset(
 	)
 {
 	struct conf_sys_flags sys;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	int res;
 
 	sys.flags = 0;
 	res = 0;
-	for (items = 0; items < pcmd->nargs; items++) {
+	for (items = 0; (size_t)items < pcmd->nargs; items++) {
 		if (STREQ(pcmd->argval[items].string, "auth"))
 			sys.flags |= SYS_FLAG_AUTH;
 		else if (STREQ(pcmd->argval[items].string, "bclient"))
@@ -1667,7 +1649,7 @@ static struct resflags resflagsV3[] = {
 	{ "limited",	RES_LIMITED },
 	{ "version",	RES_VERSION },
 	{ "kod",	RES_KOD },
-	{ "timeout",	RES_TIMEOUT },
+	{ "flake",	RES_FLAKE },
 
 	{ "",		0 }
 };
@@ -1675,6 +1657,7 @@ static struct resflags resflagsV3[] = {
 static struct resflags resmflags[] = {
 	{ "ntpport",	RESM_NTPONLY },
 	{ "interface",	RESM_INTERFACE },
+	{ "source",	RESM_SOURCE },
 	{ "",		0 }
 };
 
@@ -1692,12 +1675,12 @@ reslist(
 	struct info_restrict *rl;
 	sockaddr_u resaddr;
 	sockaddr_u maskaddr;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 	int skip;
-	char *addr;
-	char *mask;
+	const char *addr;
+	const char *mask;
 	struct resflags *rf;
 	u_int32 count;
 	u_short flags;
@@ -1716,26 +1699,26 @@ again:
 	}
 
 	if (res != 0)
-	    return;
+		return;
 
 	if (!checkitems(items, fp))
-	    return;
+		return;
 
 	if (!checkitemsize(itemsize, sizeof(struct info_restrict)) &&
 	    !checkitemsize(itemsize, v4sizeof(struct info_restrict)))
-	    return;
+		return;
 
-	(void) fprintf(fp,
-	       "   address          mask            count        flags\n");
-	(void) fprintf(fp,
-		       "=====================================================================\n");
+	fprintf(fp,
+		"   address          mask            count        flags\n");
+	fprintf(fp,
+		"=====================================================================\n");
 
 	while (items > 0) {
 		SET_ADDRS(resaddr, maskaddr, rl, addr, mask);
 		if (rl->v6_flag != 0) {
 			addr = nntohost(&resaddr);
 		} else {
-			if ((rl->mask == (u_int32)0xffffffff))
+			if (rl->mask == (u_int32)0xffffffff)
 				addr = nntohost(&resaddr);
 			else
 				addr = stoa(&resaddr);
@@ -1756,29 +1739,33 @@ again:
 		while (rf->bit != 0) {
 			if (mflags & rf->bit) {
 				if (!res)
-				    (void) strcat(flagstr, comma);
+					strlcat(flagstr, comma,
+						sizeof(flagstr));
 				res = 0;
-				(void) strcat(flagstr, rf->str);
+				strlcat(flagstr, rf->str,
+					sizeof(flagstr));
 			}
 			rf++;
 		}
 
 		rf = (impl_ver == IMPL_XNTPD_OLD)
-		     ? &resflagsV2[0]
-		     : &resflagsV3[0]
-		     ;
+			 ? &resflagsV2[0]
+			 : &resflagsV3[0];
+
 		while (rf->bit != 0) {
 			if (flags & rf->bit) {
 				if (!res)
-				    (void) strcat(flagstr, comma);
+					strlcat(flagstr, comma,
+						sizeof(flagstr));
 				res = 0;
-				(void) strcat(flagstr, rf->str);
+				strlcat(flagstr, rf->str,
+					sizeof(flagstr));
 			}
 			rf++;
 		}
 
 		if (flagstr[0] == '\0')
-			strcpy(flagstr, "none");
+			strlcpy(flagstr, "none", sizeof(flagstr));
 
 		if (!skip)
 			fprintf(fp, "%-15.15s %-15.15s %9lu  %s\n",
@@ -1840,13 +1827,13 @@ do_restrict(
 	)
 {
 	struct conf_restrict cres;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	u_int32 num;
 	u_long bit;
 	int i;
-	int res;
+	size_t res;
 	int err;
 	int sendsize;
 
@@ -1959,22 +1946,24 @@ monlist(
 	FILE *fp
 	)
 {
-	char *struct_star;
+	const char *struct_star;
+	const struct info_monitor *ml;
+	const struct info_monitor_1 *m1;
+	const struct old_info_monitor *oml;
 	sockaddr_u addr;
 	sockaddr_u dstadr;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 	int version = -1;
 
-	if (pcmd->nargs > 0) {
+	if (pcmd->nargs > 0)
 		version = pcmd->argval[0].ival;
-	}
 
 again:
 	res = doquery(impl_ver,
 		      (version == 1 || version == -1) ? REQ_MON_GETLIST_1 :
-		      REQ_MON_GETLIST, 0, 0, 0, (char *)NULL,
+		      REQ_MON_GETLIST, 0, 0, 0, NULL,
 		      &items, &itemsize, &struct_star,
 		      (version < 0) ? (1 << INFO_ERR_REQ) : 0, 
 		      sizeof(struct info_monitor_1));
@@ -1985,57 +1974,57 @@ again:
 	}
 
 	if (res == INFO_ERR_REQ && version < 0) 
-	    res = doquery(impl_ver, REQ_MON_GETLIST, 0, 0, 0, (char *)NULL,
-			  &items, &itemsize, &struct_star, 0, 
-			  sizeof(struct info_monitor));
+		res = doquery(impl_ver, REQ_MON_GETLIST, 0, 0, 0, NULL,
+			      &items, &itemsize, &struct_star, 0,
+			      sizeof(struct info_monitor));
 	
 	if (res != 0)
-	    return;
+		return;
 
 	if (!checkitems(items, fp))
-	    return;
+		return;
 
 	if (itemsize == sizeof(struct info_monitor_1) ||
 	    itemsize == v4sizeof(struct info_monitor_1)) {
-		struct info_monitor_1 *ml = (struct info_monitor_1 *) struct_star;
 
-		(void) fprintf(fp,
-			       "remote address          port local address      count m ver rstr avgint  lstint\n");
-		(void) fprintf(fp,
-			       "===============================================================================\n");
+	    m1 = (const void*)struct_star;
+		fprintf(fp,
+			"remote address          port local address      count m ver rstr avgint  lstint\n");
+		fprintf(fp,
+			"===============================================================================\n");
 		while (items > 0) {
-			SET_ADDRS(dstadr, addr, ml, daddr, addr);
+			SET_ADDRS(dstadr, addr, m1, daddr, addr);
 			if ((pcmd->nargs == 0) ||
-			    ((pcmd->argval->ival == 6) && (ml->v6_flag != 0)) ||
-			    ((pcmd->argval->ival == 4) && (ml->v6_flag == 0)))
+			    ((pcmd->argval->ival == 6) && (m1->v6_flag != 0)) ||
+			    ((pcmd->argval->ival == 4) && (m1->v6_flag == 0)))
 				fprintf(fp, 
 				    "%-22.22s %5d %-15s %8lu %1u %1u %6lx %6lu %7lu\n",
 				    nntohost(&addr), 
-				    ntohs(ml->port),
+				    ntohs(m1->port),
 				    stoa(&dstadr),
-				    (u_long)ntohl(ml->count),
-				    ml->mode,
-				    ml->version,
-				    (u_long)ntohl(ml->restr),
-				    (u_long)ntohl(ml->lasttime),
-				    (u_long)ntohl(ml->firsttime));
-			ml++;
+				    (u_long)ntohl(m1->count),
+				    m1->mode,
+				    m1->version,
+				    (u_long)ntohl(m1->restr),
+				    (u_long)ntohl(m1->avg_int),
+				    (u_long)ntohl(m1->last_int));
+			m1++;
 			items--;
 		}
 	} else if (itemsize == sizeof(struct info_monitor) ||
 	    itemsize == v4sizeof(struct info_monitor)) {
-		struct info_monitor *ml = (struct info_monitor *) struct_star;
 
-		(void) fprintf(fp,
-			       "     address               port     count mode ver rstr avgint  lstint\n");
-		(void) fprintf(fp,
-			       "===============================================================================\n");
+		ml = (const void *)struct_star;
+		fprintf(fp,
+			"     address               port     count mode ver rstr avgint  lstint\n");
+		fprintf(fp,
+			"===============================================================================\n");
 		while (items > 0) {
 			SET_ADDR(dstadr, ml->v6_flag, ml->addr, ml->addr6);
 			if ((pcmd->nargs == 0) ||
 			    ((pcmd->argval->ival == 6) && (ml->v6_flag != 0)) ||
 			    ((pcmd->argval->ival == 4) && (ml->v6_flag == 0)))
-				(void) fprintf(fp,
+				fprintf(fp,
 				    "%-25.25s %5u %9lu %4u %2u %9lx %9lu %9lu\n",
 				    nntohost(&dstadr),
 				    ntohs(ml->port),
@@ -2043,27 +2032,28 @@ again:
 				    ml->mode,
 				    ml->version,
 				    (u_long)ntohl(ml->restr),
-				    (u_long)ntohl(ml->lasttime),
-				    (u_long)ntohl(ml->firsttime));
+				    (u_long)ntohl(ml->avg_int),
+				    (u_long)ntohl(ml->last_int));
 			ml++;
 			items--;
 		}
 	} else if (itemsize == sizeof(struct old_info_monitor)) {
-		struct old_info_monitor *oml = (struct old_info_monitor *)struct_star;
-		(void) fprintf(fp,
-			       "     address          port     count  mode version  lasttime firsttime\n");
-		(void) fprintf(fp,
-			       "======================================================================\n");
+
+		oml = (const void *)struct_star;
+		fprintf(fp,
+			"     address          port     count  mode version  lasttime firsttime\n");
+		fprintf(fp,
+			"======================================================================\n");
 		while (items > 0) {
 			SET_ADDR(dstadr, oml->v6_flag, oml->addr, oml->addr6);
-			(void) fprintf(fp, "%-20.20s %5u %9lu %4u   %3u %9lu %9lu\n",
-				       nntohost(&dstadr),
-				       ntohs(oml->port),
-				       (u_long)ntohl(oml->count),
-				       oml->mode,
-				       oml->version,
-				       (u_long)ntohl(oml->lasttime),
-				       (u_long)ntohl(oml->firsttime));
+			fprintf(fp, "%-20.20s %5u %9lu %4u   %3u %9lu %9lu\n",
+				nntohost(&dstadr),
+				ntohs(oml->port),
+				(u_long)ntohl(oml->count),
+				oml->mode,
+				oml->version,
+				(u_long)ntohl(oml->lasttime),
+				(u_long)ntohl(oml->firsttime));
 			oml++;
 			items--;
 		}
@@ -2078,15 +2068,16 @@ again:
  * Mapping between command line strings and stat reset flags
  */
 struct statreset {
-  const char *str;
-	int flag;
+	const char * const	str;
+	const int		flag;
 } sreset[] = {
+	{ "allpeers",	RESET_FLAG_ALLPEERS },
 	{ "io",		RESET_FLAG_IO },
 	{ "sys",	RESET_FLAG_SYS },
 	{ "mem",	RESET_FLAG_MEM },
 	{ "timer",	RESET_FLAG_TIMER },
 	{ "auth",	RESET_FLAG_AUTH },
-	{ "allpeers",	RESET_FLAG_ALLPEERS },
+	{ "ctl",	RESET_FLAG_CTL },
 	{ "",		0 }
 };
 
@@ -2100,11 +2091,11 @@ reset(
 	)
 {
 	struct reset_flags rflags;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	int i;
-	int res;
+	size_t res;
 	int err;
 
 	err = 0;
@@ -2112,12 +2103,12 @@ reset(
 	for (res = 0; res < pcmd->nargs; res++) {
 		for (i = 0; sreset[i].flag != 0; i++) {
 			if (STREQ(pcmd->argval[res].string, sreset[i].str))
-			    break;
+				break;
 		}
 		if (sreset[i].flag == 0) {
-			(void) fprintf(fp, "Flag %s unknown\n",
-				       pcmd->argval[res].string);
-			err++;
+			fprintf(fp, "Flag %s unknown\n",
+				pcmd->argval[res].string);
+			err = 1;
 		} else {
 			rflags.flags |= sreset[i].flag;
 		}
@@ -2157,13 +2148,13 @@ preset(
 {
 	/* 8 is the maximum number of peers which will fit in a packet */
 	struct conf_unpeer *pl, plist[min(MAXARGS, 8)];
-	int qitemlim;
-	int qitems;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t qitemlim;
+	size_t qitems;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	int res;
-	int sendsize;
+	size_t sendsize;
 
 again:
 	if (impl_ver == IMPL_XNTPD)
@@ -2187,7 +2178,7 @@ again:
 			    SOCK_ADDR6(&pcmd->argval[qitems].netnum);
 			pl->v6_flag = 1;
 		}
-		pl = (struct conf_unpeer *)((char *)pl + sendsize);
+		pl = (void *)((char *)pl + sendsize);
 	}
 
 	res = doquery(impl_ver, REQ_RESET_PEER, 1, qitems,
@@ -2214,9 +2205,9 @@ readkeys(
 	FILE *fp
 	)
 {
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	int res;
 
 again:
@@ -2271,10 +2262,10 @@ do_trustkey(
 	)
 {
 	u_long keyids[MAXARGS];
-	int i;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t i;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	int ritems;
 	int res;
 
@@ -2311,8 +2302,8 @@ authinfo(
 	)
 {
 	struct info_auth *ia;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 again:
@@ -2365,17 +2356,16 @@ traps(
 	FILE *fp
 	)
 {
-	int i;
+	size_t i;
 	struct info_trap *it;
 	sockaddr_u trap_addr, local_addr;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 again:
-	res = doquery(impl_ver, REQ_TRAPS, 0, 0, 0, (char *)NULL,
-		      &items, &itemsize, (void *)&it, 0, 
-		      sizeof(struct info_trap));
+	res = doquery(impl_ver, REQ_TRAPS, 0, 0, 0, NULL, &items,
+		      &itemsize, (void *)&it, 0, sizeof(*it));
 	
 	if (res == INFO_ERR_IMPL && impl_ver == IMPL_XNTPD) {
 		impl_ver = IMPL_XNTPD_OLD;
@@ -2383,39 +2373,38 @@ again:
 	}
 
 	if (res != 0)
-	    return;
+		return;
 
 	if (!checkitems(items, fp))
-	    return;
+		return;
 
 	if (!checkitemsize(itemsize, sizeof(struct info_trap)) &&
 	    !checkitemsize(itemsize, v4sizeof(struct info_trap)))
-	    return;
+		return;
 
 	for (i = 0; i < items; i++ ) {
-		if (i != 0)
-		    (void) fprintf(fp, "\n");
 		SET_ADDRS(trap_addr, local_addr, it, trap_address, local_address);
-		(void) fprintf(fp, "address %s, port %d\n",
-				stoa(&trap_addr), 
-				ntohs(it->trap_port));
-		(void) fprintf(fp, "interface: %s, ",
-				(it->local_address == 0)
-				? "wildcard"
-				: stoa(&local_addr));
+		fprintf(fp, "%saddress %s, port %d\n",
+			(0 == i)
+			    ? ""
+			    : "\n",
+			stoa(&trap_addr), ntohs(it->trap_port));
+		fprintf(fp, "interface: %s, ",
+			(0 == it->local_address)
+			    ? "wildcard"
+			    : stoa(&local_addr));
 		if (ntohl(it->flags) & TRAP_CONFIGURED)
-		    (void) fprintf(fp, "configured\n");
+			fprintf(fp, "configured\n");
 		else if (ntohl(it->flags) & TRAP_NONPRIO)
-		    (void) fprintf(fp, "low priority\n");
+			fprintf(fp, "low priority\n");
 		else
-		    (void) fprintf(fp, "normal priority\n");
+			fprintf(fp, "normal priority\n");
 		
-		(void) fprintf(fp, "set for %ld secs, last set %ld secs ago\n",
-			       (long)ntohl(it->origtime),
-			       (long)ntohl(it->settime));
-		(void) fprintf(fp, "sequence %d, number of resets %ld\n",
-			       ntohs(it->sequence),
-			       (long)ntohl(it->resets));
+		fprintf(fp, "set for %ld secs, last set %ld secs ago\n",
+			(long)ntohl(it->origtime),
+			(long)ntohl(it->settime));
+		fprintf(fp, "sequence %d, number of resets %ld\n",
+			ntohs(it->sequence), (long)ntohl(it->resets));
 	}
 }
 
@@ -2457,9 +2446,9 @@ do_addclr_trap(
 	)
 {
 	struct conf_trap ctrap;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	int res;
 	int sendsize;
 
@@ -2556,9 +2545,9 @@ do_changekey(
 	)
 {
 	u_long key;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	int res;
 
 
@@ -2592,8 +2581,8 @@ ctlstats(
 	)
 {
 	struct info_control *ic;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 again:
@@ -2659,10 +2648,10 @@ clockstat(
 	struct info_clock *cl;
 	/* 8 is the maximum number of clocks which will fit in a packet */
 	u_long clist[min(MAXARGS, 8)];
-	int qitemlim;
-	int qitems;
-	int items;
-	int itemsize;
+	size_t qitemlim;
+	size_t qitems;
+	size_t items;
+	size_t itemsize;
 	int res;
 	l_fp ts;
 	struct clktype *clk;
@@ -2746,9 +2735,9 @@ fudge(
 	)
 {
 	struct conf_fudge fudgedata;
-	int items;
-	int itemsize;
-	char *dummy;
+	size_t items;
+	size_t itemsize;
+	const char *dummy;
 	l_fp ts;
 	int res;
 	long val;
@@ -2757,7 +2746,7 @@ fudge(
 
 
 	err = 0;
-	memset((char *)&fudgedata, 0, sizeof fudgedata);
+	ZERO(fudgedata);
 	fudgedata.clockadr = NSRCADR(&pcmd->argval[0].netnum);
 
 	if (STREQ(pcmd->argval[1].string, "time1")) {
@@ -2833,10 +2822,10 @@ clkbug(
 	/* 8 is the maximum number of clocks which will fit in a packet */
 	u_long clist[min(MAXARGS, 8)];
 	u_int32 ltemp;
-	int qitemlim;
-	int qitems;
-	int items;
-	int itemsize;
+	size_t qitemlim;
+	size_t qitems;
+	size_t items;
+	size_t itemsize;
 	int res;
 	int needsp;
 	l_fp ts;
@@ -2927,8 +2916,8 @@ kerninfo(
 	)
 {
 	struct info_kernel *ik;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 	unsigned status;
 	double tscale = 1e-6;
@@ -2963,9 +2952,9 @@ again:
 	(void)fprintf(fp, "pll frequency:        %s ppm\n",
 	    fptoa((s_fp)ntohl(ik->freq), 3));
 	(void)fprintf(fp, "maximum error:        %g s\n",
-	    (u_long)ntohl(ik->maxerror) * 1e-6);
+	    (u_long)ntohl(ik->maxerror) * tscale);
 	(void)fprintf(fp, "estimated error:      %g s\n",
-	    (u_long)ntohl(ik->esterror) * 1e-6);
+	    (u_long)ntohl(ik->esterror) * tscale);
 	(void)fprintf(fp, "status:               %04x ", status);
 #ifdef STA_PLL
 	if (status & STA_PLL) (void)fprintf(fp, " pll");
@@ -3061,12 +3050,12 @@ static void
 iflist(
 	FILE *fp,
 	struct info_if_stats *ifs,
-	int items,
-	int itemsize,
+	size_t items,
+	size_t itemsize,
 	int res
 	)
 {
-	static char *actions = "?.+-";
+	static const char *actions = "?.+-";
 	sockaddr_u saddr;
 
 	if (res != 0)
@@ -3124,8 +3113,8 @@ get_if_stats(
 	)
 {
 	struct info_if_stats *ifs;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 	res = doquery(impl_ver, REQ_IF_STATS, 1, 0, 0, (char *)NULL, &items,
@@ -3142,8 +3131,8 @@ do_if_reload(
 	)
 {
 	struct info_if_stats *ifs;
-	int items;
-	int itemsize;
+	size_t items;
+	size_t itemsize;
 	int res;
 
 	res = doquery(impl_ver, REQ_IF_RELOAD, 1, 0, 0, (char *)NULL, &items,
