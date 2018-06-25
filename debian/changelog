@@ -6,6 +6,7 @@ ntp (1:4.2.6.p5+dfsg-7+deb8u2pexip3) pexip; urgency=medium
   * Also use flock to in the ntp init script, and update the lock file
     location.  (Closes: #806556)
     Backported from a1e6a54f3eb59e6a32a05463eca85d7683d6e99d upstream
+  * Default auth hash to sha1
 
  -- John-Mark Bell <jmb@pexip.com>  Fri, 22 Jun 2017 19:05:54 +0100
 

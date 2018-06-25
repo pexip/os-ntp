@@ -1,0 +1,36 @@
+diff --git a/ntpd/ntp_config.c b/ntpd/ntp_config.c
+index db9682a..8476340 100644
+--- a/ntpd/ntp_config.c
++++ b/ntpd/ntp_config.c
+@@ -1866,15 +1866,15 @@ config_auth(
+ 		req_hashlen = digest_len;
+ #endif
+ 	} else {
+-		unsigned char rankey[16];
++		unsigned char rankey[20];
+ 
+ 		if (ntp_crypto_random_buf(rankey, sizeof (rankey))) {
+ 			msyslog(LOG_ERR, "ntp_crypto_random_buf() failed.");
+ 			exit(1);
+ 		}
+ 
+-		req_keytype = NID_md5;
+-		req_hashlen = 16;
++               req_keytype = NID_sha1;
++               req_hashlen = 20;
+ 		MD5auth_setkey(req_keyid, req_keytype, rankey, sizeof(rankey));
+ 		authtrust(req_keyid, 1);
+ 	}
+diff --git a/ntpd/ntp_crypto.c b/ntpd/ntp_crypto.c
+index 38f38a1..8c9fb8e 100644
+--- a/ntpd/ntp_crypto.c
++++ b/ntpd/ntp_crypto.c
+@@ -116,7 +116,7 @@
+  * Global cryptodata in host byte order
+  */
+ u_int32	crypto_flags = 0x0;	/* status word */
+-int	crypto_nid = KEY_TYPE_MD5; /* digest nid */
++int    crypto_nid = NID_sha1; /* digest nid */
+ char	*sys_hostname = NULL;	/* host name */
+ char	*sys_groupname = NULL;	/* group name */
+ 

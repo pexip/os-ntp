@@ -43,4 +43,4 @@ ntp-4.2.6p5-cve-2016-1550.patch
 ntp-4.2.6p5-cve-2016-2516.patch
 ntp-4.2.6p5-cve-2016-2518.patch
 sha1-refid.patch
-
+sha1-auth.patch
