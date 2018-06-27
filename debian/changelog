@@ -1,3 +1,10 @@
+ntp (1:4.2.6.p5+dfsg-7+deb8u2pexip4) pexip; urgency=medium
+
+  * debian/forking.conf: Give systemd sysv-generator hint that
+    init scripts fork daemons
+
+ -- John-Mark Bell <jmb@pexip.com>  Wed, 27 Jun 2018 21:05:44 +0100
+
 ntp (1:4.2.6.p5+dfsg-7+deb8u2pexip3) pexip; urgency=medium
 
   * Use flock instead of lockfile-progs for ntpdate.if-up (closes:
@@ -8,7 +15,7 @@ ntp (1:4.2.6.p5+dfsg-7+deb8u2pexip3) pexip; urgency=medium
     Backported from a1e6a54f3eb59e6a32a05463eca85d7683d6e99d upstream
   * Default auth hash to sha1
 
- -- John-Mark Bell <jmb@pexip.com>  Fri, 22 Jun 2017 19:05:54 +0100
+ -- John-Mark Bell <jmb@pexip.com>  Fri, 22 Jun 2018 19:05:54 +0100
 
 ntp (1:4.2.6.p5+dfsg-7+deb8u2pexip2) pexip; urgency=medium
 
