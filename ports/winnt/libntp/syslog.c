@@ -26,6 +26,9 @@
 #include <syslog.h>
 
 #include <isc/strerror.h>
+#include <lib_strbuf.h>
+
+#include "ntp_stdlib.h"
 
 #include "messages.h"
 
@@ -101,7 +104,7 @@ syslog(int level, const char *fmt, ...) {
 	str[0] = buf;
 
 	va_start(ap, fmt);
-	vsprintf(buf, fmt, ap);
+	vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
 
 	/* Make sure that the channel is open to write the event */
@@ -133,8 +136,7 @@ void
 openlog(const char *name, int flags, ...) {
 	/* Get a handle to the Application event log */
 	hAppLog = RegisterEventSource(NULL, progname);
-	strncpy(progname, name, sizeof(progname));
-	progname[sizeof(progname) - 1] = 0;
+	strlcpy(progname, name, sizeof(progname));
 }
 
 /*
@@ -208,9 +210,10 @@ ntp_strerror(
 	int code
 	)
 {
-	static char msgbuf[128];
+	char *	buf;
 
-	isc__strerror(code, msgbuf, sizeof(msgbuf));
+	LIB_GETBUF(buf);
+	isc__strerror(code, buf, LIB_BUFLENGTH);
 
-	return msgbuf;
+	return buf;
 }

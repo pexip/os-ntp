@@ -4,12 +4,13 @@
 
 #include "ntp_syslog.h"
 #include "ntp_stdlib.h"
+#include "ntp_unixtime.h"
 #include "clockstuff.h"
 
 int
 gettimeofday(
-	struct timeval *tv,
-	int ignored
+	struct timeval *	tv,
+	void *			ignored
 	)
 {
 	struct timespec ts;

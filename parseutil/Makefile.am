@@ -1,18 +1,23 @@
 NULL=
-#AUTOMAKE_OPTIONS = ../util/ansi2knr no-dependencies
-AUTOMAKE_OPTIONS = 
+
 BUILT_SOURCES =
 CLEANFILES =
 noinst_PROGRAMS = @TESTDCF@ @DCFD@
 EXTRA_PROGRAMS = testdcf dcfd
 
-INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/lib/isc/include \
-		-I$(top_srcdir)/lib/isc/nothreads/include \
-		-I$(top_srcdir)/lib/isc/unix/include
+AM_CFLAGS  = $(CFLAGS_NTP)
+AM_CFLAGS += $(NTP_HARD_CFLAGS)
+
+AM_CPPFLAGS  = $(NTP_INCS)
+AM_CPPFLAGS += $(CPPFLAGS_NTP)
+AM_CPPFLAGS += $(NTP_HARD_CPPFLAGS)
+
+AM_LDFLAGS = $(NTP_HARD_LDFLAGS)
+
+LDADD = ../libntp/libntp.a $(LDADD_LIBNTP) $(LIBM)
 
 ETAGS_ARGS = Makefile.am
 DISTCLEANFILES = $(EXTRA_PROGRAMS)
-#EXTRA_DIST= TAGS
 
 check-local: @DCFD@
 	case "$(noinst_PROGRAMS)" in	\
@@ -20,3 +25,4 @@ check-local: @DCFD@
 	esac
 
 include $(top_srcdir)/depsver.mf
+include $(top_srcdir)/includes.mf

@@ -2,6 +2,8 @@
  * getclock.c - Emulate Unix getclock(3) nanosecond interface for libntp/ntpd
  */
 #include "config.h"
+
+#include "ntp_unixtime.h"
 #include "clockstuff.h"
 #include "ntp_stdlib.h"
 
@@ -11,6 +13,8 @@
  * via the pointer get_sys_time_as_filetime.
  */
 PGSTAFT get_sys_time_as_filetime;
+PGSTAFT pGetSystemTimePreciseAsFileTime;
+
 
 int
 getclock(
@@ -24,18 +28,13 @@ getclock(
 	} uNow;
 
 	if (clktyp != TIMEOFDAY) {
-#ifdef DEBUG
-		if (debug) {
-			printf("getclock() supports only TIMEOFDAY clktyp\n");
-		}
-#endif
+		TRACE(1, ("getclock() supports only TIMEOFDAY clktyp\n"));
 		errno = EINVAL;
 		return -1;
 	}
 
-	if (! get_sys_time_as_filetime)
-		get_sys_time_as_filetime = GetSystemTimeAsFileTime;
-
+	if (NULL == get_sys_time_as_filetime)
+		init_win_precise_time();
 	(*get_sys_time_as_filetime)(&uNow.ft);
 
 	/* 
@@ -46,4 +45,21 @@ getclock(
 	ts->tv_nsec = (long)(( uNow.ull % HECTONANOSECONDS) * 100);
 
 	return 0;
+}
+
+
+void
+init_win_precise_time(void)
+{
+	HANDLE	hDll;
+	FARPROC	pfn;
+
+	hDll = LoadLibrary("kernel32");
+	pfn = GetProcAddress(hDll, "GetSystemTimePreciseAsFileTime");
+	if (NULL != pfn) {
+		pGetSystemTimePreciseAsFileTime = (PGSTAFT)pfn;
+		get_sys_time_as_filetime = pGetSystemTimePreciseAsFileTime;
+	} else {
+		get_sys_time_as_filetime = &GetSystemTimeAsFileTime;
+	}
 }

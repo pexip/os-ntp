@@ -29,6 +29,7 @@
 #include "ntp.h"
 #include "ntp_stdlib.h"
 #include "ntp_lineedit.h"
+#include "safecast.h"
 
 #define MAXEDITLINE	512
 
@@ -36,7 +37,7 @@
  * external references
  */
 
-extern char *	progname;
+extern char const *	progname;
 
 /*
  * globals, private prototypes
@@ -93,8 +94,7 @@ ntp_readline_init(
 
 			if (NULL == ntp_hist) {
 
-				fprintf(stderr, "history_init(): %s\n",
-						strerror(errno));
+				mfprintf(stderr, "history_init(): %m\n");
 				fflush(stderr);
 
 				el_end(ntp_el);
@@ -103,7 +103,7 @@ ntp_readline_init(
 				success = 0;
 
 			} else {
-				memset(&hev, 0, sizeof(hev));
+				ZERO(hev);
 #ifdef H_SETSIZE
 				history(ntp_hist, &hev, H_SETSIZE, 128);
 #endif
@@ -179,23 +179,22 @@ ntp_readline(
 	if (NULL != line) {
 		if (*line) {
 			add_history(line);
-			*pcount = strlen(line);
-		} else {
-			free(line);
-			line = NULL;
 		}
+		*pcount = strlen(line);
 	}
 #endif	/* LE_READLINE */
 
 #ifdef LE_EDITLINE
 	cline = el_gets(ntp_el, pcount);
 
-	if (NULL != cline && *cline) {
+	if (NULL != cline) {
 		history(ntp_hist, &hev, H_ENTER, cline);
-		*pcount = strlen(cline);
 		line = estrdup(cline);
-	} else
+	} else if (*pcount == -1) {
 		line = NULL;
+	} else {
+		line = estrdup("");
+	}
 #endif	/* LE_EDITLINE */
 
 #ifdef LE_NONE
@@ -215,7 +214,7 @@ ntp_readline(
 
 	line = fgets(line_buf, sizeof(line_buf), stdin);
 	if (NULL != line && *line) {
-		*pcount = strlen(line);
+		*pcount = (int)strlen(line); /* cannot overflow here */
 		line = estrdup(line);
 	} else
 		line = NULL;
