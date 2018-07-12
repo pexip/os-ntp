@@ -12,11 +12,11 @@ index 05c109a..6338f12 100644
   * The result is in network byte order.
   */
 @@ -101,7 +101,7 @@ addr2refid(sockaddr_u *addr)
- 		return (NSRCADR(addr));
- 
- 	INIT_SSL();
--	EVP_DigestInit(&ctx, EVP_get_digestbynid(NID_md5));
-+	EVP_DigestInit(&ctx, EVP_get_digestbynid(NID_sha1));
- 	EVP_DigestUpdate(&ctx, (u_char *)PSOCK_ADDR6(addr),
- 	    sizeof(struct in6_addr));
- 	EVP_DigestFinal(&ctx, digest, &len);
+ 	/* MD5 is not used as a crypto hash here. */
+ 	EVP_MD_CTX_set_flags(ctx, EVP_MD_CTX_FLAG_NON_FIPS_ALLOW);
+ #endif
+-	if (!EVP_DigestInit_ex(ctx, EVP_md5(), NULL)) {
++	if (!EVP_DigestInit_ex(ctx, EVP_sha1(), NULL)) {
+ 		msyslog(LOG_ERR,
+ 		    "MD5 init failed");
+ 		EVP_MD_CTX_free(ctx);	/* pedantic... but safe */
