@@ -9,10 +9,6 @@ if dpkg-maintscript-helper supports rm_conffile; then
 		/etc/dhcp3/dhclient-enter-hooks.d/ntp 1:4.2.6+dfsg-1 -- "$@"
 	dpkg-maintscript-helper rm_conffile \
 		/etc/network/if-up.d/ntp 1:4.2.6+dfsg-1 -- "$@"
-	dpkg-maintscript-helper rm_conffile \
-		/etc/apparmor.d/tunables/ntpd 1:4.2.6.p5+dfsg-7+deb8u2pexip1 -- "$@"
-	dpkg-maintscript-helper rm_conffile \
-		 /etc/apparmor.d/usr.sbin.ntpd 1:4.2.6.p5+dfsg-7+deb8u2pexip1 -- "$@"
 fi
 
 if dpkg-maintscript-helper supports mv_conffile; then
