@@ -1,10 +1,11 @@
 
+#include <config.h>
+
 #include "clockstuff.h"
 #include "ntp_stdlib.h"
+#include "ntp_unixtime.h"
 
 pset_tod_using		set_tod_using = NULL;
-
-time_stepped_callback	step_callback = NULL;
 
 int
 ntp_set_tod(
@@ -25,12 +26,9 @@ ntp_set_tod(
 		(ULONGLONG)tv->tv_usec * 10;
 
 	if (!FileTimeToSystemTime(&t.ft, &st) || !SetSystemTime(&st)) {
-		msyslog(LOG_ERR, "SetSystemTime failed: %m\n");
+		msyslog(LOG_ERR, "SetSystemTime failed: %m");
 		return -1;
 	}
-
-	if (step_callback)
-		(*step_callback)();
 
 	return 0;
 }

@@ -10,95 +10,18 @@
 		<Platform
 			Name="Win32"
 		/>
+		<Platform
+			Name="x64"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
-			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\libntp,..\..\include,..\..\..\..\include,..\..\..\..\lib\isc\win32\include,..\..\..\..\lib\isc\include,$(OPENSSL_INC),..\..\..\..\sntp\libopts"
-				PreprocessorDefinitions="_DEBUG;_LIB;WIN32;SYS_WINNT;HAVE_CONFIG_H"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				PrecompiledHeaderFile=".\Debug\libntp.pch"
-				AssemblerListingLocation=".\Debug\"
-				ObjectFile=".\Debug\"
-				ProgramDataBaseFileName=".\Debug\"
-				BrowseInformation="1"
-				WarningLevel="4"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="1"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Debug\libntp.lib"
-				SuppressStartupBanner="true"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Debug\libntp.bsc"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="$(TmpBaseDir)"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
+			InheritedPropertySheets="..\release.vsprops;..\common.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -121,25 +44,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				InlineFunctionExpansion="1"
-				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\libntp,..\..\include,..\..\..\..\include,..\..\..\..\lib\isc\win32\include,..\..\..\..\lib\isc\include,$(OPENSSL_INC),..\..\..\..\sntp\libopts"
-				PreprocessorDefinitions="NDEBUG;_LIB;WIN32;SYS_WINNT;HAVE_CONFIG_H"
-				GeneratePreprocessedFile="0"
-				StringPooling="true"
-				ExceptionHandling="0"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="false"
-				PrecompiledHeaderFile=".\Release\libntp.pch"
-				AssemblerListingLocation=".\Release\"
-				ObjectFile=".\Release\"
-				ProgramDataBaseFileName=".\Release\"
-				BrowseInformation="1"
-				WarningLevel="4"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -154,7 +58,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\Release\libntp.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -166,7 +69,192 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Release\libntp.bsc"
+				OutputFile="$(IntDir)/$(ProjectName).bsc"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(TmpBaseDir)"
+			ConfigurationType="4"
+			InheritedPropertySheets="..\release-x64.vsprops;..\common.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="true"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile="$(IntDir)/$(ProjectName).bsc"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(TmpBaseDir)"
+			ConfigurationType="4"
+			InheritedPropertySheets="..\debug.vsprops;..\common.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="true"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile="$(IntDir)/$(ProjectName).bsc"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(TmpBaseDir)"
+			ConfigurationType="4"
+			InheritedPropertySheets="..\debug-x64.vsprops;..\common.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				SuppressStartupBanner="true"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile="$(IntDir)/$(ProjectName).bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -189,6 +277,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\libntp\adjtime.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libntp\arc4wrap.c"
 				>
 			</File>
 			<File
@@ -221,6 +313,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\libntp\authusekey.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\lib\isc\backtrace-emptytbl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\lib\isc\backtrace.c"
 				>
 			</File>
 			<File
@@ -284,14 +384,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\libntp\fptoa.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\libntp\fptoms.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libntp\getclock.c"
 				>
 			</File>
@@ -312,6 +404,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\libntp\icom.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\inet_aton.c"
 				>
 			</File>
@@ -328,11 +424,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\libntp\inttoa.c"
+				RelativePath="..\..\..\..\libntp\iosignal.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\libntp\iosignal.c"
+				RelativePath="..\..\..\..\libntp\is_ip_address.c"
 				>
 			</File>
 			<File
@@ -348,6 +444,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\libntp\libssl_compat.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\log.c"
 				>
 			</File>
@@ -357,18 +457,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\lib\isc\md5.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\libntp\memmove.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\libntp\mfptoa.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\libntp\mfptoms.c"
 				>
 			</File>
 			<File
@@ -385,10 +473,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\libntp\mstolfp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\libntp\msutotsf.c"
 				>
 			</File>
 			<File
@@ -412,6 +496,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\libntp\ntp_calendar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\libntp\ntp_crypto_rnd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\libntp\ntp_intres.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\libntp\ntp_libopts.c"
 				>
 			</File>
@@ -425,6 +521,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\libntp\ntp_rfc2553.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\libntp\ntp_worker.c"
 				>
 			</File>
 			<File
@@ -472,7 +572,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\lib\isc\sha1.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\libntp\snprintf.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\sockaddr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\libntp\socket.c"
 				>
 			</File>
 			<File
@@ -496,7 +608,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\libntp\strdup.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\win32\strerror.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\libntp\strl_obsd.c"
 				>
 			</File>
 			<File
@@ -516,6 +636,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libntp\termios.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\win32\thread.c"
 				>
 			</File>
@@ -524,19 +648,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libntp\transmitbuff.c"
+				RelativePath="..\..\..\..\libntp\timetoa.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\libntp\tsftomsu.c"
+				RelativePath="..\..\..\..\libntp\timevalops.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\libntp\tstotv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\libntp\tvtots.c"
+				RelativePath="..\..\..\..\lib\isc\tsmemcmp.c"
 				>
 			</File>
 			<File
@@ -544,15 +664,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\libntp\uinttoa.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libntp\util_clockstuff.c"
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\libntp\vint64ops.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libntp\win32_io.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\win32\win32os.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\libntp\work_fork.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\libntp\work_thread.c"
 				>
 			</File>
 			<File
@@ -589,11 +721,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\include\declcond.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\include\isc\event.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\include\global.h"
+				RelativePath="..\..\include\gaa_compat.h"
 				>
 			</File>
 			<File
@@ -605,15 +741,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\netinet\in.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\arpa\inet.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\..\lib\isc\include\isc\interfaceiter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\intreswork.h"
 				>
 			</File>
 			<File
@@ -637,11 +773,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\include\libntp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\libssl_compat.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\include\isc\log.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\include\md5.h"
+				RelativePath="..\..\..\..\lib\isc\include\isc\md5.h"
 				>
 			</File>
 			<File
@@ -649,11 +793,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\lib\isc\win32\include\isc\mutex.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\lib\isc\win32\include\isc\net.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\include\isc\netaddr.h"
+				RelativePath="..\..\..\..\lib\isc\include\isc\netaddr.h"
 				>
 			</File>
 			<File
@@ -661,7 +809,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\include\isc\netscope.h"
+				RelativePath="..\..\..\..\lib\isc\include\isc\netscope.h"
 				>
 			</File>
 			<File
@@ -690,6 +838,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\include\ntp_if.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\ntp_intres.h"
 				>
 			</File>
 			<File
@@ -749,10 +901,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\include\ntp_sprintf.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\include\ntp_stdlib.h"
 				>
 			</File>
@@ -801,7 +949,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\sys\socket.h"
+				RelativePath="..\..\..\..\lib\isc\include\isc\socket.h"
 				>
 			</File>
 			<File
@@ -837,7 +985,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\transmitbuff.h"
+				RelativePath="..\..\..\..\lib\isc\win32\include\isc\time.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\timespecops.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\timetoa.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\timevalops.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\include\vint64ops.h"
 				>
 			</File>
 			<File
@@ -845,7 +1009,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\isc\win32os.h"
+				RelativePath="..\..\..\..\lib\isc\win32\include\isc\win32os.h"
 				>
 			</File>
 		</Filter>
@@ -864,6 +1028,26 @@
 				RelativePath="..\..\libntp\messages.mc"
 				>
 				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Message Compiler"
+						CommandLine="mc -h $(InputDir) -r $(InputDir) -e h $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(InputDir)$(InputName).rc;$(InputDir)$(InputName).h;$(InputDir)msg00001.bin"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Message Compiler"
+						CommandLine="mc -h $(InputDir) -r $(InputDir) -e h $(InputPath)&#x0D;&#x0A;"
+						Outputs="$(InputDir)$(InputName).rc;$(InputDir)$(InputName).h;$(InputDir)msg00001.bin"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
@@ -874,7 +1058,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Debug|x64"
 					>
 					<Tool
 						Name="VCCustomBuildTool"

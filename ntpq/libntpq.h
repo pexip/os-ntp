@@ -36,7 +36,7 @@
 #define NTP_STATUS_INVALID      0
 #define NTP_STATUS_FALSETICKER  1
 #define NTP_STATUS_EXCESS       2
-#define NTP_STATUS_OUTLYER      3
+#define NTP_STATUS_OUTLIER      3
 #define NTP_STATUS_CANDIDATE    4
 #define NTP_STATUS_SELECTED     5
 #define NTP_STATUS_SYSPEER      6
@@ -80,9 +80,10 @@ extern struct ntpq_varlist ntpq_varlist[MAXLIST];
  */
 
 /* from libntpq.c */
-extern int ntpq_openhost(char *);
+extern int ntpq_openhost(char *, int);
 extern int ntpq_closehost(void);
-extern int ntpq_queryhost(unsigned short VARSET, associd_t association, char *resultbuf, int maxlen);
+extern int ntpq_queryhost(unsigned short VARSET, associd_t association,
+			  char *resultbuf, int maxlen);
 extern size_t ntpq_getvar(const char *resultbuf, size_t datalen,
 			  const char *varname, char *varvalue,
 			  size_t maxlen);
@@ -104,5 +105,5 @@ extern int ntpq_read_assoc_clockvars( associd_t associd, char *resultbuf, int ma
 /* in libntpq_subs.c */
 extern int ntpq_dogetassoc(void);
 extern char ntpq_decodeaddrtype(sockaddr_u *sock);
-extern int ntpq_doquerylist(struct ntpq_varlist *, int , associd_t , int , u_short *, int *, const char **datap );
-
+extern int ntpq_doquerylist(struct ntpq_varlist *, int, associd_t, int,
+			    u_short *, size_t *, const char **datap);

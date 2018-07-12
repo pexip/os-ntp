@@ -13,39 +13,70 @@
 #include <lib_strbuf.h>
 
 #ifdef OPENSSL
+#include "openssl/crypto.h"
 #include "openssl/err.h"
 #include "openssl/evp.h"
-
+#include "openssl/opensslv.h"
+#include "libssl_compat.h"
 
 int ssl_init_done;
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+
+static void
+atexit_ssl_cleanup(void)
+{
+	if (!ssl_init_done)
+		return;
+
+	ssl_init_done = FALSE;
+	EVP_cleanup();
+	ERR_free_strings();
+}
 
 void
 ssl_init(void)
 {
-	if (ssl_init_done)
-		return;
+	init_lib();
 
-	ERR_load_crypto_strings();
-	OpenSSL_add_all_algorithms();
-
-	ssl_init_done = 1;
+	if ( ! ssl_init_done) {
+	    ERR_load_crypto_strings();
+	    OpenSSL_add_all_algorithms();
+	    atexit(&atexit_ssl_cleanup);
+	    ssl_init_done = TRUE;
+	}
 }
+
+#else /* OPENSSL_VERSION_NUMBER >= 0x10100000L */
+
+void
+ssl_init(void)
+{
+	init_lib();
+	ssl_init_done = TRUE;
+}
+
+#endif /* OPENSSL_VERSION_NUMBER */
 
 
 void
 ssl_check_version(void)
 {
-	if ((SSLeay() ^ OPENSSL_VERSION_NUMBER) & ~0xff0L) {
+	u_long	v;
+	
+	v = OpenSSL_version_num();
+	if ((v ^ OPENSSL_VERSION_NUMBER) & ~0xff0L) {
 		msyslog(LOG_WARNING,
 		    "OpenSSL version mismatch. Built against %lx, you have %lx",
-		    OPENSSL_VERSION_NUMBER, SSLeay());
+		    (u_long)OPENSSL_VERSION_NUMBER, v);
 		fprintf(stderr,
 		    "OpenSSL version mismatch. Built against %lx, you have %lx\n",
-		    OPENSSL_VERSION_NUMBER, SSLeay());
+		    (u_long)OPENSSL_VERSION_NUMBER, v);
 	}
 
 	INIT_SSL();
 }
+
 #endif	/* OPENSSL */
 
 
@@ -61,14 +92,13 @@ keytype_from_text(
 	size_t *pdigest_len
 	)
 {
-	const u_long	max_digest_len = MAX_MAC_LEN - sizeof(keyid_t);
 	int		key_type;
 	u_int		digest_len;
 #ifdef OPENSSL
+	const u_long	max_digest_len = MAX_MAC_LEN - sizeof(keyid_t);
 	u_char		digest[EVP_MAX_MD_SIZE];
 	char *		upcased;
 	char *		pch;
-	EVP_MD_CTX	ctx;
 
 	/*
 	 * OpenSSL digest short names are capitalized, so uppercase the
@@ -78,15 +108,15 @@ keytype_from_text(
 	 */
 	INIT_SSL();
 	LIB_GETBUF(upcased);
-	strncpy(upcased, text, LIB_BUFLENGTH);
+	strlcpy(upcased, text, LIB_BUFLENGTH);
 	for (pch = upcased; '\0' != *pch; pch++)
-		*pch = (char)toupper(*pch);
+		*pch = (char)toupper((unsigned char)*pch);
 	key_type = OBJ_sn2nid(upcased);
 #else
 	key_type = 0;
 #endif
 
-	if (!key_type && 'm' == tolower(text[0]))
+	if (!key_type && 'm' == tolower((unsigned char)text[0]))
 		key_type = NID_md5;
 
 	if (!key_type)
@@ -94,15 +124,19 @@ keytype_from_text(
 
 	if (NULL != pdigest_len) {
 #ifdef OPENSSL
-		EVP_DigestInit(&ctx, EVP_get_digestbynid(key_type));
-		EVP_DigestFinal(&ctx, digest, &digest_len);
-		if (digest_len + sizeof(keyid_t) > MAX_MAC_LEN) {
+		EVP_MD_CTX	*ctx;
+
+		ctx = EVP_MD_CTX_new();
+		EVP_DigestInit(ctx, EVP_get_digestbynid(key_type));
+		EVP_DigestFinal(ctx, digest, &digest_len);
+		EVP_MD_CTX_free(ctx);
+		if (digest_len > max_digest_len) {
 			fprintf(stderr,
 				"key type %s %u octet digests are too big, max %lu\n",
 				keytype_name(key_type), digest_len,
 				max_digest_len);
 			msyslog(LOG_ERR,
-				"key type %s %u octet digests are too big, max %lu\n",
+				"key type %s %u octet digests are too big, max %lu",
 				keytype_name(key_type), digest_len,
 				max_digest_len);
 			return 0;

@@ -15,20 +15,19 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* $Id: ntservice.c,v 1.3.2.1.10.3 2004/03/08 04:04:22 marka Exp $ */
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
 #include <stdio.h>
 
-#include <ntp_cmdargs.h>
 #include <ntp_stdlib.h>
 #include "syslog.h"
+#include "ntpd.h"
 #include "ntservice.h"
 #include "clockstuff.h"
 #include "ntp_iocompletionport.h"
+#include "ntpd-opts.h"
 #include "isc/win32os.h"
 #include <ssl_applink.c>
 
@@ -42,7 +41,6 @@ static BOOL computer_shutting_down = FALSE;
 static int glb_argc;
 static char **glb_argv;
 HANDLE hServDoneEvent = NULL;
-extern volatile int debug;
 extern int accept_wildcard_if_for_winnt;
 
 /*
@@ -57,12 +55,16 @@ void ntservice_exit(void);
 void *wrap_dbg_malloc(size_t s, const char *f, int l);
 void *wrap_dbg_realloc(void *p, size_t s, const char *f, int l);
 void wrap_dbg_free(void *p);
+void wrap_dbg_free_ex(void *p, const char *f, int l);
 #endif
 
-void WINAPI service_main( DWORD argc, LPTSTR *argv )
+void WINAPI
+service_main(
+	DWORD argc,
+	LPTSTR *argv
+	)
 {
-	if ( argc > 1 )
-	{
+	if (argc > 1) {
 		/*
 		 * Let command line parameters from the Windows SCM GUI
 		 * override the standard parameters from the ImagePath registry key.
@@ -71,7 +73,7 @@ void WINAPI service_main( DWORD argc, LPTSTR *argv )
 		glb_argv = argv;
 	}
 
-	ntpdmain( glb_argc, glb_argv );
+	ntpdmain(glb_argc, glb_argv);
 }
 
 
@@ -80,11 +82,14 @@ void WINAPI service_main( DWORD argc, LPTSTR *argv )
  * We can call ntpdmain() explicitly or via StartServiceCtrlDispatcher()
  * as we need to.
  */
-int main( int argc, char *argv[] )
+int main(
+	int	argc,
+	char **	argv
+	)
 {
-	int rc;
-	int i = 1;
-
+	int	rc;
+	int	argc_after_opts;
+	char **	argv_after_opts;
 
 	ssl_applink();
 
@@ -97,30 +102,18 @@ int main( int argc, char *argv[] )
 	if (isc_win32os_majorversion() <= 4)
 		accept_wildcard_if_for_winnt = TRUE;
 
-	/*
-	 * This is a hack in the Windows port of ntpd.  Before the
-	 * portable ntpd libopts processing of the command line, we
-	 * need to know if we're "daemonizing" (attempting to start as
-	 * a service).  There is undoubtedly a better way.  Legitimate
-	 * option combinations are broken by this code , such as:
-	 *   ntpd -nc debug.conf
-	 */
-	while (argv[i]) {
-		if (!_strnicmp(argv[i], "-d", 2)
-		    || !strcmp(argv[i], "--debug_level")
-		    || !strcmp(argv[i], "--set-debug_level")
-		    || !strcmp(argv[i], "-q")
-		    || !strcmp(argv[i], "--quit")
-		    || !strcmp(argv[i], "-?")
-		    || !strcmp(argv[i], "--help")
-		    || !_strnicmp(argv[i], "-n", 2)
-		    || !strcmp(argv[i], "--nofork")
-		    || !strcmp(argv[i], "--saveconfigquit")) {
-			foreground = TRUE;
-			break;
-		}
-		i++;
-	}
+	argc_after_opts = argc;
+	argv_after_opts = argv;
+	parse_cmdline_opts(&argc_after_opts, &argv_after_opts);
+
+	if (HAVE_OPT(QUIT)
+	    || HAVE_OPT(SAVECONFIGQUIT)
+	    || HAVE_OPT(HELP)
+#ifdef DEBUG
+	    || OPT_VALUE_SET_DEBUG_LEVEL != 0
+#endif
+	    || HAVE_OPT(NOFORK))
+		foreground = TRUE;
 
 	if (foreground)			/* run in console window */
 		rc = ntpdmain(argc, argv);
@@ -137,14 +130,18 @@ int main( int argc, char *argv[] )
 			rc = 0; 
 		else {
 			rc = GetLastError();
-#ifdef DEBUG
-			fprintf(stderr, "%s: unable to start as service, rc: %i\n\n", argv[0], rc);
-#endif
-			fprintf(stderr, "\nUse -d, -q, --help or -n to run from the command line.\n");
+			fprintf(stderr,
+				"%s: unable to start as service:\n"
+				"%s\n"
+				"Use -d, -q, -n, -?, --help or "
+				"--saveconfigquit to run "
+				"interactive.\n",
+				argv[0], ntp_strerror(rc));
 		}
 	}
 	return rc;
 }
+
 
 /*
  * Initialize the Service by registering it.
@@ -164,8 +161,9 @@ ntservice_init() {
 		}
 		UpdateSCM(SERVICE_RUNNING);
 	} else {
-		strcpy(ConsoleTitle, "NTP Version ");
-		strcat(ConsoleTitle, Version);
+		snprintf(ConsoleTitle, sizeof(ConsoleTitle),
+			 "NTP Version %s", Version);
+		ConsoleTitle[sizeof(ConsoleTitle) - 1] = '\0';
 		SetConsoleTitle(ConsoleTitle);
 	}
 
@@ -194,13 +192,6 @@ ntservice_init() {
 	atexit( ntservice_exit );
 }
 
-/*
- * Routine to check if this is a service or a foreground program
- */
-BOOL
-ntservice_isservice() {
-	return(!foreground);
-}
 
 /*
  * Routine to check if the service is stopping
@@ -235,31 +226,41 @@ ntservice_exit( void )
  * to the service.
  */
 void WINAPI
-ServiceControl(DWORD dwCtrlCode) {
-	/* Handle the requested control code */
-	HANDLE exitEvent = get_exit_event();
+ServiceControl(
+	DWORD dwCtrlCode
+	) 
+{
+	static const char * const msg_tab[2] = {
+		"explicit stop",
+		"system shutdown"
+	};
 
-	switch(dwCtrlCode) {
+	switch (dwCtrlCode) {
 
 	case SERVICE_CONTROL_SHUTDOWN:
 		computer_shutting_down = TRUE;
 		/* fall through to stop case */
 
 	case SERVICE_CONTROL_STOP:
-		if (exitEvent != NULL) {
-			SetEvent(exitEvent);
+		if (WaitableExitEventHandle != NULL) {
+			msyslog(LOG_INFO, "SCM requests stop (%s)",
+				msg_tab[!!computer_shutting_down]);
 			UpdateSCM(SERVICE_STOP_PENDING);
-			Sleep( 100 );  //##++
+			SetEvent(WaitableExitEventHandle);
+			Sleep(100);  //##++
+			break;
 		}
-		return;
+		msyslog(LOG_ERR, "SCM requests stop (%s), but have no exit event!",
+			msg_tab[!!computer_shutting_down]);
+		/* FALLTHROUGH */
 
 	case SERVICE_CONTROL_PAUSE:
 	case SERVICE_CONTROL_CONTINUE:
 	case SERVICE_CONTROL_INTERROGATE:
 	default:
+		UpdateSCM(SERVICE_RUNNING);
 		break;
 	}
-	UpdateSCM(SERVICE_RUNNING);
 }
 
 /*
@@ -273,7 +274,7 @@ void UpdateSCM(DWORD state) {
 		if (state)
 			dwState = state;
 
-		memset(&ss, 0, sizeof(SERVICE_STATUS));
+		ZERO(ss);
 		ss.dwServiceType |= SERVICE_WIN32_OWN_PROCESS;
 		ss.dwCurrentState = dwState;
 		ss.dwControlsAccepted = SERVICE_ACCEPT_STOP |
@@ -292,8 +293,6 @@ OnConsoleEvent(
 	DWORD dwCtrlType
 	)
 {
-	HANDLE exitEvent = get_exit_event();
-
 	switch (dwCtrlType) {
 #ifdef DEBUG
 		case CTRL_BREAK_EVENT:
@@ -316,9 +315,9 @@ OnConsoleEvent(
 		case CTRL_C_EVENT:
 		case CTRL_CLOSE_EVENT:
 		case CTRL_SHUTDOWN_EVENT:
-			if (exitEvent != NULL) {
-				SetEvent(exitEvent);
-				Sleep( 100 );  //##++
+			if (WaitableExitEventHandle != NULL) {
+				SetEvent(WaitableExitEventHandle);
+				Sleep(100);  //##++
 			}
 			break;
 

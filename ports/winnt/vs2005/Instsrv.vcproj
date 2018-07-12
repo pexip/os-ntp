@@ -70,13 +70,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="../bin/Debug/Instsrv.exe"
+				OutputFile="bin/Debug/Instsrv.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\instsrv\Debug/Instsrv.pdb"
 				SubSystem="1"
 				TargetMachine="1"
+				Version="0x0400"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -161,12 +162,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="../bin/Release/Instsrv.exe"
+				OutputFile="bin/Release/Instsrv.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile=".\instsrv\Release/Instsrv.pdb"
 				SubSystem="1"
 				TargetMachine="1"
+				Version="0x0400"
 			/>
 			<Tool
 				Name="VCALinkTool"
