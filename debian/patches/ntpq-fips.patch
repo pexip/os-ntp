@@ -1,0 +1,23 @@
+diff --git a/ntpq/ntpq.c b/ntpq/ntpq.c
+index 547f3cc..a57fff5 100644
+--- a/ntpq/ntpq.c
++++ b/ntpq/ntpq.c
+@@ -31,6 +31,7 @@
+ #include "ntp_lineedit.h"
+ #include "ntp_debug.h"
+ #ifdef OPENSSL
++#include "openssl/crypto.h"
+ #include "openssl/evp.h"
+ #include "openssl/objects.h"
+ #include "openssl/err.h"
+@@ -3606,6 +3607,10 @@ static void list_md_fn(const EVP_MD *m, const char *from, const char *to, void *
+     if (!m)
+         return; /* Ignore aliases */
+ 
++    /* Ignore non-FIPS digests in FIPS mode */
++    if (FIPS_mode() && (EVP_MD_flags(m) & EVP_MD_FLAG_FIPS) == 0)
++        return;
++
+     name = EVP_MD_name(m);
+ 
+     /* Lowercase names aren't accepted by keytype_from_text in ssl_init.c */

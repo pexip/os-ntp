@@ -9,3 +9,4 @@ sntp-sysexits.patch
 ntpd-increase-stack-size.patch
 sha1-refid.patch
 sha1-auth.patch
+ntpq-fips.patch
