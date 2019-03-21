@@ -1,20 +1,125 @@
-ntp (1:4.2.8p10+dfsg-3+deb9u2) stretch; urgency=medium
+ntp (1:4.2.8p12+dfsg-4) unstable; urgency=medium
 
+  * CVE-2019-8936: Crafted null dereference attack in authenticated
+    mode 6 packet (Closes: #924228)
+  * ntp: exit 0 from init script if daemon does not exist (Closes: #764546)
+  * Drop locking from ntp initscript/systemd-wrapper
+  * Only delete ntpd statistics files in cronjob (Closes: #772790)
+
+ -- Bernhard Schmidt <berni@debian.org>  Thu, 21 Mar 2019 23:42:36 +0100
+
+ntp (1:4.2.8p12+dfsg-3) unstable; urgency=low
+
+  * Treat testsuite errors as non-fatal on some architectures
+    Fixes FTBFS on ppc64el, ia64, powerpc, ppc64
+
+ -- Bernhard Schmidt <berni@debian.org>  Fri, 14 Sep 2018 22:31:42 +0200
+
+ntp (1:4.2.8p12+dfsg-2) unstable; urgency=low
+
+  * Drop ntpdate ifupdown hooks (Closes: #908286)
+    These have been a constant source of problems and one-shot syncs
+    are not a proper solution for timekeeping. See ntpdate.NEWS for
+    details
+  * Do not install /var/lib/ntpdate, not used anymore
+  * Drop maintscript snippets for upgrading from versions prior to Jessie
+  * Reenable unittest
+    - disable always failing test-decodenetnum with a patch
+  * Set Rules-Requires-Root: no
+
+ -- Bernhard Schmidt <berni@debian.org>  Thu, 13 Sep 2018 23:16:11 +0200
+
+ntp (1:4.2.8p12+dfsg-1) unstable; urgency=medium
+
+  [ Bernhard Schmidt ]
+  * New upstream version 4.2.8p12
+  * Update Maintainer address to ntp@packages.debian.org (Closes: #899940)
+  * Update ntpdate.8 from ntpdate.html (Closes: #476491, #515246)
+
+  [ Peter Eisentraut ]
+  * Remove Peter Eisentraut from Uploaders
+
+ -- Bernhard Schmidt <berni@debian.org>  Thu, 16 Aug 2018 22:20:29 +0200
+
+ntp (1:4.2.8p11+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 4.2.8p11+dfsg (Closes: #851096)
+    - Refresh patches
+    - Drop ntpd-increase-stack-size included upstream
+    - CVE-2018-7185: Unauthenticated packet can reset authenticated
+      interleaved association (LOW/MED)
+    - CVE-2018-7184: Interleaved symmetric mode cannot recover from bad state
+      (LOW/MED)
+    - CVE-2018-7170 / CVE-2016-1549: Provide a way to prevent authenticated
+      symmetric passive peering (LOW)
+    - CVE-2018-7183: decodearr() can write beyond its 'buf' limits (Medium)
+    - CVE-2018-7182: ctl_getitem(): buffer read overrun leads to undefined
+      behavior and information leak (Info/Medium)
+    - CVE-2016-1549: Sybil vulnerability: ephemeral association attack
+      (mitigated in 4.2.8p7)
+  * convert dfsg.sh into mk-origtargz script
+  * Run wrap-and-sort
+  * Sync AppArmor profile changes from Ubuntu, including a fix for a
+    harmless AppArmor denial in /usr/local (Closes: #883022)
+  * Don't chown in postinst recursively.
+    Thanks to Daniel Kahn Gillmor (Closes: #889488)
+  * Build sntp against system libevent
+  * Drop versioned build-deps already fulfilled by oldoldstable
+
+ -- Bernhard Schmidt <berni@debian.org>  Sun, 25 Mar 2018 23:52:51 +0200
+
+ntp (1:4.2.8p10+dfsg-6) unstable; urgency=medium
+
+  * Make sntp KoD path FHS-compliant.
+    Thanks to Aaron Smith (Closes: #863873)
+  * Drop historic Breaks/Pre-Depends
+  * Drop historic conffile handling from pre-jessie
+  * Adjust ntpdate description stating that it is deprecated
+  * Move Vcs-* to salsa
+  * Bump Standards-Version to 4.1.3.0, no changes necessary
   * Cherry-pick patch from upstream to increase stack size.
     Thanks to Frederic Endner-Dühr for testing (Closes: #887385)
-  * Add d/gbp.conf for stretch branch
+  * Temporarily add ntpdate lock for systemd wrapper.
+    Thanks to Christian Ehrhardt (Closes: #874540)
+  * Add note about AppArmor tunable in README.Debian (Closes: #883949)
 
- -- Bernhard Schmidt <berni@debian.org>  Thu, 15 Feb 2018 12:45:57 +0100
+ -- Bernhard Schmidt <berni@debian.org>  Wed, 24 Jan 2018 22:42:13 +0100
 
-ntp (1:4.2.8p10+dfsg-3+deb9u1) stretch; urgency=medium
+ntp (1:4.2.8p10+dfsg-5) unstable; urgency=medium
 
-  * Build and install /usr/bin/sntp (Closes: #793837)
-    sntp (the successor of ntpdate as general purpose NTP client) has
-    been accidentally included in Jessie, dropped after Jessie,
-    reintroduced too late for Stretch and is now included in Buster.
-    Fix regression by building sntp and shipping it in ntp:any
+  * Fix arch:all FTBFS due to improper moving of sntp manpage (Closes: #865227)
 
- -- Bernhard Schmidt <berni@debian.org>  Tue, 08 Aug 2017 22:44:37 +0200
+ -- Bernhard Schmidt <berni@debian.org>  Tue, 20 Jun 2017 09:01:07 +0200
+
+ntp (1:4.2.8p10+dfsg-4) unstable; urgency=medium
+
+  Upload changes tested in experimental to unstable
+
+  * Build system/packaging changes
+    - Update to debhelper sequencer, compat level 10
+    - Bump Standards Version, no changes necessary
+    - Build ntp reproducibly.
+      Thanks to Reiner Herrmann (Closes: #828989)
+    - Use 'debian' location file (Closes: #852946)
+    - Install upstream manpages where available
+      (Closes: #794182, #806645, #803709, #805325)
+    - Re-enable Debugging (Closes: #643954)
+  * Build sntp (Closes: #793837)
+    - Split sntp into new binary package
+  * Add systemd unit (Closes: #635752)
+  + Documentation fixes
+    - Fix spelling error in cron.daily/ntp (Closes: #739942)
+    - Fix outdated path/package name in README.Debian (Closes: #806647)
+  * Use tzdata leapfile in default configuration.
+    Thanks to Edmund Grimley Evans (Closes: #858548)
+    - add trigger to restart ntp on leapfile updates
+  * Changes from Ubuntu, thanks to Christian Ehrhardt
+    - apparmor: Allow access to winbindd pipe (Closes: #861727)
+    - add apport hook (Closes: #861730)
+  * Set --home in adduser to resolve lintian error
+  * mark ntp-doc Multi-Arch: foreign
+
+ -- Bernhard Schmidt <berni@debian.org>  Sat, 17 Jun 2017 21:51:57 +0200
 
 ntp (1:4.2.8p10+dfsg-3) unstable; urgency=medium
 
