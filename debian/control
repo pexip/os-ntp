@@ -10,7 +10,7 @@ Standards-Version: 3.9.5
 Homepage: http://support.ntp.org/
 Vcs-Browser: https://anonscm.debian.org/git/pkg-ntp/pkg-ntp.git/
 Vcs-Git: https://anonscm.debian.org/git/pkg-ntp/pkg-ntp.git/
-XS-Pexip-Upstream: http://ftp.debian.org/debian/ stretch
+XS-Pexip-Upstream: http://ftp.debian.org/debian/ buster
 
 Package: ntp
 Architecture: any
