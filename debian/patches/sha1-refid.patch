@@ -1,8 +1,6 @@
-diff --git a/libntp/a_md5encrypt.c b/libntp/a_md5encrypt.c
-index 05c109a..6338f12 100644
 --- a/libntp/a_md5encrypt.c
 +++ b/libntp/a_md5encrypt.c
-@@ -85,7 +85,7 @@ MD5authdecrypt(
+@@ -245,7 +245,7 @@
  
  /*
   * Calculate the reference id from the address. If it is an IPv4
@@ -11,10 +9,10 @@ index 05c109a..6338f12 100644
   * it and use the bottom 4 bytes.
   * The result is in network byte order.
   */
-@@ -101,7 +101,7 @@ addr2refid(sockaddr_u *addr)
- 	/* MD5 is not used as a crypto hash here. */
- 	EVP_MD_CTX_set_flags(ctx, EVP_MD_CTX_FLAG_NON_FIPS_ALLOW);
- #endif
+@@ -269,7 +269,7 @@
+ #   endif
+ 	/* [Bug 3457] DON'T use plain EVP_DigestInit! It would kill the
+ 	 * flags! */
 -	if (!EVP_DigestInit_ex(ctx, EVP_md5(), NULL)) {
 +	if (!EVP_DigestInit_ex(ctx, EVP_sha1(), NULL)) {
  		msyslog(LOG_ERR,

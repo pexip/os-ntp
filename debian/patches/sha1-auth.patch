@@ -1,8 +1,6 @@
-diff --git a/ntpd/ntp_crypto.c b/ntpd/ntp_crypto.c
-index 38f38a1..8c9fb8e 100644
 --- a/ntpd/ntp_crypto.c
 +++ b/ntpd/ntp_crypto.c
-@@ -116,7 +116,7 @@
+@@ -150,7 +150,7 @@
   * Global cryptodata in host byte order
   */
  u_int32	crypto_flags = 0x0;	/* status word */
@@ -11,16 +9,17 @@ index 38f38a1..8c9fb8e 100644
  char	*sys_hostname = NULL;
  char	*sys_groupname = NULL;
  static char *host_filename = NULL;	/* host file name */
-diff --git a/ntpd/ntp_control.c b/ntpd/ntp_control.c
-index a18a4d3..1347651 100644
 --- a/ntpd/ntp_control.c
 +++ b/ntpd/ntp_control.c
-@@ -3594,7 +3594,7 @@ static u_int32 derive_nonce(
- 	}
- 
- 	ctx = EVP_MD_CTX_new();
+@@ -3657,9 +3657,9 @@
+ #   if defined(OPENSSL) && defined(EVP_MD_CTX_FLAG_NON_FIPS_ALLOW)
+ 	/* [Bug 3457] set flags and don't kill them again */
+ 	EVP_MD_CTX_set_flags(ctx, EVP_MD_CTX_FLAG_NON_FIPS_ALLOW);
+-	EVP_DigestInit_ex(ctx, EVP_get_digestbynid(NID_md5), NULL);
++	EVP_DigestInit_ex(ctx, EVP_get_digestbynid(NID_sha1), NULL);
+ #   else
 -	EVP_DigestInit(ctx, EVP_get_digestbynid(NID_md5));
 +	EVP_DigestInit(ctx, EVP_get_digestbynid(NID_sha1));
+ #   endif
  	EVP_DigestUpdate(ctx, salt, sizeof(salt));
  	EVP_DigestUpdate(ctx, &ts_i, sizeof(ts_i));
- 	EVP_DigestUpdate(ctx, &ts_f, sizeof(ts_f));

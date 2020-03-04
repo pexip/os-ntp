@@ -1,23 +1,21 @@
-diff --git a/ntpq/ntpq.c b/ntpq/ntpq.c
-index 547f3cc..a57fff5 100644
 --- a/ntpq/ntpq.c
 +++ b/ntpq/ntpq.c
-@@ -31,6 +31,7 @@
+@@ -32,6 +32,7 @@
  #include "ntp_lineedit.h"
  #include "ntp_debug.h"
  #ifdef OPENSSL
-+#include "openssl/crypto.h"
- #include "openssl/evp.h"
- #include "openssl/objects.h"
- #include "openssl/err.h"
-@@ -3606,6 +3607,10 @@ static void list_md_fn(const EVP_MD *m, const char *from, const char *to, void *
-     if (!m)
-         return; /* Ignore aliases */
++# include "openssl/crypto.h"
+ # include "openssl/evp.h"
+ # include "openssl/objects.h"
+ # include "openssl/err.h"
+@@ -3855,6 +3856,10 @@
+ 	if (!m || !from || to)
+ 		return; /* Ignore aliases */
  
-+    /* Ignore non-FIPS digests in FIPS mode */
-+    if (FIPS_mode() && (EVP_MD_flags(m) & EVP_MD_FLAG_FIPS) == 0)
-+        return;
++	/* Ignore non-FIPS digests in FIPS mode */
++	if (FIPS_mode() && (EVP_MD_flags(m) & EVP_MD_FLAG_FIPS) == 0)
++		return;
 +
-     name = EVP_MD_name(m);
- 
-     /* Lowercase names aren't accepted by keytype_from_text in ssl_init.c */
+ 	/* Discard MACs that NTP won't accept. */
+ 	/* Keep this consistent with keytype_from_text() in ssl_init.c. */
+ 	if (EVP_MD_size(m) > (MAX_MAC_LEN - sizeof(keyid_t)))
