@@ -2,26 +2,22 @@
 
 set -e
 
-if dpkg-maintscript-helper supports rm_conffile; then
-	dpkg-maintscript-helper rm_conffile \
-		/etc/logcheck/ignore.d.server/ntp 1:4.2.6+dfsg-1 -- "$@"
-	dpkg-maintscript-helper rm_conffile \
-		/etc/dhcp3/dhclient-enter-hooks.d/ntp 1:4.2.6+dfsg-1 -- "$@"
-	dpkg-maintscript-helper rm_conffile \
-		/etc/network/if-up.d/ntp 1:4.2.6+dfsg-1 -- "$@"
-fi
-
-if dpkg-maintscript-helper supports mv_conffile; then
-	dpkg-maintscript-helper mv_conffile \
-		/etc/dhcp3/dhclient-exit-hooks.d/ntp \
-		/etc/dhcp/dhclient-exit-hooks.d/ntp \
-		1:4.2.6.p1+dfsg-1 -- "$@"
-fi
-
 if [ "$1" = "configure" ]; then
 	addgroup --system --quiet ntp
-	adduser --system --quiet --ingroup ntp --no-create-home ntp
-	chown -R ntp:ntp /var/lib/ntp /var/log/ntpstats
+	adduser --system --quiet --ingroup ntp --no-create-home --home /nonexistent ntp
+	chown ntp:ntp /var/lib/ntp /var/log/ntpstats
+
+	# Bug#863857, the experimental version shipped a broken systemd wrapper
+	# writing a bogus PIDFILE on the root partition
+	if [ "$2" = "1:4.2.8p10+dfsg-3+exp2" ]; then
+		rm -f /-g
+	fi
+fi
+
+if [ "$1" = "triggered" ]; then
+	# The default configuration uses a leapfile from tzdata
+	# restart ntp on changes
+	invoke-rc.d ntp try-restart || true
 fi
 
 installinit_error() {

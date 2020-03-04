@@ -2,23 +2,38 @@ Source: ntp
 Section: net
 Priority: optional
 Maintainer: Pexip AS <packaging@pexip.com>
-XSBC-Pexip-Original-Maintainer: Debian NTP Team <pkg-ntp-maintainers@lists.alioth.debian.org>
-XSBC-Pexip-Original-Uploaders: Peter Eisentraut <petere@debian.org>, Kurt Roeckx <kurt@roeckx.be>, Bernhard Schmidt <berni@debian.org>
-Build-Depends: dh-autoreconf, debhelper (>= 6), libedit-dev, libcap2-dev [linux-any], libssl1.0-dev | libssl-dev (<< 1.1), autogen (>= 1:5.11), libopts25-dev (>= 1:5.11), pps-tools [linux-any], dh-apparmor
+XSBC-Pexip-Original-Maintainer: Debian NTP Team <ntp@packages.debian.org>
+XSBC-Pexip-Original-Uploaders: Kurt Roeckx <kurt@roeckx.be>,
+           Bernhard Schmidt <berni@debian.org>
+Build-Depends: autogen,
+               debhelper (>= 10),
+               dh-apparmor,
+               libcap2-dev [linux-any],
+               libedit-dev,
+               libevent-dev,
+               libopts25-dev,
+               libssl1.0-dev | libssl-dev (<< 1.1),
+               pkg-config,
+               pps-tools [linux-any]
 Build-Conflicts: libavahi-compat-libdnssd-dev, libwww-dev, libwww-ssl-dev
-Standards-Version: 3.9.5
+Standards-Version: 4.1.3.0
+Rules-Requires-Root: no
 Homepage: http://support.ntp.org/
-Vcs-Browser: https://anonscm.debian.org/git/pkg-ntp/pkg-ntp.git/
-Vcs-Git: https://anonscm.debian.org/git/pkg-ntp/pkg-ntp.git/
+Vcs-Browser: https://salsa.debian.org/pkg-ntp-team/ntp
+Vcs-Git: https://salsa.debian.org/pkg-ntp-team/ntp.git
 XS-Pexip-Upstream: http://ftp.debian.org/debian/ buster
 
 Package: ntp
 Architecture: any
-Depends: adduser, lsb-base (>= 3.2-13), netbase, ${misc:Depends}, ${shlibs:Depends}
-Pre-Depends: dpkg (>= 1.15.7.2)
-Recommends: ${perl:Depends}
+Depends: adduser,
+         lsb-base (>= 3.2-13),
+         netbase,
+         tzdata,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Recommends: sntp, ${perl:Depends}
 Suggests: ntp-doc
-Breaks: dhcp3-client (<< 4.1.0-1), apparmor-profiles-extra (<< 1.8)
+Breaks: apparmor-profiles-extra (<< 1.8)
 Replaces: apparmor-profiles-extra (<< 1.8)
 Description: Network Time Protocol daemon and utility programs
  NTP, the Network Time Protocol, is used to keep computer clocks
@@ -37,28 +52,20 @@ Description: Network Time Protocol daemon and utility programs
 Package: ntpdate
 Architecture: any
 Depends: netbase, ${misc:Depends}, ${shlibs:Depends}
-Pre-Depends: dpkg (>= 1.15.7.2)
-Breaks: dhcp3-client (<< 4.1.0-1)
-Description: client for setting system time from NTP servers
+Description: client for setting system time from NTP servers (deprecated)
  NTP, the Network Time Protocol, is used to keep computer clocks
  accurate by synchronizing them over the Internet or a local network,
  or by following an accurate hardware receiver that interprets GPS,
  DCF-77, NIST or similar time signals.
  .
- ntpdate is a simple NTP client that sets a system's clock to match
- the time obtained by communicating with one or more NTP servers.  It
- is not sufficient, however, for maintaining an accurate clock in the
- long run.  ntpdate by itself is useful for occasionally setting the
- time on machines that do not have full-time network access, such as
- laptops.
- .
- If the full NTP daemon from the package "ntp" is installed, then
- ntpdate is not necessary.
+ ntpdate is deprecated. Please use sntp instead for manual or scripted
+ NTP queries/syncs.
 
 Package: ntp-doc
 Architecture: all
 Depends: ${misc:Depends}
 Section: doc
+Multi-Arch: foreign
 Description: Network Time Protocol documentation
  NTP, the Network Time Protocol, is used to keep computer clocks
  accurate by synchronizing them over the Internet or a local network,
@@ -69,3 +76,18 @@ Description: Network Time Protocol documentation
  ntpdate).  Since there are no substantive man pages for ntp's
  programs and configuration files, this package is desirable for any
  setup beyond the simple default configuration.
+
+Package: sntp
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Breaks: ntp (<<1:4.2.8p10+dfsg-3+exp3)
+Replaces: ntp (<<1:4.2.8p10+dfsg-3+exp3)
+Description: Network Time Protocol - sntp client
+ NTP, the Network Time Protocol, is used to keep computer clocks
+ accurate by synchronizing them over the Internet or a local network,
+ or by following an accurate hardware receiver that interprets GPS,
+ DCF-77, NIST or similar time signals.
+ .
+ sntp can be used as an SNTP client to query a NTP or SNTP server and
+ either display the time or set the local system's time. It is not
+ sufficient, however, for maintaining an accurate clock in the long run.
