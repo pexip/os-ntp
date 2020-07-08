@@ -45,7 +45,6 @@ override_dh_install:
 	install -D -m 0755 debian/ntpdate-debian debian/ntpdate/usr/sbin/ntpdate-debian
 
 	install -D -m 0644 debian/ntp.conf debian/ntp/etc/ntp.conf
-	install -D -m 0644 debian/forking.conf debian/ntp/lib/systemd/system/ntp.service.d/forking.conf
 
 	# install apparmor profile
 	install -D -m 0644 debian/apparmor-profile debian/ntp/etc/apparmor.d/usr.sbin.ntpd

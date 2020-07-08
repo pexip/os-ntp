@@ -5,6 +5,7 @@ ntp (1:4.2.8p12+dfsg-4pexip1) pexip; urgency=medium
     debian/patches/ntpq-fips.patch,
     debian/patches/sha1-auth.patch,
     debian/patches/sha1-refid.patch
+  * Drop forking.conf: redundant
 
  -- Vincent Sanders <vince@pexip.com>  Wed, 04 Mar 2020 10:43:07 +0000
 
