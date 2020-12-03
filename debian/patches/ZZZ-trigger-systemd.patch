@@ -1,0 +1,59 @@
+diff --git a/ntpd/ntp_control.c b/ntpd/ntp_control.c
+index 48cd908..3913776 100644
+--- a/ntpd/ntp_control.c
++++ b/ntpd/ntp_control.c
+@@ -112,6 +112,8 @@ static	struct ctl_trap *ctlfindtrap(sockaddr_u *,
+ 				     struct interface *);
+ 
+ int/*BOOL*/ is_safe_filename(const char * name);
++static	void	report_systemd_time_sync(void);
++
+ 
+ static const struct ctl_proc control_codes[] = {
+ 	{ CTL_OP_UNSPEC,		NOAUTH,	control_unspec },
+@@ -4928,6 +4930,34 @@ ctlfindtrap(
+ 	return NULL;
+ }
+ 
++/*
++ * report_systemd_time_sync - when we are in sync, touch the flag file
++ * that systemd looks for. This crap should not be necessary, but this
++ * is probably the path of least resistance. For more details, see
++ * https://github.com/systemd/systemd/issues/14061
++ * Added for PexOS
++ */
++static void
++report_systemd_time_sync(
++	void
++	)
++{
++	char *filename = "/run/systemd/timesync/synchronized";
++	int fd;
++
++	/* Not much we can do about failures here... */
++	fd = creat(pathname, 0644);
++	if (fd >= 0)
++	{
++		msyslog(LOG_INFO, "Prodded systemd flag file %s",
++			filename);
++		close(fd);
++	}
++	else
++		msyslog(LOG_ERROR,
++			"Failed to open systemd flag file %s, errno %d",
++			filename, errno);
++}
+ 
+ /*
+  * report_event - report an event to the trappers
+@@ -5009,6 +5039,10 @@ report_event(
+ 		printf("event at %lu %s\n", current_time, statstr);
+ #endif
+ 
++	/* Added for PexOS */
++	if (err == EVNT_SYNC)
++		report_systemd_time_sync()
++
+ 	/*
+ 	 * If no trappers, return.
+ 	 */
