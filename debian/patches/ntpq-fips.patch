@@ -1,3 +1,5 @@
+diff --git a/ntpq/ntpq.c b/ntpq/ntpq.c
+index 6e7a5c3..b2baec6 100644
 --- a/ntpq/ntpq.c
 +++ b/ntpq/ntpq.c
 @@ -32,6 +32,7 @@
@@ -8,14 +10,59 @@
  # include "openssl/evp.h"
  # include "openssl/objects.h"
  # include "openssl/err.h"
-@@ -3855,6 +3856,10 @@
+@@ -236,8 +237,12 @@
+ static	void	on_ctrlc	(void);
+ static	int	my_easprintf	(char**, const char *, ...) NTP_PRINTF(2, 3);
+ # if defined(OPENSSL) && defined(HAVE_EVP_MD_DO_ALL_SORTED)
++#  if OPENSSL_VERSION_NUMBER < 0x30000000L
+ static	void	list_md_fn	(const EVP_MD *m, const char *from,
+ 				 const char *to, void *arg);
++#  else
++static void	list_md_fn	(EVP_MD *m, void *arg);
++#  endif
+ # endif /* defined(OPENSSL) && defined(HAVE_EVP_MD_DO_ALL_SORTED) */
+ #endif /* !defined(BUILD_AS_LIB) */
+ 
+@@ -3844,17 +3849,30 @@ struct hstate {
+ 
+ #  ifndef BUILD_AS_LIB
+ static void
++#if OPENSSL_VERSION_NUMBER < 0x30000000L
+ list_md_fn(const EVP_MD *m, const char *from, const char *to, void *arg)
++#else
++list_md_fn(EVP_MD *m, void *arg)
++#endif
+ {
+ 	size_t 	       len, n;
+ 	const char    *name, **seen;
+ 	struct hstate *hstate = arg;
+ 	const char    *cp;
+ 	
++#if OPENSSL_VERSION_NUMBER < 0x30000000L
+ 	/* m is MD obj, from is name or alias, to is base name for alias */
  	if (!m || !from || to)
  		return; /* Ignore aliases */
  
 +	/* Ignore non-FIPS digests in FIPS mode */
 +	if (FIPS_mode() && (EVP_MD_flags(m) & EVP_MD_FLAG_FIPS) == 0)
 +		return;
++#else
++	if (!m)
++		return;
++#endif
 +
  	/* Discard MACs that NTP won't accept. */
  	/* Keep this consistent with keytype_from_text() in ssl_init.c. */
  	if (EVP_MD_size(m) > (MAX_MAC_LEN - sizeof(keyid_t)))
+@@ -4030,7 +4044,11 @@ list_digest_names(void)
+ 	hstate.seen = (const char **)emalloc_zero(sizeof(const char *));
+ 	
+ 	INIT_SSL();
++#  if OPENSSL_VERSION_NUMBER < 0x30000000L
+ 	EVP_MD_do_all_sorted(list_md_fn, &hstate);
++#  else
++	EVP_MD_do_all_provided(NULL, list_md_fn, &hstate);
++#  endif
+ 	list = hstate.list;
+ 	free(hstate.seen);
+ 	
