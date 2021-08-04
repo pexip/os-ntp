@@ -1,3 +1,9 @@
+ntp (1:4.2.8p12+dfsg-4pexip3) pexip; urgency=medium
+
+  * Massage config files to match clean install
+
+ -- Huw Jones <huw@pexip.com>  Wed, 04 Aug 2021 15:33:05 +0100
+
 ntp (1:4.2.8p12+dfsg-4pexip2) pexip; urgency=medium
 
   * Rebuild in buster environment
