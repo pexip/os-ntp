@@ -39,9 +39,9 @@ endif
 
 override_dh_install:
 	install -D -m 0755 scripts/ntpsweep/ntpsweep debian/ntp/usr/bin/ntpsweep
-	install -D -m 0644 debian/ntp.dhcp debian/ntp/etc/dhcp/dhclient-exit-hooks.d/ntp
-	install -D -m 0755 debian/ntp.networkmanager debian/ntp/etc/NetworkManager/dispatcher.d/ntp
-	install -D -m 0644 debian/ntpdate.dhcp debian/ntpdate/etc/dhcp/dhclient-exit-hooks.d/ntpdate
+	#install -D -m 0644 debian/ntp.dhcp debian/ntp/etc/dhcp/dhclient-exit-hooks.d/ntp
+	#install -D -m 0755 debian/ntp.networkmanager debian/ntp/etc/NetworkManager/dispatcher.d/ntp
+	#install -D -m 0644 debian/ntpdate.dhcp debian/ntpdate/etc/dhcp/dhclient-exit-hooks.d/ntpdate
 	install -D -m 0755 debian/ntpdate-debian debian/ntpdate/usr/sbin/ntpdate-debian
 
 	install -D -m 0644 debian/ntp.conf debian/ntp/etc/ntp.conf

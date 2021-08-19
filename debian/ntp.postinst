@@ -16,6 +16,11 @@ if [ "$1" = "configure" ]; then
 	if [ -e "/etc/apparmor.d/local/usr.sbin.ntpd" ] && [ "$(md5sum /etc/apparmor.d/local/usr.sbin.ntpd | awk '{print $1}')" = "5f6bb84f28095167af823c554e4e1a28" ]; then
 		install --mode=644 /dev/null "/etc/apparmor.d/local/usr.sbin.ntpd"
 	fi
+
+	# Remove DHCP integration conffiles in case they're still around
+	rm -f /etc/dhcp/dhclient-enter-hooks/ntp
+	rm -f /etc/dhcp/dhclient-enter-hooks/ntpdate
+	rm -f /etc/NetworkManager/dispatcher.d/ntp
 fi
 
 if [ "$1" = "triggered" ]; then

@@ -1,3 +1,11 @@
+ntp (1:4.2.8p12+dfsg-4pexip4) pexip; urgency=medium
+
+  * Disable DHCP integration:
+    + Don't install the DHCP exit hooks for ntp and ntpdate
+    + Don't use /run/ntp.conf.dhcp if it's there
+
+ -- Steve McIntyre <steve.mcintyre@pexip.com>  Thu, 19 Aug 2021 14:14:25 +0100
+
 ntp (1:4.2.8p12+dfsg-4pexip3) pexip; urgency=medium
 
   * Massage config files to match clean install
