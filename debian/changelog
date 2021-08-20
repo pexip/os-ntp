@@ -1,3 +1,9 @@
+ntp (1:4.2.8p12+dfsg-4pexip5) pexip; urgency=medium
+
+  * Really remove the old exit hooks in postinst. Sigh.
+
+ -- Steve McIntyre <steve.mcintyre@pexip.com>  Fri, 20 Aug 2021 11:11:55 +0100
+
 ntp (1:4.2.8p12+dfsg-4pexip4) pexip; urgency=medium
 
   * Disable DHCP integration:

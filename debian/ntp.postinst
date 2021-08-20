@@ -18,8 +18,8 @@ if [ "$1" = "configure" ]; then
 	fi
 
 	# Remove DHCP integration conffiles in case they're still around
-	rm -f /etc/dhcp/dhclient-enter-hooks/ntp
-	rm -f /etc/dhcp/dhclient-enter-hooks/ntpdate
+	rm -f /etc/dhcp/dhclient-exit-hooks.d/ntp
+	rm -f /etc/dhcp/dhclient-exit-hooks.d/ntpdate
 	rm -f /etc/NetworkManager/dispatcher.d/ntp
 fi
 
