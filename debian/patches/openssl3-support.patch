@@ -1,0 +1,1458 @@
+diff --git a/include/ntp_md5.h b/include/ntp_md5.h
+index 06c90b2..658c87c 100644
+--- a/include/ntp_md5.h
++++ b/include/ntp_md5.h
+@@ -9,6 +9,9 @@
+ #ifdef OPENSSL
+ # include <openssl/evp.h>
+ # include "libssl_compat.h"
++# if OPENSSL_VERSION_NUMBER >= 0x30000000L
++#  include <openssl/params.h>
++# endif
+ # ifdef HAVE_OPENSSL_CMAC_H
+ #  include <openssl/cmac.h>
+ #  define CMAC                  "AES128CMAC"
+diff --git a/libntp/a_md5encrypt.c b/libntp/a_md5encrypt.c
+index 8c046f4..83fb3f0 100644
+--- a/libntp/a_md5encrypt.c
++++ b/libntp/a_md5encrypt.c
+@@ -23,6 +23,7 @@ typedef struct {
+ } rwbuffT;
+ 
+ #if defined(OPENSSL) && defined(ENABLE_CMAC)
++#if OPENSSL_VERSION_NUMBER < 0x30000000L
+ static size_t
+ cmac_ctx_size(
+ 	CMAC_CTX *	ctx)
+@@ -36,6 +37,90 @@ cmac_ctx_size(
+ 	}
+ 	return mlen;
+ }
++
++static size_t
++make_cmac(
++	const rwbuffT    * digest,
++	const robuffT    * msg,
++	const void const * keyptr)
++{
++	CMAC_CTX * ctx = NULL;
++	size_t     retlen = 0;
++
++	if (NULL == (ctx = CMAC_CTX_new())) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s CTX new failed.", CMAC);
++		goto cmac_fail;
++	}
++	if (!CMAC_Init(ctx, keyptr, AES_128_KEY_SIZE, EVP_aes_128_cbc(), NULL)) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s Init failed.",    CMAC);
++		goto cmac_fail;
++	}
++	if (cmac_ctx_size(ctx) > digest->len) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s buf too small.",  CMAC);
++		goto cmac_fail;
++	}
++	if (!CMAC_Update(ctx, msg->buf, msg->len)) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s Update failed.",  CMAC);
++		goto cmac_fail;
++	}
++	if (!CMAC_Final(ctx, digest->buf, &retlen)) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s Final failed.",   CMAC);
++		retlen = 0;
++	}
++  cmac_fail:
++	if (ctx)
++		CMAC_CTX_cleanup(ctx);
++
++	return retlen;
++}
++#else
++static size_t
++make_cmac(
++	const rwbuffT    * digest,
++	const robuffT    * msg,
++	const void const * keyptr)
++{
++	EVP_MAC_CTX * ctx = NULL;
++	EVP_MAC * mac = NULL;
++	size_t retlen = 0;
++	OSSL_PARAM params[2];
++
++	params[0] = OSSL_PARAM_construct_utf8_string("cipher", "aes-128-cbc", 0);
++	params[1] = OSSL_PARAM_construct_end();
++
++	if (NULL == (mac = EVP_MAC_fetch(NULL, "cmac", NULL))) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s fetch failed.", CMAC);
++		goto cmac_fail;
++	}
++	if (NULL == (ctx = EVP_MAC_CTX_new(mac))) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s CTX new failed.", CMAC);
++		goto cmac_fail;
++	}
++	if (!EVP_MAC_init(ctx, keyptr, AES_128_KEY_SIZE, params)) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s init failed.", CMAC);
++		goto cmac_fail;
++	}
++	if (EVP_MAC_CTX_get_mac_size(ctx) > digest->len) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s buf too small.", CMAC);
++		goto cmac_fail;
++	}
++	if (!EVP_MAC_update(ctx, msg->buf, msg->len)) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s update failed.", CMAC);
++		goto cmac_fail;
++	}
++	if (!EVP_MAC_final(ctx, digest->buf, &retlen, digest->len)) {
++		msyslog(LOG_ERR, "MAC encrypt: CMAC %s final failed.", CMAC);
++		retlen = 0;
++	}
++  cmac_fail:
++	if (ctx)
++		EVP_MAC_CTX_free(ctx);
++	if (mac)
++		EVP_MAC_free(mac);
++
++	return retlen;
++}
++#endif /* OPENSSL_VERSION_NUMBER < 0x30000000L */
+ #endif /*OPENSSL && ENABLE_CMAC*/
+ 
+ static size_t
+@@ -59,7 +144,6 @@ make_mac(
+ 	/* Check if CMAC key type specific code required */
+ #   ifdef ENABLE_CMAC
+ 	if (ktype == NID_cmac) {
+-		CMAC_CTX *	ctx    = NULL;
+ 		void const *	keyptr = key->buf;
+ 		u_char		keybuf[AES_128_KEY_SIZE];
+ 
+@@ -70,30 +154,8 @@ make_mac(
+ 			       (AES_128_KEY_SIZE - key->len));
+ 			keyptr = keybuf;
+ 		}
+-		
+-		if (NULL == (ctx = CMAC_CTX_new())) {
+-			msyslog(LOG_ERR, "MAC encrypt: CMAC %s CTX new failed.", CMAC);
+-			goto cmac_fail;
+-		}
+-		if (!CMAC_Init(ctx, keyptr, AES_128_KEY_SIZE, EVP_aes_128_cbc(), NULL)) {
+-			msyslog(LOG_ERR, "MAC encrypt: CMAC %s Init failed.",    CMAC);
+-			goto cmac_fail;
+-		}
+-		if (cmac_ctx_size(ctx) > digest->len) {
+-			msyslog(LOG_ERR, "MAC encrypt: CMAC %s buf too small.",  CMAC);
+-			goto cmac_fail;
+-		}
+-		if (!CMAC_Update(ctx, msg->buf, msg->len)) {
+-			msyslog(LOG_ERR, "MAC encrypt: CMAC %s Update failed.",  CMAC);
+-			goto cmac_fail;
+-		}
+-		if (!CMAC_Final(ctx, digest->buf, &retlen)) {
+-			msyslog(LOG_ERR, "MAC encrypt: CMAC %s Final failed.",   CMAC);
+-			retlen = 0;
+-		}
+-	  cmac_fail:
+-		if (ctx)
+-			CMAC_CTX_free(ctx);
++
++		retlen = make_cmac(digest, msg, keyptr);
+ 	}
+ 	else
+ #   endif /*ENABLE_CMAC*/
+diff --git a/ntpd/ntp_crypto.c b/ntpd/ntp_crypto.c
+index f2df4da..0cfbfde 100644
+--- a/ntpd/ntp_crypto.c
++++ b/ntpd/ntp_crypto.c
+@@ -38,6 +38,405 @@
+ #include "ntp_syscall.h"
+ #endif /* KERNEL_PLL */
+ 
++#if defined(OPENSSL)
++#if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
++#include "openssl/core_names.h"
++#include "openssl/decoder.h"
++#include "openssl/encoder.h"
++#include "openssl/param_build.h"
++#else
++#include <assert.h>
++#define OSSL_LIB_CTX void
++#define OSSL_PKEY_PARAM_PUB_KEY "pub"
++#define OSSL_PKEY_PARAM_PRIV_KEY "priv"
++#define OSSL_PKEY_PARAM_FFC_P "p"
++#define OSSL_PKEY_PARAM_FFC_Q "q"
++#define OSSL_PKEY_PARAM_FFC_G "g"
++#define OSSL_PKEY_PARAM_RSA_N "n"
++#define OSSL_PKEY_PARAM_RSA_E "e"
++#define OSSL_PKEY_PARAM_RSA_D "d"
++
++typedef struct {
++    const EVP_PKEY *pkey;
++} OSSL_ENCODER_CTX;
++
++typedef struct {
++    char *name;
++    BIGNUM *value;
++} OSSL_PARAM;
++
++typedef struct {
++    OSSL_PARAM *params;
++    size_t n_params;
++} OSSL_PARAM_BLD;
++
++static OSSL_PARAM_BLD *OSSL_PARAM_BLD_new(void)
++{
++    return calloc(1, sizeof(OSSL_PARAM_BLD));
++}
++
++static void OSSL_PARAM_BLD_free(OSSL_PARAM_BLD *bld)
++{
++    size_t idx;
++
++    if (bld == NULL)
++        return;
++
++    for (idx = 0; idx < bld->n_params; idx++) {
++        free(bld->params[idx].name);
++        BN_free(bld->params[idx].value);
++    }
++
++    free(bld);
++}
++
++static int OSSL_PARAM_BLD_push_BN(OSSL_PARAM_BLD *bld,
++                                  const char *key_name,
++                                  const BIGNUM *bn)
++{
++    OSSL_PARAM *params;
++    int rc = 0;
++
++    if (bld->params == NULL)
++        params = calloc(1, sizeof(OSSL_PARAM));
++    else
++        params = realloc(bld->params, (bld->n_params + 1) * sizeof(OSSL_PARAM));
++
++    if (params != NULL) {
++        bld->params = params;
++        params[bld->n_params].name = strdup(key_name);
++        if (params[bld->n_params].name == NULL) {
++            params[bld->n_params].value = NULL;
++        } else {
++            params[bld->n_params].value = BN_dup(bn);
++            if (params[bld->n_params].value == NULL) {
++                free(params[bld->n_params].name);
++                params[bld->n_params].name = NULL;
++            } else {
++                bld->n_params += 1;
++                rc = 1;
++            }
++        }
++    }
++
++    return rc;
++}
++
++static OSSL_PARAM *OSSL_PARAM_BLD_to_param(OSSL_PARAM_BLD *bld)
++{
++    OSSL_PARAM *params;
++    size_t idx;
++
++    params = calloc(bld->n_params + 1, sizeof(OSSL_PARAM));
++    if (params != NULL) {
++        for (idx = 0; idx < bld->n_params; idx++) {
++            params[idx].name = strdup(bld->params[idx].name);
++            if (params[idx].name != NULL) {
++                params[idx].value = BN_dup(bld->params[idx].value);
++                if (params[idx].value == NULL) {
++                    free(params[idx].name);
++                    break;
++                }
++            } else {
++                break;
++            }
++        }
++        if (idx != bld->n_params) {
++            /* Failed to copy: clean up */
++            size_t didx;
++            for (didx = 0; didx < idx; didx++) {
++                free(params[didx].name);
++                BN_free(params[didx].value);
++            }
++            free(params);
++            params = NULL;
++        }
++    }
++
++    return params;
++}
++
++static void OSSL_PARAM_free(OSSL_PARAM *param)
++{
++    OSSL_PARAM *p;
++
++    for (p = param; p != NULL && p->name != NULL; p++) {
++        free(p->name);
++        if (p->value != NULL)
++            BN_free(p->value);
++    }
++
++    free(param);
++}
++
++static EVP_PKEY_CTX *EVP_PKEY_CTX_new_from_name(OSSL_LIB_CTX *libctx,
++                                                const char *name,
++                                                const char *propquery)
++{
++    assert(libctx == NULL && propquery == NULL);
++    assert(strcmp(name, "DSA") == 0);
++    return EVP_PKEY_CTX_new_id(EVP_PKEY_DSA, NULL);
++}
++
++static int EVP_PKEY_fromdata_init(EVP_PKEY_CTX *ctx)
++{
++    return 1;
++}
++
++#define EVP_PKEY_KEY_PARAMETERS 0x01
++#define EVP_PKEY_PUBLIC_KEY (EVP_PKEY_KEY_PARAMETERS | 0x02)
++#define EVP_PKEY_KEYPAIR (EVP_PKEY_PUBLIC_KEY | 0x04)
++static int EVP_PKEY_fromdata(EVP_PKEY_CTX *ctx,
++                             EVP_PKEY **pkey,
++                             int selection,
++                             OSSL_PARAM params[])
++{
++    OSSL_PARAM *p;
++    DSA *dsa;
++    EVP_PKEY *result;
++
++    dsa = DSA_new();
++    if (dsa == NULL)
++        return 0;
++
++    for (p = params; p != NULL && p->name != NULL; p++) {
++        if (selection & 0x1) {
++            if (strcmp(p->name, OSSL_PKEY_PARAM_FFC_P) == 0) {
++                DSA_set0_pqg(dsa, p->value, NULL, NULL);
++		p->value = NULL;
++            } else if (strcmp(p->name, OSSL_PKEY_PARAM_FFC_Q) == 0) {
++                DSA_set0_pqg(dsa, NULL, p->value, NULL);
++		p->value = NULL;
++            } else if (strcmp(p->name, OSSL_PKEY_PARAM_FFC_G) == 0) {
++                DSA_set0_pqg(dsa, NULL, NULL, p->value);
++		p->value = NULL;
++            }
++        }
++        if (selection & 0x2) {
++            if (strcmp(p->name, OSSL_PKEY_PARAM_PUB_KEY) == 0) {
++                DSA_set0_key(dsa, p->value, NULL);
++		p->value = NULL;
++            }
++        }
++        if (selection & 0x4) {
++            if (strcmp(p->name, OSSL_PKEY_PARAM_PRIV_KEY) == 0) {
++                DSA_set0_key(dsa, NULL, p->value);
++		p->value = NULL;
++            }
++        }
++    }
++
++    result = EVP_PKEY_new();
++    if (result == NULL) {
++        DSA_free(dsa);
++        return 0;
++    }
++    EVP_PKEY_assign_DSA(result, dsa);
++    *pkey = result;
++
++    return 1;
++}
++
++static int EVP_PKEY_is_a(const EVP_PKEY *pkey, const char *name)
++{
++	int rc = 0;
++
++	if (strcmp(name, "DSA") == 0 &&
++			EVP_PKEY_get0_DSA((EVP_PKEY *) pkey) != NULL) {
++		rc = 1;
++	} else if (strcmp(name, "RSA") == 0 &&
++			EVP_PKEY_get0_RSA((EVP_PKEY *) pkey) != NULL) {
++		rc = 1;
++	}
++
++	return rc;
++}
++
++static int EVP_PKEY_get_bn_param(const EVP_PKEY *pkey,
++				 const char *key_name,
++				 BIGNUM **bn)
++{
++	DSA *dsa = EVP_PKEY_is_a(pkey, "DSA") ? EVP_PKEY_get0_DSA((EVP_PKEY *) pkey) : NULL;
++	RSA *rsa = EVP_PKEY_is_a(pkey, "RSA") ? EVP_PKEY_get0_RSA((EVP_PKEY *) pkey) : NULL;
++	const BIGNUM *val = NULL;
++	int rc = 0;
++
++	if (dsa != NULL) {
++		if (strcmp(key_name, OSSL_PKEY_PARAM_PUB_KEY) == 0) {
++			DSA_get0_key(dsa, &val, NULL);
++		} else if (strcmp(key_name, OSSL_PKEY_PARAM_PRIV_KEY) == 0) {
++			DSA_get0_key(dsa, NULL, &val);
++		} else if (strcmp(key_name, OSSL_PKEY_PARAM_FFC_P) == 0) {
++			DSA_get0_pqg(dsa, &val, NULL, NULL);
++		} else if (strcmp(key_name, OSSL_PKEY_PARAM_FFC_Q) == 0) {
++			DSA_get0_pqg(dsa, NULL, &val, NULL);
++		} else if (strcmp(key_name, OSSL_PKEY_PARAM_FFC_G) == 0) {
++			DSA_get0_pqg(dsa, NULL, NULL, &val);
++		}
++	} else if (rsa != NULL) {
++		if (strcmp(key_name, OSSL_PKEY_PARAM_RSA_N) == 0) {
++			RSA_get0_key(rsa, &val, NULL, NULL);
++		} else if (strcmp(key_name, OSSL_PKEY_PARAM_RSA_E) == 0) {
++			RSA_get0_key(rsa, NULL, &val, NULL);
++		} else if (strcmp(key_name, OSSL_PKEY_PARAM_RSA_D) == 0) {
++			RSA_get0_key(rsa, NULL, NULL, &val);
++		}
++	}
++
++	if (val != NULL) {
++		*bn = BN_dup(val);
++		rc = 1;
++	}
++
++	return rc;
++}
++
++typedef struct {
++    EVP_PKEY **pkey;
++} OSSL_DECODER_CTX;
++
++static OSSL_DECODER_CTX *OSSL_DECODER_CTX_new_for_pkey(EVP_PKEY **pkey,
++    const char *input_type, const char *input_struct, const char *keytype,
++    int selection, OSSL_LIB_CTX *libctx, const char *propquery)
++{
++    OSSL_DECODER_CTX *ctx;
++
++    assert(pkey != NULL && *pkey != NULL);
++    assert(strcmp(input_type, "DER") == 0);
++    assert(strcmp(keytype, "DSA") == 0);
++    assert(input_struct == NULL && libctx == NULL && propquery == NULL);
++    assert(selection == EVP_PKEY_KEY_PARAMETERS);
++
++    ctx = malloc(sizeof(*ctx));
++    if (ctx != NULL) {
++        ctx->pkey = pkey;
++    }
++
++    return ctx;
++}
++
++static void OSSL_DECODER_CTX_free(OSSL_DECODER_CTX *ctx)
++{
++    free(ctx);
++}
++
++static int OSSL_DECODER_from_data(OSSL_DECODER_CTX *ctx,
++    const unsigned char **pdata, size_t *pdata_len)
++{
++    DSA *dsa;
++    const unsigned char *ptr;
++    const BIGNUM *p, *q, *g;
++    OSSL_PARAM_BLD *bld;
++    OSSL_PARAM *params;
++    EVP_PKEY_CTX *pctx;
++
++    if (ctx == NULL || pdata == NULL || *pdata == NULL || pdata_len == NULL)
++        return 0;
++
++    ptr = *pdata;
++
++    dsa = d2i_DSAparams(NULL, &ptr, *pdata_len);
++    if (dsa == NULL)
++        return 0;
++    DSA_get0_pqg(dsa, &p, &q, &g);
++
++    bld = OSSL_PARAM_BLD_new();
++    if (bld == NULL ||
++            OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_FFC_P, p) == 0 ||
++            OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_FFC_Q, q) == 0 ||
++            OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_FFC_G, g) == 0) {
++        if (bld != NULL) OSSL_PARAM_BLD_free(bld);
++        DSA_free(dsa);
++        return 0;
++    }
++
++    params = OSSL_PARAM_BLD_to_param(bld);
++    if (params == NULL) {
++        OSSL_PARAM_BLD_free(bld);
++        DSA_free(dsa);
++        return 0;
++    }
++
++    pctx = EVP_PKEY_CTX_new_from_name(NULL, "DSA", NULL);
++    if (pctx == NULL || EVP_PKEY_fromdata_init(pctx) <= 0 ||
++            EVP_PKEY_fromdata(pctx, ctx->pkey,
++                EVP_PKEY_KEY_PARAMETERS, params) <= 0) {
++        if (pctx != NULL) EVP_PKEY_CTX_free(pctx);
++        OSSL_PARAM_free(params);
++        OSSL_PARAM_BLD_free(bld);
++        DSA_free(dsa);
++        return 0;
++    }
++    DSA_free(dsa);
++
++    *pdata_len -= (ptr - *pdata);
++    *pdata = ptr;
++
++    return 1;
++}
++
++static OSSL_ENCODER_CTX *OSSL_ENCODER_CTX_new_for_pkey(const EVP_PKEY *pkey,
++    int selection, const char *output_type, const char *output_structure,
++    const char *propquery)
++{
++    OSSL_ENCODER_CTX *ctx;
++
++    assert(EVP_PKEY_is_a(pkey, "DSA"));
++    assert(selection == EVP_PKEY_KEY_PARAMETERS);
++    assert(strcmp(output_type, "DER") == 0);
++    assert(output_structure == NULL && propquery == NULL);
++
++    ctx = malloc(sizeof(*ctx));
++    if (ctx != NULL) {
++        ctx->pkey = pkey;
++    }
++
++    return ctx;
++}
++
++static void OSSL_ENCODER_CTX_free(OSSL_ENCODER_CTX *ctx)
++{
++    free(ctx);
++}
++
++static int OSSL_ENCODER_to_data(OSSL_ENCODER_CTX *ctx, unsigned char **pdata,
++    size_t *pdata_len)
++{
++    if (pdata == NULL || *pdata == NULL) {
++        int len = i2d_DSAparams(EVP_PKEY_get0_DSA((EVP_PKEY *) ctx->pkey), NULL);
++        if (len < 0)
++            return 0;
++
++        if (pdata != NULL) {
++            unsigned char *buf;
++
++            buf = *pdata = calloc(len, 1);
++            if (*pdata == NULL)
++                return 0;
++
++            if (i2d_DSAparams(EVP_PKEY_get0_DSA((EVP_PKEY *) ctx->pkey), &buf) < 0) {
++                free(*pdata);
++                *pdata = NULL;
++                return 0;
++            }
++        }
++
++        if (pdata_len != NULL)
++            *pdata_len = (size_t) len;
++    } else {
++        int len = i2d_DSAparams(EVP_PKEY_get0_DSA((EVP_PKEY *) ctx->pkey), pdata);
++        if (len < 0)
++            return 0;
++
++        if (pdata_len != NULL)
++            *pdata_len -= len;
++    }
++
++    return 1;
++}
++#endif
++#endif
++
+ /*
+  * calcomp - compare two calendar structures, ignoring yearday and weekday; like strcmp
+  * No, it's not a plotter.  If you don't understand that, you're too young.
+@@ -834,24 +1233,57 @@ crypto_recv(
+ 			 * errors.
+ 			 */
+ 			if (vallen == (u_int)EVP_PKEY_size(host_pkey)) {
+-				RSA *rsa = EVP_PKEY_get0_RSA(host_pkey);
+-				u_int32 *cookiebuf = malloc(RSA_size(rsa));
++				EVP_PKEY_CTX *ctx;
++				size_t outlen = 0;
++				u_int32 *cookiebuf;
++
++				ctx = EVP_PKEY_CTX_new(host_pkey, NULL);
++				if (!ctx) {
++					rval = XEVNT_CKY;
++					break;
++				}
++				if (EVP_PKEY_decrypt_init(ctx) <= 0) {
++					rval = XEVNT_CKY;
++					EVP_PKEY_CTX_free(ctx);
++					break;
++				}
++				if (EVP_PKEY_CTX_set_rsa_padding(ctx,
++						RSA_PKCS1_OAEP_PADDING) <= 0) {
++					rval = XEVNT_CKY;
++					EVP_PKEY_CTX_free(ctx);
++					break;
++				}
++				if (EVP_PKEY_decrypt(ctx, NULL, &outlen,
++						(u_char *)ep->pkt,
++						vallen) <= 0) {
++					rval = XEVNT_CKY;
++					EVP_PKEY_CTX_free(ctx);
++					break;
++				}
++				cookiebuf = malloc(outlen);
+ 				if (!cookiebuf) {
+ 					rval = XEVNT_CKY;
++					EVP_PKEY_CTX_free(ctx);
+ 					break;
+ 				}
+-
+-				if (RSA_private_decrypt(vallen,
+-				    (u_char *)ep->pkt,
+-				    (u_char *)cookiebuf,
+-				    rsa,
+-				    RSA_PKCS1_OAEP_PADDING) != 4) {
++				if (EVP_PKEY_decrypt(ctx, (u_char *)cookiebuf,
++						&outlen,
++						(u_char *)ep->pkt,
++						vallen) <= 0) {
++					rval = XEVNT_CKY;
++					free(cookiebuf);
++					EVP_PKEY_CTX_free(ctx);
++					break;
++				}
++				if (outlen != 4) {
+ 					rval = XEVNT_CKY;
+ 					free(cookiebuf);
++					EVP_PKEY_CTX_free(ctx);
+ 					break;
+ 				} else {
+ 					cookie = ntohl(*cookiebuf);
+ 					free(cookiebuf);
++					EVP_PKEY_CTX_free(ctx);
+ 				}
+ 			} else {
+ 				rval = XEVNT_CKY;
+@@ -1582,10 +2014,12 @@ crypto_encrypt(
+ 	)
+ {
+ 	EVP_PKEY *pkey;		/* public key */
++	EVP_PKEY_CTX *pctx;	/* encryption context */
+ 	EVP_MD_CTX *ctx;	/* signature context */
+ 	tstamp_t tstamp;	/* NTP timestamp */
+ 	u_int32	temp32;
+ 	u_char *puch;
++	size_t outlen;
+ 
+ 	/*
+ 	 * Extract the public key from the request.
+@@ -1609,14 +2043,35 @@ crypto_encrypt(
+ 	vp->ptr = emalloc(vallen);
+ 	puch = vp->ptr;
+ 	temp32 = htonl(*cookie);
+-	if (RSA_public_encrypt(4, (u_char *)&temp32, puch,
+-	    EVP_PKEY_get0_RSA(pkey), RSA_PKCS1_OAEP_PADDING) <= 0) {
++	pctx = EVP_PKEY_CTX_new(host_pkey, NULL);
++	if (!pctx) {
++		free(vp->ptr);
++		EVP_PKEY_free(pkey);
++		return (XEVNT_CKY);
++	}
++	if (EVP_PKEY_encrypt_init(pctx) <= 0) {
++		EVP_PKEY_CTX_free(pctx);
++		free(vp->ptr);
++		EVP_PKEY_free(pkey);
++		return (XEVNT_CKY);
++	}
++	if (EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_OAEP_PADDING) <= 0) {
++		EVP_PKEY_CTX_free(pctx);
++		free(vp->ptr);
++		EVP_PKEY_free(pkey);
++		return (XEVNT_CKY);
++	}
++	outlen = vp->vallen;
++	if (EVP_PKEY_encrypt(pctx, puch, &outlen, (u_char *)&temp32, 4) <= 0) {
+ 		msyslog(LOG_ERR, "crypto_encrypt: %s",
+ 		    ERR_error_string(ERR_get_error(), NULL));
++		EVP_PKEY_CTX_free(pctx);
+ 		free(vp->ptr);
+ 		EVP_PKEY_free(pkey);
+ 		return (XEVNT_CKY);
+ 	}
++	vp->vallen = outlen;
++	EVP_PKEY_CTX_free(pctx);
+ 	EVP_PKEY_free(pkey);
+ 	if (tstamp == 0)
+ 		return (XEVNT_OK);
+@@ -2168,12 +2623,11 @@ crypto_alice(
+ 	struct value *vp	/* value pointer */
+ 	)
+ {
+-	DSA	*dsa;		/* IFF parameters */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	EVP_MD_CTX *ctx;	/* signature context */
+ 	tstamp_t tstamp;
+ 	u_int	len;
+-	const BIGNUM *q;
++	BIGNUM *q = NULL;
+ 
+ 	/*
+ 	 * The identity parameters must have correct format and content.
+@@ -2183,7 +2637,9 @@ crypto_alice(
+ 		return (XEVNT_ID);
+ 	}
+ 
+-	if ((dsa = EVP_PKEY_get0_DSA(peer->ident_pkey->pkey)) == NULL) {
++	if (EVP_PKEY_is_a(peer->ident_pkey->pkey, "DSA") == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_FFC_Q, &q) == 0) {
+ 		msyslog(LOG_NOTICE, "crypto_alice: defective key");
+ 		return (XEVNT_PUB);
+ 	}
+@@ -2194,12 +2650,12 @@ crypto_alice(
+ 	if (peer->iffval != NULL)
+ 		BN_free(peer->iffval);
+ 	peer->iffval = BN_new();
+-	DSA_get0_pqg(dsa, NULL, &q, NULL);
+ 	len = BN_num_bytes(q);
+ 	BN_rand(peer->iffval, len * 8, -1, 1);	/* r mod q*/
+ 	bctx = BN_CTX_new();
+ 	BN_mod(peer->iffval, peer->iffval, q, bctx);
+ 	BN_CTX_free(bctx);
++	BN_free(q);
+ 
+ 	/*
+ 	 * Sign and send to Bob. The filestamp is from the local file.
+@@ -2242,7 +2698,6 @@ crypto_bob(
+ 	struct value *vp	/* value pointer */
+ 	)
+ {
+-	DSA	*dsa;		/* IFF parameters */
+ 	DSA_SIG	*sdsa;		/* DSA signature context fake */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	EVP_MD_CTX *ctx;	/* signature context */
+@@ -2250,8 +2705,8 @@ crypto_bob(
+ 	BIGNUM	*bn, *bk, *r;
+ 	u_char	*ptr;
+ 	u_int	len;		/* extension field value length */
+-	const BIGNUM *p, *q, *g;
+-	const BIGNUM *priv_key;
++	BIGNUM *p = NULL, *q = NULL, *g = NULL;
++	BIGNUM *priv_key = NULL;
+ 
+ 	/*
+ 	 * If the IFF parameters are not valid, something awful
+@@ -2261,19 +2716,41 @@ crypto_bob(
+ 		msyslog(LOG_NOTICE, "crypto_bob: scheme unavailable");
+ 		return (XEVNT_ID);
+ 	}
+-	dsa = EVP_PKEY_get0_DSA(iffkey_info->pkey);
+-	DSA_get0_pqg(dsa, &p, &q, &g);
+-	DSA_get0_key(dsa, NULL, &priv_key);
++	if (EVP_PKEY_is_a(iffkey_info->pkey, "DSA") == 0 ||
++			EVP_PKEY_get_bn_param(iffkey_info->pkey,
++				OSSL_PKEY_PARAM_FFC_P, &p) == 0 ||
++			EVP_PKEY_get_bn_param(iffkey_info->pkey,
++				OSSL_PKEY_PARAM_FFC_Q, &q) == 0 ||
++			EVP_PKEY_get_bn_param(iffkey_info->pkey,
++				OSSL_PKEY_PARAM_FFC_G, &g) == 0 ||
++			EVP_PKEY_get_bn_param(iffkey_info->pkey,
++				OSSL_PKEY_PARAM_PRIV_KEY, &priv_key) == 0) {
++		if (p != NULL) BN_free(p);
++		if (q != NULL) BN_free(q);
++		if (g != NULL) BN_free(g);
++		if (priv_key != NULL) BN_free(priv_key);
++		msyslog(LOG_NOTICE, "crypto_bob: bad key");
++		return (XEVNT_ID);
++	}
+ 
+ 	/*
+ 	 * Extract r from the challenge.
+ 	 */
+ 	len = exten_payload_size(ep);
+-	if (len == 0 || len > MAX_VALLEN)
++	if (len == 0 || len > MAX_VALLEN) {
++		BN_free(priv_key);
++		BN_free(g);
++		BN_free(q);
++		BN_free(p);
+ 		return (XEVNT_LEN);
++	}
+ 	if ((r = BN_bin2bn((u_char *)ep->pkt, len, NULL)) == NULL) {
+ 		msyslog(LOG_ERR, "crypto_bob: %s",
+ 		    ERR_error_string(ERR_get_error(), NULL));
++		BN_free(priv_key);
++		BN_free(g);
++		BN_free(q);
++		BN_free(p);
+ 		return (XEVNT_ERR);
+ 	}
+ 
+@@ -2292,9 +2769,18 @@ crypto_bob(
+ 	DSA_SIG_set0(sdsa, bn, bk);
+ 	BN_CTX_free(bctx);
+ 	BN_free(r);
++	BN_free(priv_key);
++	BN_free(g);
++	BN_free(q);
++	BN_free(p);
+ #ifdef DEBUG
+-	if (debug > 1)
+-		DSA_print_fp(stdout, dsa, 0);
++	if (debug > 1) {
++		BIO *out = BIO_new_fd(fileno(stdout), BIO_NOCLOSE);
++		EVP_PKEY_print_public(out, iffkey_info->pkey, 0, NULL);
++		EVP_PKEY_print_private(out, iffkey_info->pkey, 0, NULL);
++		EVP_PKEY_print_params(out, iffkey_info->pkey, 0, NULL);
++		BIO_free(out);
++	}
+ #endif
+ 
+ 	/*
+@@ -2356,16 +2842,15 @@ crypto_iff(
+ 	struct peer *peer	/* peer structure pointer */
+ 	)
+ {
+-	DSA	*dsa;		/* IFF parameters */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	DSA_SIG	*sdsa;		/* DSA parameters */
+ 	BIGNUM	*bn, *bk;
+ 	u_int	len;
+ 	const u_char *ptr;
+ 	int	temp;
+-	const BIGNUM *p, *g;
++	BIGNUM *p = NULL, *g = NULL;
+ 	const BIGNUM *r, *s;
+-	const BIGNUM *pub_key;
++	BIGNUM *pub_key = NULL;
+ 
+ 	/*
+ 	 * If the IFF parameters are not valid or no challenge was sent,
+@@ -2380,12 +2865,24 @@ crypto_iff(
+ 		    ntohl(ep->fstamp));
+ 		return (XEVNT_FSP);
+ 	}
+-	if ((dsa = EVP_PKEY_get0_DSA(peer->ident_pkey->pkey)) == NULL) {
++	if (EVP_PKEY_is_a(peer->ident_pkey->pkey, "DSA") == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_FFC_P, &p) == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_FFC_G, &g) == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_PUB_KEY, &pub_key) == 0) {
+ 		msyslog(LOG_NOTICE, "crypto_iff: defective key");
++		if (p != NULL) BN_free(p);
++		if (g != NULL) BN_free(g);
++		if (pub_key != NULL) BN_free(pub_key);
+ 		return (XEVNT_PUB);
+ 	}
+ 	if (peer->iffval == NULL) {
+ 		msyslog(LOG_NOTICE, "crypto_iff: missing challenge");
++		BN_free(pub_key);
++		BN_free(g);
++		BN_free(p);
+ 		return (XEVNT_ID);
+ 	}
+ 
+@@ -2399,14 +2896,15 @@ crypto_iff(
+ 		BN_free(bn); BN_free(bk); BN_CTX_free(bctx);
+ 		msyslog(LOG_ERR, "crypto_iff: %s",
+ 		    ERR_error_string(ERR_get_error(), NULL));
++		BN_free(pub_key);
++		BN_free(g);
++		BN_free(p);
+ 		return (XEVNT_ERR);
+ 	}
+ 
+ 	/*
+ 	 * Compute g^(k + b r) g^(q - b)r mod p.
+ 	 */
+-	DSA_get0_key(dsa, &pub_key, NULL);
+-	DSA_get0_pqg(dsa, &p, NULL, &g);
+ 	DSA_SIG_get0(sdsa, &r, &s);
+ 	BN_mod_exp(bn, pub_key, peer->iffval, p, bctx);
+ 	BN_mod_exp(bk, g, r, p, bctx);
+@@ -2418,6 +2916,9 @@ crypto_iff(
+ 	bighash(bn, bn);
+ 	temp = BN_cmp(bn, s);
+ 	BN_free(bn); BN_free(bk); BN_CTX_free(bctx);
++	BN_free(pub_key);
++	BN_free(g);
++	BN_free(p);
+ 	BN_free(peer->iffval);
+ 	peer->iffval = NULL;
+ 	DSA_SIG_free(sdsa);
+@@ -2500,12 +2301,11 @@ crypto_alice2(
+ 	struct value *vp	/* value pointer */
+ 	)
+ {
+-	RSA	*rsa;		/* GQ parameters */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	EVP_MD_CTX *ctx;	/* signature context */
+ 	tstamp_t tstamp;
+ 	u_int	len;
+-	const BIGNUM *n;
++	BIGNUM *n = NULL;
+ 
+ 	/*
+ 	 * The identity parameters must have correct format and content.
+@@ -2513,8 +3013,11 @@ crypto_alice2(
+ 	if (peer->ident_pkey == NULL)
+ 		return (XEVNT_ID);
+ 
+-	if ((rsa = EVP_PKEY_get0_RSA(peer->ident_pkey->pkey)) == NULL) {
++	if (EVP_PKEY_is_a(peer->ident_pkey->pkey, "RSA") == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_RSA_N, &n) == 0) {
+ 		msyslog(LOG_NOTICE, "crypto_alice2: defective key");
++		if (n != NULL) BN_free(n);
+ 		return (XEVNT_PUB);
+ 	}
+ 
+@@ -2524,12 +3027,12 @@ crypto_alice2(
+ 	if (peer->iffval != NULL)
+ 		BN_free(peer->iffval);
+ 	peer->iffval = BN_new();
+-	RSA_get0_key(rsa, &n, NULL, NULL);
+ 	len = BN_num_bytes(n);
+ 	BN_rand(peer->iffval, len * 8, -1, 1);	/* r mod n */
+ 	bctx = BN_CTX_new();
+ 	BN_mod(peer->iffval, peer->iffval, n, bctx);
+ 	BN_CTX_free(bctx);
++	BN_free(n);
+ 
+ 	/*
+ 	 * Sign and send to Bob. The filestamp is from the local file.
+@@ -2572,7 +3075,6 @@ crypto_bob2(
+ 	struct value *vp	/* value pointer */
+ 	)
+ {
+-	RSA	*rsa;		/* GQ parameters */
+ 	DSA_SIG	*sdsa;		/* DSA parameters */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	EVP_MD_CTX *ctx;	/* signature context */
+@@ -2581,7 +3083,7 @@ crypto_bob2(
+ 	u_char	*ptr;
+ 	u_int	len;
+ 	int	s_len;
+-	const BIGNUM *n, *p, *e;
++	BIGNUM *n = NULL, *p = NULL, *e = NULL;
+ 
+ 	/*
+ 	 * If the GQ parameters are not valid, something awful
+@@ -2591,18 +3093,36 @@ crypto_bob2(
+ 		msyslog(LOG_NOTICE, "crypto_bob2: scheme unavailable");
+ 		return (XEVNT_ID);
+ 	}
+-	rsa = EVP_PKEY_get0_RSA(gqkey_info->pkey);
+-	RSA_get0_key(rsa, &n, &p, &e);
++	if (EVP_PKEY_is_a(gqkey_info->pkey, "RSA") == 0 ||
++			EVP_PKEY_get_bn_param(gqkey_info->pkey,
++				OSSL_PKEY_PARAM_RSA_N, &n) == 0 ||
++			EVP_PKEY_get_bn_param(gqkey_info->pkey,
++				OSSL_PKEY_PARAM_RSA_E, &p) == 0 ||
++			EVP_PKEY_get_bn_param(gqkey_info->pkey,
++				OSSL_PKEY_PARAM_RSA_D, &e) == 0) {
++		if (n != NULL) BN_free(n);
++		if (p != NULL) BN_free(p);
++		if (e != NULL) BN_free(e);
++		msyslog(LOG_NOTICE, "crypto_bob2: bad key");
++		return (XEVNT_ID);
++	}
+ 
+ 	/*
+ 	 * Extract r from the challenge.
+ 	 */
+ 	len = exten_payload_size(ep);
+-	if (len == 0 || len > MAX_VALLEN)
++	if (len == 0 || len > MAX_VALLEN) {
++		BN_free(e);
++		BN_free(p);
++		BN_free(n);
+ 		return (XEVNT_LEN);
++	}
+ 	if ((r = BN_bin2bn((u_char *)ep->pkt, len, NULL)) == NULL) {
+ 		msyslog(LOG_ERR, "crypto_bob2: %s",
+ 		    ERR_error_string(ERR_get_error(), NULL));
++		BN_free(e);
++		BN_free(p);
++		BN_free(n);
+ 		return (XEVNT_ERR);
+ 	}
+ 
+@@ -2621,9 +3141,17 @@ crypto_bob2(
+ 	DSA_SIG_set0(sdsa, y, g);
+ 	BN_CTX_free(bctx);
+ 	BN_free(r); BN_free(k);
++	BN_free(e);
++	BN_free(p);
++	BN_free(n);
+ #ifdef DEBUG
+-	if (debug > 1)
+-		RSA_print_fp(stdout, rsa, 0);
++	if (debug > 1) {
++		BIO *out = BIO_new_fd(fileno(stdout), BIO_NOCLOSE);
++		EVP_PKEY_print_public(out, gqkey_info->pkey, 0, NULL);
++		EVP_PKEY_print_private(out, gqkey_info->pkey, 0, NULL);
++		EVP_PKEY_print_params(out, gqkey_info->pkey, 0, NULL);
++		BIO_free(out);
++	}
+ #endif
+  
+ 	/*
+@@ -2679,14 +3207,13 @@ crypto_gq(
+ 	struct peer *peer	/* peer structure pointer */
+ 	)
+ {
+-	RSA	*rsa;		/* GQ parameters */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	DSA_SIG	*sdsa;		/* RSA signature context fake */
+ 	BIGNUM	*y, *v;
+ 	const u_char *ptr;
+ 	long	len;
+ 	u_int	temp;
+-	const BIGNUM *n, *e;
++	BIGNUM *n = NULL, *e = NULL;
+ 	const BIGNUM *r, *s;
+ 
+ 	/*
+@@ -2704,13 +3231,20 @@ crypto_gq(
+ 		    ntohl(ep->fstamp));
+ 		return (XEVNT_FSP);
+ 	}
+-	if ((rsa = EVP_PKEY_get0_RSA(peer->ident_pkey->pkey)) == NULL) {
++	if (EVP_PKEY_is_a(peer->ident_pkey->pkey, "RSA") == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_RSA_N, &n) == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_RSA_D, &e) == 0) {
++		if (n != NULL) BN_free(n);
++		if (e != NULL) BN_free(e);
+ 		msyslog(LOG_NOTICE, "crypto_gq: defective key");
+ 		return (XEVNT_PUB);
+ 	}
+-	RSA_get0_key(rsa, &n, NULL, &e);
+ 	if (peer->iffval == NULL) {
+ 		msyslog(LOG_NOTICE, "crypto_gq: missing challenge");
++		BN_free(e);
++		BN_free(n);
+ 		return (XEVNT_ID);
+ 	}
+ 
+@@ -2725,6 +3259,8 @@ crypto_gq(
+ 		BN_CTX_free(bctx); BN_free(y); BN_free(v);
+ 		msyslog(LOG_ERR, "crypto_gq: %s",
+ 		    ERR_error_string(ERR_get_error(), NULL));
++		BN_free(e);
++		BN_free(n);
+ 		return (XEVNT_ERR);
+ 	}
+ 	DSA_SIG_get0(sdsa, &r, &s);
+@@ -2734,6 +3270,8 @@ crypto_gq(
+ 	 */
+ 	if (peer->grpkey == NULL) {
+ 		msyslog(LOG_NOTICE, "crypto_gq: missing group key");
++		BN_free(e);
++		BN_free(n);
+ 		return (XEVNT_ID);
+ 	}
+ 	BN_mod_exp(v, peer->grpkey, peer->iffval, n, bctx);
+@@ -2747,6 +3285,8 @@ crypto_gq(
+ 	bighash(y, y);
+ 	temp = BN_cmp(y, s);
+ 	BN_CTX_free(bctx); BN_free(y); BN_free(v);
++	BN_free(e);
++	BN_free(n);
+ 	BN_free(peer->iffval);
+ 	peer->iffval = NULL;
+ 	DSA_SIG_free(sdsa);
+@@ -2844,12 +3384,11 @@ crypto_alice3(
+ 	struct value *vp	/* value pointer */
+ 	)
+ {
+-	DSA	*dsa;		/* MV parameters */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	EVP_MD_CTX *ctx;	/* signature context */
+ 	tstamp_t tstamp;
+ 	u_int	len;
+-	const BIGNUM *p;
++	BIGNUM *p = NULL;
+ 
+ 	/*
+ 	 * The identity parameters must have correct format and content.
+@@ -2857,11 +3396,12 @@ crypto_alice3(
+ 	if (peer->ident_pkey == NULL)
+ 		return (XEVNT_ID);
+ 
+-	if ((dsa = EVP_PKEY_get0_DSA(peer->ident_pkey->pkey)) == NULL) {
++	if (EVP_PKEY_is_a(peer->ident_pkey->pkey, "DSA") == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_FFC_P, &p) == 0) {
+ 		msyslog(LOG_NOTICE, "crypto_alice3: defective key");
+ 		return (XEVNT_PUB);
+ 	}
+-	DSA_get0_pqg(dsa, &p, NULL, NULL);
+ 
+ 	/*
+ 	 * Roll new random r (0 < r < q).
+@@ -2874,6 +3414,7 @@ crypto_alice3(
+ 	bctx = BN_CTX_new();
+ 	BN_mod(peer->iffval, peer->iffval, p, bctx);
+ 	BN_CTX_free(bctx);
++	BN_free(p);
+ 
+ 	/*
+ 	 * Sign and send to Bob. The filestamp is from the local file.
+@@ -2915,17 +3456,21 @@ crypto_bob3(
+ 	struct value *vp	/* value pointer */
+ 	)
+ {
+-	DSA	*dsa;		/* MV parameters */
+-	DSA	*sdsa;		/* DSA signature context fake */
++	OSSL_PARAM_BLD *bld;
++	OSSL_PARAM *params;
++	EVP_PKEY_CTX *pctx;
++	EVP_PKEY *sdsa = NULL;	/* DSA signature context fake */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	EVP_MD_CTX *ctx;	/* signature context */
+ 	tstamp_t tstamp;	/* NTP timestamp */
+ 	BIGNUM	*r, *k, *u;
+ 	u_char	*ptr;
+-	u_int	len;
+-	const BIGNUM *p, *q, *g;
+-	const BIGNUM *pub_key, *priv_key;
++	u_int	dlen;
++	size_t len;
++	BIGNUM *p = NULL, *q = NULL, *g = NULL;
++	BIGNUM *pub_key = NULL, *priv_key = NULL;
+ 	BIGNUM *sp, *sq, *sg;
++	OSSL_ENCODER_CTX *octx;
+ 
+ 	/*
+ 	 * If the MV parameters are not valid, something awful
+@@ -2935,19 +3480,46 @@ crypto_bob3(
+ 		msyslog(LOG_NOTICE, "crypto_bob3: scheme unavailable");
+ 		return (XEVNT_ID);
+ 	}
+-	dsa = EVP_PKEY_get0_DSA(mvkey_info->pkey);
+-	DSA_get0_pqg(dsa, &p, &q, &g);
+-	DSA_get0_key(dsa, &pub_key, &priv_key);
++	if (EVP_PKEY_is_a(mvkey_info->pkey, "DSA") == 0 ||
++			EVP_PKEY_get_bn_param(mvkey_info->pkey,
++				OSSL_PKEY_PARAM_FFC_P, &p) == 0 ||
++			EVP_PKEY_get_bn_param(mvkey_info->pkey,
++				OSSL_PKEY_PARAM_FFC_Q, &q) == 0 ||
++			EVP_PKEY_get_bn_param(mvkey_info->pkey,
++				OSSL_PKEY_PARAM_FFC_G, &g) == 0 ||
++			EVP_PKEY_get_bn_param(mvkey_info->pkey,
++				OSSL_PKEY_PARAM_PRIV_KEY, &priv_key) == 0 ||
++			EVP_PKEY_get_bn_param(mvkey_info->pkey,
++				OSSL_PKEY_PARAM_PUB_KEY, &pub_key) == 0) {
++		if (p != NULL) BN_free(p);
++		if (q != NULL) BN_free(q);
++		if (g != NULL) BN_free(g);
++		if (priv_key != NULL) BN_free(priv_key);
++		if (pub_key != NULL) BN_free(pub_key);
++		msyslog(LOG_NOTICE, "crypto_bob3: bad key");
++		return (XEVNT_ID);
++	}
+ 
+ 	/*
+ 	 * Extract r from the challenge.
+ 	 */
+ 	len = exten_payload_size(ep);
+-	if (len == 0 || len > MAX_VALLEN)
++	if (len == 0 || len > MAX_VALLEN) {
++		BN_free(pub_key);
++		BN_free(priv_key);
++		BN_free(g);
++		BN_free(q);
++		BN_free(p);
+ 		return (XEVNT_LEN);
++	}
+ 	if ((r = BN_bin2bn((u_char *)ep->pkt, len, NULL)) == NULL) {
+ 		msyslog(LOG_ERR, "crypto_bob3: %s",
+ 		    ERR_error_string(ERR_get_error(), NULL));
++		BN_free(pub_key);
++		BN_free(priv_key);
++		BN_free(g);
++		BN_free(q);
++		BN_free(p);
+ 		return (XEVNT_ERR);
+ 	}
+ 
+@@ -2957,7 +3529,6 @@ crypto_bob3(
+ 	 * and ghat^k) to Alice.
+ 	 */
+ 	bctx = BN_CTX_new(); k = BN_new(); u = BN_new();
+-	sdsa = DSA_new();
+ 	sp = BN_new(); sq = BN_new(); sg = BN_new();
+ 	while (1) {
+ 		BN_rand(k, BN_num_bits(q), 0, 0);
+@@ -2970,14 +3541,95 @@ crypto_bob3(
+ 	BN_mod_mul(sp, u, r, p, bctx);
+ 	BN_mod_exp(sq, priv_key, k, p, bctx); /* gbar */
+ 	BN_mod_exp(sg, pub_key, k, p, bctx); /* ghat */
+-	DSA_set0_key(sdsa, BN_dup(pub_key), NULL);
+-	DSA_set0_pqg(sdsa, sp, sq, sg);
++
++	bld = OSSL_PARAM_BLD_new();
++	if (bld == NULL ||
++			OSSL_PARAM_BLD_push_BN(bld,
++				OSSL_PKEY_PARAM_FFC_P, sp) == 0 ||
++			OSSL_PARAM_BLD_push_BN(bld,
++				OSSL_PKEY_PARAM_FFC_Q, sq) == 0 ||
++			OSSL_PARAM_BLD_push_BN(bld,
++				OSSL_PKEY_PARAM_FFC_G, sg) == 0) {
++		msyslog(LOG_ERR, "crypto_bob3: %s",
++		    ERR_error_string(ERR_get_error(), NULL));
++		if (bld != NULL) OSSL_PARAM_BLD_free(bld);
++		BN_CTX_free(bctx); BN_free(k); BN_free(r); BN_free(u);
++		BN_free(sp);
++		BN_free(sq);
++		BN_free(sg);
++		BN_free(pub_key);
++		BN_free(priv_key);
++		BN_free(g);
++		BN_free(q);
++		BN_free(p);
++		return (XEVNT_ERR);
++	}
++
++	params = OSSL_PARAM_BLD_to_param(bld);
++	if (params == NULL) {
++		msyslog(LOG_ERR, "crypto_bob3: %s",
++		    ERR_error_string(ERR_get_error(), NULL));
++		OSSL_PARAM_BLD_free(bld);
++		BN_CTX_free(bctx); BN_free(k); BN_free(r); BN_free(u);
++		BN_free(sp);
++		BN_free(sq);
++		BN_free(sg);
++		BN_free(pub_key);
++		BN_free(priv_key);
++		BN_free(g);
++		BN_free(q);
++		BN_free(p);
++		return (XEVNT_ERR);
++	}
++
++	pctx = EVP_PKEY_CTX_new_from_name(NULL, "DSA", NULL);
++	if (pctx == NULL || EVP_PKEY_fromdata_init(pctx) <= 0 ||
++			EVP_PKEY_fromdata(pctx, &sdsa,
++				EVP_PKEY_KEY_PARAMETERS, params) <= 0) {
++		msyslog(LOG_ERR, "crypto_bob3: %s",
++		    ERR_error_string(ERR_get_error(), NULL));
++		if (pctx != NULL) EVP_PKEY_CTX_free(pctx);
++		OSSL_PARAM_free(params);
++		OSSL_PARAM_BLD_free(bld);
++		BN_CTX_free(bctx); BN_free(k); BN_free(r); BN_free(u);
++		BN_free(sp);
++		BN_free(sq);
++		BN_free(sg);
++		BN_free(pub_key);
++		BN_free(priv_key);
++		BN_free(g);
++		BN_free(q);
++		BN_free(p);
++		return (XEVNT_ERR);
++	}
++
++	EVP_PKEY_CTX_free(pctx);
++	OSSL_PARAM_free(params);
++	OSSL_PARAM_BLD_free(bld);
++	BN_free(sp); BN_free(sq); BN_free(sg);
+ 	BN_CTX_free(bctx); BN_free(k); BN_free(r); BN_free(u);
++	BN_free(pub_key);
++	BN_free(priv_key);
++	BN_free(g);
++	BN_free(q);
++	BN_free(p);
+ #ifdef DEBUG
+-	if (debug > 1)
+-		DSA_print_fp(stdout, sdsa, 0);
++	if (debug > 1) {
++		BIO *out = BIO_new_fd(fileno(stdout), BIO_NOCLOSE);
++		EVP_PKEY_print_params(out, sdsa, 0, NULL);
++		BIO_free(out);
++	}
+ #endif
+ 
++	octx = OSSL_ENCODER_CTX_new_for_pkey(sdsa,
++			EVP_PKEY_KEY_PARAMETERS, "DER", NULL, NULL);
++	if (octx == NULL || OSSL_ENCODER_to_data(octx, NULL, &len) <= 0) {
++		msyslog(LOG_ERR, "crypto_bob3: %s",
++		    ERR_error_string(ERR_get_error(), NULL));
++		EVP_PKEY_free(sdsa);
++		return (XEVNT_ERR);
++	}
++
+ 	/*
+ 	 * Encode the values in ASN.1 and sign. The filestamp is from
+ 	 * the local file.
+@@ -2986,18 +3638,18 @@ crypto_bob3(
+ 	tstamp = crypto_time();
+ 	vp->tstamp = htonl(tstamp);
+ 	vp->fstamp = htonl(mvkey_info->fstamp);
+-	len = i2d_DSAparams(sdsa, NULL);
+-	if (len == 0) {
++	vp->vallen = htonl(len);
++	ptr = emalloc(len);
++	vp->ptr = ptr;
++	if (OSSL_ENCODER_to_data(octx, &ptr, &len) <= 0) {
+ 		msyslog(LOG_ERR, "crypto_bob3: %s",
+ 		    ERR_error_string(ERR_get_error(), NULL));
+-		DSA_free(sdsa);
++		OSSL_ENCODER_CTX_free(octx);
++		EVP_PKEY_free(sdsa);
+ 		return (XEVNT_ERR);
+ 	}
+-	vp->vallen = htonl(len);
+-	ptr = emalloc(len);
+-	vp->ptr = ptr;
+-	i2d_DSAparams(sdsa, &ptr);
+-	DSA_free(sdsa);
++	OSSL_ENCODER_CTX_free(octx);
++	EVP_PKEY_free(sdsa);
+ 	if (tstamp == 0)
+ 		return (XEVNT_OK);
+ 
+@@ -3006,9 +3658,9 @@ crypto_bob3(
+ 	EVP_SignInit(ctx, sign_digest);
+ 	EVP_SignUpdate(ctx, (u_char *)&vp->tstamp, 12);
+ 	EVP_SignUpdate(ctx, vp->ptr, len);
+-	if (EVP_SignFinal(ctx, vp->sig, &len, sign_pkey)) {
+-		INSIST(len <= sign_siglen);
+-		vp->siglen = htonl(len);
++	if (EVP_SignFinal(ctx, vp->sig, &dlen, sign_pkey)) {
++		INSIST(dlen <= sign_siglen);
++		vp->siglen = htonl(dlen);
+ 	}
+ 	EVP_MD_CTX_free(ctx);
+ 	return (XEVNT_OK);
+@@ -3031,16 +3683,16 @@ crypto_mv(
+ 	struct peer *peer	/* peer structure pointer */
+ 	)
+ {
+-	DSA	*dsa;		/* MV parameters */
+-	DSA	*sdsa;		/* DSA parameters */
++	EVP_PKEY *sdsa = NULL;	/* DSA parameters */
+ 	BN_CTX	*bctx;		/* BIGNUM context */
+ 	BIGNUM	*k, *u, *v;
+-	u_int	len;
++	size_t	len;
+ 	const u_char *ptr;
+ 	int	temp;
+-	const BIGNUM *p;
+-	const BIGNUM *pub_key, *priv_key;
+-	const BIGNUM *sp, *sq, *sg;
++	BIGNUM *p = NULL;
++	BIGNUM *pub_key = NULL, *priv_key = NULL;
++	BIGNUM *sp = NULL, *sq = NULL, *sg = NULL;
++	OSSL_DECODER_CTX *octx;
+ 
+ 	/*
+ 	 * If the MV parameters are not valid or no challenge was sent,
+@@ -3055,29 +3707,66 @@ crypto_mv(
+ 		    ntohl(ep->fstamp));
+ 		return (XEVNT_FSP);
+ 	}
+-	if ((dsa = EVP_PKEY_get0_DSA(peer->ident_pkey->pkey)) == NULL) {
++	if (EVP_PKEY_is_a(peer->ident_pkey->pkey, "DSA") == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_FFC_P, &p) == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_PUB_KEY, &pub_key) == 0 ||
++			EVP_PKEY_get_bn_param(peer->ident_pkey->pkey,
++				OSSL_PKEY_PARAM_PRIV_KEY, &priv_key) == 0) {
+ 		msyslog(LOG_NOTICE, "crypto_mv: defective key");
++		if (p != NULL) BN_free(p);
++		if (pub_key != NULL) BN_free(pub_key);
++		if (priv_key != NULL) BN_free(priv_key);
+ 		return (XEVNT_PUB);
+ 	}
+-	DSA_get0_pqg(dsa, &p, NULL, NULL);
+-	DSA_get0_key(dsa, &pub_key, &priv_key);
+ 	if (peer->iffval == NULL) {
+ 		msyslog(LOG_NOTICE, "crypto_mv: missing challenge");
++		BN_free(priv_key);
++		BN_free(pub_key);
++		BN_free(p);
+ 		return (XEVNT_ID);
+ 	}
+ 
+ 	/*
+ 	 * Extract the y, gbar and ghat values from the response.
+ 	 */
+-	bctx = BN_CTX_new(); k = BN_new(); u = BN_new(); v = BN_new();
+ 	len = ntohl(ep->vallen);
+ 	ptr = (u_char *)ep->pkt;
+-	if ((sdsa = d2i_DSAparams(NULL, &ptr, len)) == NULL) {
++	octx = OSSL_DECODER_CTX_new_for_pkey(&sdsa, "DER", NULL, "DSA",
++			EVP_PKEY_KEY_PARAMETERS, NULL, NULL);
++	if (octx == NULL || OSSL_DECODER_from_data(octx, &ptr, &len) == 0) {
++		msyslog(LOG_ERR, "crypto_mv: %s",
++		    ERR_error_string(ERR_get_error(), NULL));
++		if (octx != NULL) OSSL_DECODER_CTX_free(octx);
++		BN_free(priv_key);
++		BN_free(pub_key);
++		BN_free(p);
++		return (XEVNT_ERR);
++	}
++	OSSL_DECODER_CTX_free(octx);
++
++	if (EVP_PKEY_is_a(sdsa, "DSA") == 0 ||
++			EVP_PKEY_get_bn_param(sdsa,
++				OSSL_PKEY_PARAM_FFC_P, &sp) == 0 ||
++			EVP_PKEY_get_bn_param(sdsa,
++				OSSL_PKEY_PARAM_FFC_Q, &sq) == 0 ||
++			EVP_PKEY_get_bn_param(sdsa,
++				OSSL_PKEY_PARAM_FFC_G, &sg) == 0) {
+ 		msyslog(LOG_ERR, "crypto_mv: %s",
+ 		    ERR_error_string(ERR_get_error(), NULL));
++		if (sp != NULL) BN_free(sp);
++		if (sq != NULL) BN_free(sq);
++		if (sg != NULL) BN_free(sg);
++		EVP_PKEY_free(sdsa);
++		BN_free(priv_key);
++		BN_free(pub_key);
++		BN_free(p);
+ 		return (XEVNT_ERR);
+ 	}
+-	DSA_get0_pqg(sdsa, &sp, &sq, &sg);
++	EVP_PKEY_free(sdsa);
++
++	bctx = BN_CTX_new(); k = BN_new(); u = BN_new(); v = BN_new();
+ 
+ 	/*
+ 	 * Compute (gbar^xhat ghat^xbar) mod p.
+@@ -3092,9 +3781,14 @@ crypto_mv(
+ 	 */
+ 	temp = BN_cmp(u, peer->iffval);
+ 	BN_CTX_free(bctx); BN_free(k); BN_free(u); BN_free(v);
++	BN_free(sp);
++	BN_free(sq);
++	BN_free(sg);
++	BN_free(priv_key);
++	BN_free(pub_key);
++	BN_free(p);
+ 	BN_free(peer->iffval);
+ 	peer->iffval = NULL;
+-	DSA_free(sdsa);
+ 	if (temp == 0)
+ 		return (XEVNT_OK);
+ 
+@@ -3754,10 +4448,11 @@ crypto_key(
+ 	DPRINTF(1, ("crypto_key: %s\n", statstr));
+ #ifdef DEBUG
+ 	if (debug > 1) {
+-		if (EVP_PKEY_base_id(pkey) == EVP_PKEY_DSA)
+-			DSA_print_fp(stdout, EVP_PKEY_get0_DSA(pkey), 0);
+-		else if (EVP_PKEY_base_id(pkey) == EVP_PKEY_RSA)
+-			RSA_print_fp(stdout, EVP_PKEY_get0_RSA(pkey), 0);
++		BIO *out = BIO_new_fd(fileno(stdout), BIO_NOCLOSE);
++		EVP_PKEY_print_public(out, pkey, 0, NULL);
++		EVP_PKEY_print_private(out, pkey, 0, NULL);
++		EVP_PKEY_print_params(out, pkey, 0, NULL);
++		BIO_free(out);
+ 	}
+ #endif
+ 	return (pkp);

@@ -8,3 +8,4 @@ sntp-kod-location.patch
 sha1-refid.patch
 sha1-auth.patch
 ntpq-fips.patch
+openssl3-support.patch
