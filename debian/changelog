@@ -1,3 +1,12 @@
+ntp (1:4.2.8p15+dfsg-1pexip4) pexip; urgency=medium
+
+  * Build-Depend on libssl3-dev
+  * debian/patches/ntpq-fips.patch: Update for OpenSSL 3
+  * debian/patches/openssl3-support.patch: Remove use of API
+    deprecated in OpenSSL 3
+
+ -- John-Mark Bell <jmb@pexip.com>  Thu, 10 Nov 2022 18:37:28 +0000
+
 ntp (1:4.2.8p15+dfsg-1pexip3) pexip-bullseye; urgency=medium
 
   * Bullseye rebuild for ARM64 inclusion
