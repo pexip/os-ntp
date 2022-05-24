@@ -1,3 +1,10 @@
+ntp (1:4.2.8p12+dfsg-4pexip6) pexip; urgency=medium
+
+  * Move the hooks removals to preinst files, to quieten dpkg conffile
+    noise.
+
+ -- Steve McIntyre <steve.mcintyre@pexip.com>  Tue, 24 May 2022 15:18:17 +0100
+
 ntp (1:4.2.8p12+dfsg-4pexip5) pexip; urgency=medium
 
   * Really remove the old exit hooks in postinst. Sigh.

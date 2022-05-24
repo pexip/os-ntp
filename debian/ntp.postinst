@@ -17,10 +17,6 @@ if [ "$1" = "configure" ]; then
 		install --mode=644 /dev/null "/etc/apparmor.d/local/usr.sbin.ntpd"
 	fi
 
-	# Remove DHCP integration conffiles in case they're still around
-	rm -f /etc/dhcp/dhclient-exit-hooks.d/ntp
-	rm -f /etc/dhcp/dhclient-exit-hooks.d/ntpdate
-	rm -f /etc/NetworkManager/dispatcher.d/ntp
 fi
 
 if [ "$1" = "triggered" ]; then
