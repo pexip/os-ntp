@@ -1,3 +1,9 @@
+ntp (1:4.2.8p12+dfsg-4pexip8) pexip; urgency=medium
+
+  * And for ntpdate too
+
+ -- Steve McIntyre <steve.mcintyre@pexip.com>  Thu, 26 May 2022 12:28:27 +0100
+
 ntp (1:4.2.8p12+dfsg-4pexip7) pexip; urgency=medium
 
   * Make sure the conffile rm is called on upgrades too.
