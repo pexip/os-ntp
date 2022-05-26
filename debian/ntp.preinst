@@ -2,10 +2,12 @@
 
 set -e
 
-if [ "$1" = "configure" ]; then
+case "$1" in
+    upgrade|configure)
 	# Remove DHCP integration conffiles in case they're still around
 	rm -f /etc/dhcp/dhclient-exit-hooks.d/ntp
 	rm -f /etc/NetworkManager/dispatcher.d/ntp
-fi
+	;;
+esac
 
 #DEBHELPER#
