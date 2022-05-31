@@ -21,7 +21,7 @@ Rules-Requires-Root: no
 Homepage: http://support.ntp.org/
 Vcs-Browser: https://salsa.debian.org/pkg-ntp-team/ntp
 Vcs-Git: https://salsa.debian.org/pkg-ntp-team/ntp.git
-XS-Pexip-Upstream: http://ftp.debian.org/debian/ buster
+XS-Pexip-Upstream: http://deb.debian.org/debian/ bullseye
 
 Package: ntp
 Architecture: any
